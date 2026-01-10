@@ -73,3 +73,20 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Unity Bee build system cache (Unity 2020+ / Unity6 常见)
+[Bb]ee/
+[Bb]ee~/
+
+# JetBrains / Rider / IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# OS junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
