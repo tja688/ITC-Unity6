@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 975089f62a0f141b0b6c1e96bb49c873, type: 3}
   m_Name: Actions Database
   m_EditorClassIdentifier: Febucci.TextAnimator.Runtime::Febucci.UI.Actions.ActionDatabase
-  data: []
+  data:
+  - {fileID: 11400000, guid: 48d13f2a937a70649be32e6129fc3c47, type: 2}
+  - {fileID: 11400000, guid: ebd949ff4c332d645a4b6cf60aac4079, type: 2}
+  - {fileID: 11400000, guid: c6bdddae19b3846458ecd2fe584671f7, type: 2}

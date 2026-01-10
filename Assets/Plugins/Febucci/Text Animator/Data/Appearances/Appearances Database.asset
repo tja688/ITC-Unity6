@@ -12,4 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103e863f5c0347be8a512f431aaf5ec1, type: 3}
   m_Name: Appearances Database
   m_EditorClassIdentifier: Febucci.TextAnimator.Runtime::Febucci.UI.Effects.AnimationsDatabase
-  data: []
+  data:
+  - {fileID: 11400000, guid: d488b544a76b1b440be6e5af9cc74c7c, type: 2}
+  - {fileID: 11400000, guid: 380a75b7ba9332e4e94fb595684782e8, type: 2}
+  - {fileID: 11400000, guid: 1cadccdb4b39ea643ade2e3c697e3454, type: 2}
+  - {fileID: 11400000, guid: 49f90890310ca754f85d9b1d79827025, type: 2}
+  - {fileID: 11400000, guid: 7baf3d9570243d94fa01bd11597f376e, type: 2}
+  - {fileID: 11400000, guid: 5a55648820cbbf544b60851c4764a000, type: 2}
+  - {fileID: 11400000, guid: 3a25b64dbc285eb46bdee696b3e56253, type: 2}
+  - {fileID: 11400000, guid: 74183fb2ab204ea459765f6638977f51, type: 2}
