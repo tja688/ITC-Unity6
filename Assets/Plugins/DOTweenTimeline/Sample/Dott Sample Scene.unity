@@ -2303,6 +2303,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6777792542846004750, guid: 8017370302c294c4fba4cea227c148f0, type: 3}
+      propertyPath: delay
+      value: 0.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 6777792542846004750, guid: 8017370302c294c4fba4cea227c148f0, type: 3}
       propertyPath: timeline
       value: 
       objectReference: {fileID: 604542487}
