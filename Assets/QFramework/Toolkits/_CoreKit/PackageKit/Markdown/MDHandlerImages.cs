@@ -182,7 +182,7 @@ namespace QFramework
             else if (req.Request.isNetworkError)
 #endif
             {
-                Debug.LogError(string.Format("Network Error: {0} - {1}", req.URL, req.Request.error));
+                // Debug.LogError(string.Format("Network Error: {0} - {1}", req.URL, req.Request.error));
                 mTextureCache[req.URL] = null;
             }
             else if (req.IsGif)
