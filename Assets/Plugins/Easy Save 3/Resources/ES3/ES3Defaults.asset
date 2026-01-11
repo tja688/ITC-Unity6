@@ -43,6 +43,8 @@ MonoBehaviour:
     - QFramework
     - QFramework.CoreKit
     - ResKit
+    - SingularityGroup.HotReload.Runtime
+    - SingularityGroup.HotReload.Runtime.Public
     - SupportOldQF
     - UIKit
     - UniTask
