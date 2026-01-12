@@ -15,7 +15,6 @@ namespace Dott.Editor
             Backward
         }
 
-        private double startTime;
         private IDOTweenAnimation[] currentPlayAnimations;
         private readonly DottDrivenProperties drivenProperties;
         private PlaybackDirection playbackDirection = PlaybackDirection.Forward;
@@ -23,21 +22,12 @@ namespace Dott.Editor
 
         public bool IsPlaying => DottEditorPreview.IsPlaying;
         public bool IsPlayingBackwards => IsPlaying && playbackDirection == PlaybackDirection.Backward;
-        public float ElapsedTime
-        {
-            get
-            {
-                if (!IsPlaying)
-                {
-                    return (float)DottEditorPreview.CurrentTime;
-                }
 
-                var time = playbackDirection == PlaybackDirection.Backward
-                    ? (float)(startTime - DottEditorPreview.CurrentTime)
-                    : (float)(DottEditorPreview.CurrentTime - startTime);
-                return Math.Max(0f, time);
-            }
-        }
+
+        /// <summary>
+        /// 当前动画时间（直接从 DottEditorPreview 获取，它会正确处理正播和倒播）
+        /// </summary>
+        public float ElapsedTime => (float)DottEditorPreview.CurrentTime;
         public bool Paused { get; private set; }
 
         public bool Loop
@@ -68,9 +58,6 @@ namespace Dott.Editor
             GoTo(animations, shift);
             DottEditorPreview.SetPlaybackDirection(direction == PlaybackDirection.Backward);
             DottEditorPreview.Start();
-            startTime = direction == PlaybackDirection.Backward
-                ? DottEditorPreview.CurrentTime + shift
-                : DottEditorPreview.CurrentTime - shift;
             Paused = false;
         }
 
@@ -81,7 +68,6 @@ namespace Dott.Editor
             drivenProperties.Register(animations);
             Sort(animations).ForEach(PreviewTween);
             DottEditorPreview.GoTo(time);
-            startTime = 0;
         }
 
         public void Stop()
