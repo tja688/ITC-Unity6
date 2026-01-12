@@ -40,12 +40,18 @@ MonoBehaviour:
     - Febucci.TextAnimatorForUnity.Runtime
     - Febucci.TextAnimatorForUnity.TMP.Runtime
     - Febucci.TextAnimatorForUnity.UITk.Runtime
+    - FluffyUnderware.DevTools
+    - LibTessDotNet
     - QFramework
     - QFramework.CoreKit
     - ResKit
     - SingularityGroup.HotReload.Runtime
     - SingularityGroup.HotReload.Runtime.Public
     - SupportOldQF
+    - ToolBuddy.ArraysPooling
+    - ToolBuddy.Curvy
+    - ToolBuddy.Curvy.Examples
+    - ToolBuddy.Dependencies.VectorGraphics
     - UIKit
     - UniTask
     - UniTask.Addressables
