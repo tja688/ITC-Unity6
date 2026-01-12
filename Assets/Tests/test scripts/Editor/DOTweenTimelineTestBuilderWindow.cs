@@ -209,7 +209,7 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
 
     private void ClearTestSetup()
     {
-        DOTweenTimelineTestRoot[] roots = Object.FindObjectsByType<DOTweenTimelineTestRoot>(FindObjectsSortMode.None);
+        DOTweenTimelineTestRoot[] roots = UnityEngine.Object.FindObjectsByType<DOTweenTimelineTestRoot>(FindObjectsSortMode.None);
         if (roots.Length == 0)
         {
             return;
@@ -228,7 +228,7 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
             }
             else
             {
-                Object.DestroyImmediate(root.gameObject);
+                UnityEngine.Object.DestroyImmediate(root.gameObject);
             }
         }
 
@@ -397,7 +397,7 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
 
         byte[] png = texture.EncodeToPNG();
         File.WriteAllBytes(path, png);
-        Object.DestroyImmediate(texture);
+        UnityEngine.Object.DestroyImmediate(texture);
 
         AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
         var importer = AssetImporter.GetAtPath(path) as TextureImporter;
@@ -420,21 +420,21 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
             case ShapeType.Square:
                 return true;
             case ShapeType.Circle:
-            {
-                float cx = size * 0.5f;
-                float cy = size * 0.5f;
-                float dx = x - cx + 0.5f;
-                float dy = y - cy + 0.5f;
-                float r = size * 0.5f - 1f;
-                return (dx * dx + dy * dy) <= r * r;
-            }
+                {
+                    float cx = size * 0.5f;
+                    float cy = size * 0.5f;
+                    float dx = x - cx + 0.5f;
+                    float dy = y - cy + 0.5f;
+                    float r = size * 0.5f - 1f;
+                    return (dx * dx + dy * dy) <= r * r;
+                }
             case ShapeType.Triangle:
-            {
-                float fx = (float)x / (size - 1);
-                float fy = (float)y / (size - 1);
-                float edge = 1f - Mathf.Abs(2f * fx - 1f);
-                return fy <= edge;
-            }
+                {
+                    float fx = (float)x / (size - 1);
+                    float fy = (float)y / (size - 1);
+                    float edge = 1f - Mathf.Abs(2f * fx - 1f);
+                    return fy <= edge;
+                }
             default:
                 return false;
         }
