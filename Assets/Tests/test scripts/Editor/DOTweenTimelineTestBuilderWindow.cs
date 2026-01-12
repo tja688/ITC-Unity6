@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using DG.Tweening;
 using Dott;
@@ -14,6 +15,7 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
     private const string TagName = "Actor";
     private const string GeneratedFolder = "Assets/Tests/test scripts/Generated";
     private const int TextureSize = 64;
+    private const int MaxLinksPerNode = 20;
 
     [SerializeField] private int actorCount = 20;
     [SerializeField] private Vector2 startAreaSize = new Vector2(6f, 4f);
@@ -46,6 +48,20 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
         Square,
         Triangle,
         Circle
+    }
+
+    private sealed class TimelineNode
+    {
+        public DOTweenTimeline Timeline { get; }
+        public float Duration { get; }
+        public string Label { get; }
+
+        public TimelineNode(DOTweenTimeline timeline, float duration, string label)
+        {
+            Timeline = timeline;
+            Duration = duration;
+            Label = label;
+        }
     }
 
     [MenuItem("Tools/DOTweenTimeline/Test Builder")]
@@ -156,9 +172,12 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
         var marker = root.AddComponent<DOTweenTimelineTestRoot>();
         marker.Assign(timeline, startArea, endArea, actorsRoot.transform);
 
+        var timelineNodesRoot = new GameObject("TimelineNodes");
+        timelineNodesRoot.transform.SetParent(root.transform, false);
+
         System.Random rng = useSeed ? new System.Random(randomSeed) : new System.Random();
 
-        float currentDelay = 0f;
+        var actorNodes = new List<TimelineNode>(actorCount);
         for (int i = 0; i < actorCount; i++)
         {
             var actor = new GameObject($"Actor_{i:D3}");
@@ -174,21 +193,23 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
             renderer.sprite = shapes[rng.Next(shapes.Length)];
             renderer.color = RandomColor(rng);
 
+            var actorTimeline = actor.AddComponent<DOTweenTimeline>();
+
             Vector3 endPos = RandomPointInBox(endArea, rng);
             float moveDuration = RandomRange(rng, durationRange, 0.1f);
             Ease moveEase = RandomEase(rng);
 
-            CreateMoveTween(timelineGO, actor.transform, endPos, currentDelay, moveDuration, moveEase, i);
+            CreateMoveTween(actor, actor.transform, endPos, moveDuration, moveEase, i);
 
-            float groupDuration = moveDuration;
+            float actorDuration = moveDuration;
 
             if (addScaleTween)
             {
                 float scaleDuration = RandomRange(rng, durationRange, 0.1f);
                 float targetScale = RandomRange(rng, scaleTargetRange, 0.1f);
                 Ease scaleEase = RandomEase(rng);
-                CreateScaleTween(timelineGO, actor.transform, currentDelay, scaleDuration, targetScale, scaleEase, i);
-                groupDuration = Mathf.Max(groupDuration, scaleDuration);
+                CreateScaleTween(actor, actor.transform, scaleDuration, targetScale, scaleEase, i);
+                actorDuration = Mathf.Max(actorDuration, scaleDuration);
             }
 
             if (addRotateTween)
@@ -196,12 +217,15 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
                 float rotateDuration = RandomRange(rng, durationRange, 0.1f);
                 float degrees = RandomRange(rng, rotateDegreesRange, 0f);
                 Ease rotateEase = RandomEase(rng);
-                CreateRotateTween(timelineGO, actor.transform, currentDelay, rotateDuration, degrees, rotateEase, i);
-                groupDuration = Mathf.Max(groupDuration, rotateDuration);
+                CreateRotateTween(actor, actor.transform, rotateDuration, degrees, rotateEase, i);
+                actorDuration = Mathf.Max(actorDuration, rotateDuration);
             }
 
-            currentDelay += groupDuration;
+            actorNodes.Add(new TimelineNode(actorTimeline, actorDuration, actor.name));
         }
+
+        List<TimelineNode> topNodes = BuildHierarchy(actorNodes, timelineNodesRoot.transform);
+        AddLinksSequential(timelineGO, topNodes, 0, topNodes.Count);
 
         Selection.activeGameObject = root;
         EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
@@ -235,9 +259,9 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
         EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
     }
 
-    private static void CreateMoveTween(GameObject timelineGO, Transform target, Vector3 endPos, float delay, float duration, Ease ease, int index)
+    private static void CreateMoveTween(GameObject actorGO, Transform target, Vector3 endPos, float duration, Ease ease, int index)
     {
-        DOTweenAnimation anim = CreateBaseAnimation(timelineGO, target, delay, duration, ease);
+        DOTweenAnimation anim = CreateBaseAnimation(actorGO, target, duration, ease);
         anim.animationType = DOTweenAnimation.AnimationType.Move;
         anim.targetType = DOTweenAnimation.TargetType.Transform;
         anim.endValueV3 = new Vector3(endPos.x, endPos.y, 0f);
@@ -246,9 +270,9 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
         anim.id = $"Actor_{index:D3}_Move";
     }
 
-    private static void CreateScaleTween(GameObject timelineGO, Transform target, float delay, float duration, float targetScale, Ease ease, int index)
+    private static void CreateScaleTween(GameObject actorGO, Transform target, float duration, float targetScale, Ease ease, int index)
     {
-        DOTweenAnimation anim = CreateBaseAnimation(timelineGO, target, delay, duration, ease);
+        DOTweenAnimation anim = CreateBaseAnimation(actorGO, target, duration, ease);
         anim.animationType = DOTweenAnimation.AnimationType.Scale;
         anim.targetType = DOTweenAnimation.TargetType.Transform;
         anim.optionalBool0 = true;
@@ -256,9 +280,9 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
         anim.id = $"Actor_{index:D3}_Scale";
     }
 
-    private static void CreateRotateTween(GameObject timelineGO, Transform target, float delay, float duration, float degrees, Ease ease, int index)
+    private static void CreateRotateTween(GameObject actorGO, Transform target, float duration, float degrees, Ease ease, int index)
     {
-        DOTweenAnimation anim = CreateBaseAnimation(timelineGO, target, delay, duration, ease);
+        DOTweenAnimation anim = CreateBaseAnimation(actorGO, target, duration, ease);
         anim.animationType = DOTweenAnimation.AnimationType.Rotate;
         anim.targetType = DOTweenAnimation.TargetType.Transform;
         anim.endValueV3 = new Vector3(0f, 0f, degrees);
@@ -267,16 +291,16 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
         anim.id = $"Actor_{index:D3}_Rotate";
     }
 
-    private static DOTweenAnimation CreateBaseAnimation(GameObject timelineGO, Transform target, float delay, float duration, Ease ease)
+    private static DOTweenAnimation CreateBaseAnimation(GameObject actorGO, Transform target, float duration, Ease ease)
     {
-        DOTweenAnimation anim = timelineGO.AddComponent<DOTweenAnimation>();
-        anim.targetIsSelf = false;
-        anim.targetGO = target.gameObject;
+        DOTweenAnimation anim = actorGO.AddComponent<DOTweenAnimation>();
+        anim.targetIsSelf = true;
+        anim.targetGO = null;
         anim.tweenTargetIsTargetGO = true;
         anim.target = target;
         anim.targetType = DOTweenAnimation.TargetType.Transform;
         anim.forcedTargetType = DOTweenAnimation.TargetType.Unset;
-        anim.delay = Mathf.Max(0f, delay);
+        anim.delay = 0f;
         anim.duration = Mathf.Max(0f, duration);
         anim.easeType = ease;
         anim.isActive = true;
@@ -290,6 +314,60 @@ public class DOTweenTimelineTestBuilderWindow : EditorWindow
         anim.loops = 1;
         anim.loopType = LoopType.Restart;
         return anim;
+    }
+
+    private static List<TimelineNode> BuildHierarchy(List<TimelineNode> leaves, Transform parentRoot)
+    {
+        int level = 0;
+        List<TimelineNode> current = leaves;
+        while (current.Count > MaxLinksPerNode)
+        {
+            current = CreateParentLevel(current, parentRoot, level);
+            level++;
+        }
+
+        return current;
+    }
+
+    private static List<TimelineNode> CreateParentLevel(List<TimelineNode> children, Transform parentRoot, int level)
+    {
+        var parents = new List<TimelineNode>();
+        int groupIndex = 0;
+
+        for (int i = 0; i < children.Count; i += MaxLinksPerNode)
+        {
+            int count = Mathf.Min(MaxLinksPerNode, children.Count - i);
+            TimelineNode parent = CreateLinkNode(children, i, count, parentRoot, $"TimelineGroup_L{level}", groupIndex);
+            parents.Add(parent);
+            groupIndex++;
+        }
+
+        return parents;
+    }
+
+    private static TimelineNode CreateLinkNode(List<TimelineNode> children, int startIndex, int count, Transform parentRoot, string namePrefix, int groupIndex)
+    {
+        var timelineGO = new GameObject($"{namePrefix}_{groupIndex:D2}");
+        timelineGO.transform.SetParent(parentRoot, false);
+        var timeline = timelineGO.AddComponent<DOTweenTimeline>();
+        float duration = AddLinksSequential(timelineGO, children, startIndex, count);
+        return new TimelineNode(timeline, duration, timelineGO.name);
+    }
+
+    private static float AddLinksSequential(GameObject timelineGO, List<TimelineNode> children, int startIndex, int count)
+    {
+        float delay = 0f;
+        for (int i = 0; i < count; i++)
+        {
+            TimelineNode child = children[startIndex + i];
+            var link = timelineGO.AddComponent<DOTweenLink>();
+            link.timeline = child.Timeline;
+            link.delay = delay;
+            link.id = child.Label;
+            delay += child.Duration;
+        }
+
+        return delay;
     }
 
     private static Vector3 RandomPointInBox(BoxCollider2D area, System.Random rng)
