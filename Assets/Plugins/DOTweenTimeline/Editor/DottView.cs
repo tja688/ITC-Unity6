@@ -28,6 +28,9 @@ namespace Dott.Editor
         public event Action DuplicateClicked;
         public event Action StopClicked;
         public event Action PlayClicked;
+        public event Action PlayBackwardsClicked;
+        public event Action RewindClicked;
+        public event Action FlipClicked;
         public event Action<bool> LoopToggled;
         public event Action SnapToggled;
         public event Action PreviewDisabled;
@@ -107,6 +110,24 @@ namespace Dott.Editor
                 case false when DottGUI.PlayButton(rect):
                     PlayClicked?.Invoke();
                     break;
+            }
+
+            // 倒播控制按钮
+            if (DottGUI.PlayBackwardsButton(rect))
+            {
+                PlayBackwardsClicked?.Invoke();
+            }
+
+
+            if (DottGUI.RewindButton(rect))
+            {
+                RewindClicked?.Invoke();
+            }
+
+
+            if (DottGUI.FlipButton(rect))
+            {
+                FlipClicked?.Invoke();
             }
 
             var snapToggle = DottGUI.SnapToggle(rect, IsSnapping);

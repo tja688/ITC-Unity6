@@ -69,6 +69,9 @@ namespace Dott.Editor
 
             view.PlayClicked += Play;
             view.StopClicked += controller.Stop;
+            view.PlayBackwardsClicked += PlayBackwards;
+            view.RewindClicked += Rewind;
+            view.FlipClicked += Flip;
             view.LoopToggled += ToggleLoop;
             view.SnapToggled += ToggleSnap;
 
@@ -94,6 +97,9 @@ namespace Dott.Editor
 
             view.PlayClicked -= Play;
             view.StopClicked -= controller.Stop;
+            view.PlayBackwardsClicked -= PlayBackwards;
+            view.RewindClicked -= Rewind;
+            view.FlipClicked -= Flip;
             view.LoopToggled -= ToggleLoop;
             view.SnapToggled -= ToggleSnap;
 
@@ -121,6 +127,41 @@ namespace Dott.Editor
         private void GoTo(float time)
         {
             controller.GoTo(animations, time);
+        }
+
+        private void PlayBackwards()
+        {
+            controller.GoTo(animations, controller.ElapsedTime);
+            controller.Stop();
+        }
+
+        private void Rewind()
+        {
+            controller.GoTo(animations, 0f);
+            controller.Pause();
+        }
+
+        private void Flip()
+        {
+            var duration = CalculateTotalDuration(animations);
+            var currentTime = controller.ElapsedTime;
+            var newTime = duration - currentTime;
+            controller.GoTo(animations, Mathf.Max(0f, newTime));
+            controller.Pause();
+        }
+
+        private float CalculateTotalDuration(IDOTweenAnimation[] anims)
+        {
+            if (anims == null || anims.Length == 0) return 0f;
+            float maxDuration = 0f;
+            foreach (var anim in anims)
+            {
+                var loops = Mathf.Max(1, anim.Loops);
+                var fullDuration = anim.Delay + anim.Duration * loops;
+                if (fullDuration > maxDuration)
+                    maxDuration = fullDuration;
+            }
+            return maxDuration;
         }
 
         private void OnTimeDragEnd(Event mouseEvent)

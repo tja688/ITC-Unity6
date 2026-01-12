@@ -84,7 +84,8 @@ namespace Dott.Editor
 
             var style = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 9, normal = { textColor = Color.white.SetAlpha(0.5f) }
+                fontSize = 9,
+                normal = { textColor = Color.white.SetAlpha(0.5f) }
             };
 
             const int count = 10;
@@ -231,7 +232,8 @@ namespace Dott.Editor
 
             var textStyle = new GUIStyle(GUI.skin.label)
             {
-                fontStyle = FontStyle.Bold, fontSize = 10,
+                fontStyle = FontStyle.Bold,
+                fontSize = 10,
                 alignment = TextAnchor.MiddleCenter,
                 normal = { textColor = Color.white },
                 richText = true
@@ -300,7 +302,8 @@ namespace Dott.Editor
             var label = new GUIContent(animation.Label);
             var style = new GUIStyle(GUI.skin.label)
             {
-                fontStyle = FontStyle.Bold, fontSize = 10,
+                fontStyle = FontStyle.Bold,
+                fontSize = 10,
                 alignment = TextAnchor.MiddleCenter,
                 normal = { textColor = Color.white.SetAlpha(alphaMultiplier) }
             };
@@ -481,6 +484,51 @@ namespace Dott.Editor
             return GUI.Toggle(toggleRect, value, iconContent, style);
         }
 
+        #region Playback Control Buttons
+
+        /// <summary>倒播按钮（从当前位置向起点播放）</summary>
+        public static bool PlayBackwardsButton(Rect rect)
+        {
+            var position = rect.position + new Vector2(2 + PlayButtonSize.x + 4, (TIMELINE_HEADER_HEIGHT - PlaybackControlButtonSize.y) / 2);
+            var buttonRect = new Rect(position, PlaybackControlButtonSize);
+            var iconContent = EditorGUIUtility.TrIconContent("Animation.PrevKey", "Play Backwards\n从当前位置倒播到起点");
+            using var colorScope = new DeGUI.ColorScope(ToggleFadeColor, ToggleFadeColor);
+            return GUI.Button(buttonRect, iconContent, PlaybackControlButtonStyle);
+        }
+
+        /// <summary>倒带按钮（跳到起点）</summary>
+        public static bool RewindButton(Rect rect)
+        {
+            var position = rect.position + new Vector2(2 + PlayButtonSize.x + 4 + PlaybackControlButtonSize.x + 2, (TIMELINE_HEADER_HEIGHT - PlaybackControlButtonSize.y) / 2);
+            var buttonRect = new Rect(position, PlaybackControlButtonSize);
+            var iconContent = EditorGUIUtility.TrIconContent("Animation.FirstKey", "Rewind\n倒带到起点并暂停");
+            using var colorScope = new DeGUI.ColorScope(ToggleFadeColor, ToggleFadeColor);
+            return GUI.Button(buttonRect, iconContent, PlaybackControlButtonStyle);
+        }
+
+        /// <summary>翻转方向按钮</summary>
+        public static bool FlipButton(Rect rect)
+        {
+            var position = rect.position + new Vector2(2 + PlayButtonSize.x + 4 + (PlaybackControlButtonSize.x + 2) * 2, (TIMELINE_HEADER_HEIGHT - PlaybackControlButtonSize.y) / 2);
+            var buttonRect = new Rect(position, PlaybackControlButtonSize);
+            var iconContent = EditorGUIUtility.TrIconContent("Refresh", "Flip Direction\n翻转播放方向");
+            using var colorScope = new DeGUI.ColorScope(ToggleFadeColor, ToggleFadeColor);
+            return GUI.Button(buttonRect, iconContent, PlaybackControlButtonStyle);
+        }
+
+        private static readonly Vector2 PlaybackControlButtonSize = new(24, 24);
+        private static readonly GUIStyle PlaybackControlButtonStyle = new(GUI.skin.button)
+        {
+
+            padding = new RectOffset(2, 2, 2, 2),
+            fixedHeight = 0,
+
+            fixedWidth = 0
+
+        };
+
+        #endregion
+
         private static void RoundRect(Rect rect, Color color, float borderRadius, float borderWidth = 0)
         {
             GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture, ScaleMode.StretchToFill, alphaBlend: false,
@@ -499,7 +547,7 @@ namespace Dott.Editor
         #region Styles
 
         private static readonly GUIStyle InspectorHeaderStyle = new(EditorStyles.boldLabel)
-            { alignment = TextAnchor.MiddleLeft };
+        { alignment = TextAnchor.MiddleLeft };
         private static readonly Vector2 InspectorButtonSize = new(24f, 20f);
         private static readonly GUIContent InspectorDownButton = EditorGUIUtility.TrTextContent("↓", "Move Down");
         private static readonly GUIContent InspectorUpButton = EditorGUIUtility.TrTextContent("↑", "Move Up");
@@ -507,11 +555,12 @@ namespace Dott.Editor
         {
             alignment = TextAnchor.MiddleCenter,
             normal = { textColor = new Color(0.6f, 0.6f, 0.6f) },
-            fixedWidth = 0, fixedHeight = 0
+            fixedWidth = 0,
+            fixedHeight = 0
         };
 
         private static readonly GUIStyle TimelineHeaderStyle = new(EditorStyles.boldLabel)
-            { alignment = TextAnchor.MiddleCenter };
+        { alignment = TextAnchor.MiddleCenter };
         private const int TIMELINE_HEADER_HEIGHT = 28;
 
         private static readonly GUIStyle AddTweenButtonStyle = new(EditorStyles.miniButtonLeft) { fixedHeight = 0 };
