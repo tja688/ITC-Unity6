@@ -131,8 +131,7 @@ namespace Dott.Editor
 
         private void PlayBackwards()
         {
-            controller.GoTo(animations, controller.ElapsedTime);
-            controller.Stop();
+            controller.PlayBackwards(animations);
         }
 
         private void Rewind()

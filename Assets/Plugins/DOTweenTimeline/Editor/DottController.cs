@@ -9,12 +9,35 @@ namespace Dott.Editor
 {
     public class DottController : IDisposable
     {
+        private enum PlaybackDirection
+        {
+            Forward,
+            Backward
+        }
+
         private double startTime;
         private IDOTweenAnimation[] currentPlayAnimations;
         private readonly DottDrivenProperties drivenProperties;
+        private PlaybackDirection playbackDirection = PlaybackDirection.Forward;
+        private float playFromTime;
 
         public bool IsPlaying => DottEditorPreview.IsPlaying;
-        public float ElapsedTime => (float)(DottEditorPreview.CurrentTime - startTime);
+        public bool IsPlayingBackwards => IsPlaying && playbackDirection == PlaybackDirection.Backward;
+        public float ElapsedTime
+        {
+            get
+            {
+                if (!IsPlaying)
+                {
+                    return (float)DottEditorPreview.CurrentTime;
+                }
+
+                var time = playbackDirection == PlaybackDirection.Backward
+                    ? (float)(startTime - DottEditorPreview.CurrentTime)
+                    : (float)(DottEditorPreview.CurrentTime - startTime);
+                return Math.Max(0f, time);
+            }
+        }
         public bool Paused { get; private set; }
 
         public bool Loop
@@ -29,14 +52,25 @@ namespace Dott.Editor
             drivenProperties = new DottDrivenProperties();
         }
 
-        public void Play(IDOTweenAnimation[] animations)
-        {
-            currentPlayAnimations = animations;
+        public void Play(IDOTweenAnimation[] animations) =>
+            PlayInternal(animations, PlaybackDirection.Forward, null);
 
-            var shift = (float)DottEditorPreview.CurrentTime;
+        public void PlayBackwards(IDOTweenAnimation[] animations) =>
+            PlayInternal(animations, PlaybackDirection.Backward, null);
+
+        private void PlayInternal(IDOTweenAnimation[] animations, PlaybackDirection direction, float? startFromTime)
+        {
+            var shift = startFromTime ?? (IsPlaying ? ElapsedTime : (float)DottEditorPreview.CurrentTime);
+            currentPlayAnimations = animations;
+            playbackDirection = direction;
+            playFromTime = shift;
+
             GoTo(animations, shift);
+            DottEditorPreview.SetPlaybackDirection(direction == PlaybackDirection.Backward);
             DottEditorPreview.Start();
-            startTime = DottEditorPreview.CurrentTime - shift;
+            startTime = direction == PlaybackDirection.Backward
+                ? DottEditorPreview.CurrentTime + shift
+                : DottEditorPreview.CurrentTime - shift;
             Paused = false;
         }
 
@@ -54,6 +88,8 @@ namespace Dott.Editor
         {
             currentPlayAnimations = null;
             Paused = false;
+            playbackDirection = PlaybackDirection.Forward;
+            playFromTime = 0f;
             DottEditorPreview.Stop();
             drivenProperties.Unregister();
         }
@@ -92,7 +128,14 @@ namespace Dott.Editor
             }
 
             DottEditorPreview.Stop();
-            Play(currentPlayAnimations);
+            if (playbackDirection == PlaybackDirection.Backward)
+            {
+                PlayInternal(currentPlayAnimations, PlaybackDirection.Backward, playFromTime);
+            }
+            else
+            {
+                Play(currentPlayAnimations);
+            }
         }
 
         public void Dispose()

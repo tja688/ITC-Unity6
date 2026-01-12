@@ -345,11 +345,7 @@ namespace Dott.Editor
 
         private void PlayBackwards()
         {
-            // 先确保时间轴已生成，然后向后播放
-            controller.GoTo(animations, controller.ElapsedTime);
-            // 由于编辑器预览不直接支持倒播，先用PlayBackwards方法模拟
-            // 实际上Editor预览是通过手动所到时间点实现的
-            controller.Stop();
+            controller.PlayBackwards(animations);
         }
 
         private void Rewind()

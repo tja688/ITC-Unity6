@@ -85,6 +85,27 @@ namespace Dott.Editor
             QueuePlayerLoopUpdate();
         }
 
+        public static void SetPlaybackDirection(bool playBackwards)
+        {
+            for (var i = 0; i < Tweens.Count; i++)
+            {
+                var tween = Tweens[i].Tween;
+                if (tween == null || !tween.active)
+                {
+                    continue;
+                }
+
+                if (playBackwards)
+                {
+                    tween.PlayBackwards();
+                }
+                else
+                {
+                    tween.PlayForward();
+                }
+            }
+        }
+
         public static void Add([NotNull] Tween tween, bool isFrom, bool allowCallbacks)
         {
             Tweens.Add(new TweenData(tween, isFrom));
