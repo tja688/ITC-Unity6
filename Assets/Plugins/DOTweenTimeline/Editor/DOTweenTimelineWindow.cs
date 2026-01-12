@@ -95,6 +95,7 @@ namespace Dott.Editor
             view.FlipClicked += Flip;
             view.LoopToggled += ToggleLoop;
             view.SnapToggled += ToggleSnap;
+            view.AutoPlayToggled += ToggleAutoPlay;
 
             view.InspectorUpButtonClicked += MoveSelectedUp;
             view.InspectorDownButtonClicked += MoveSelectedDown;
@@ -121,6 +122,7 @@ namespace Dott.Editor
             view.FlipClicked -= Flip;
             view.LoopToggled -= ToggleLoop;
             view.SnapToggled -= ToggleSnap;
+            view.AutoPlayToggled -= ToggleAutoPlay;
 
             view.InspectorUpButtonClicked -= MoveSelectedUp;
             view.InspectorDownButtonClicked -= MoveSelectedDown;
@@ -146,6 +148,9 @@ namespace Dott.Editor
                 .Where(animation => animation != null)
                 .ToArray();
             selection.Validate(animations);
+
+            // 更新 AutoPlay 状态
+            UpdateAutoPlayState();
 
             // Main content area with scroll
             using (var scroll = new EditorGUILayout.ScrollViewScope(scrollPosition))
@@ -518,6 +523,30 @@ namespace Dott.Editor
         private void ToggleSnap()
         {
             EditorPrefs.SetBool("Dott.Snap", view.IsSnapping);
+        }
+
+        private void ToggleAutoPlay(bool value)
+        {
+            if (currentTimeline == null) return;
+
+            var doTweenAnimations = currentTimeline.GetComponents<DOTweenAnimation>();
+            foreach (var anim in doTweenAnimations)
+            {
+                Undo.RecordObject(anim, "Toggle AutoPlay");
+                anim.autoPlay = value;
+                EditorUtility.SetDirty(anim);
+            }
+        }
+
+        /// <summary>
+        /// 更新 view 中的 AutoPlay 状态
+        /// </summary>
+        private void UpdateAutoPlayState()
+        {
+            if (currentTimeline == null) return;
+
+            var doTweenAnimations = currentTimeline.GetComponents<DOTweenAnimation>();
+            view.AllAutoPlay = doTweenAnimations.Length > 0 && doTweenAnimations.All(a => a.autoPlay);
         }
 
         private void MoveSelectedUp()

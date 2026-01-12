@@ -27,6 +27,9 @@ namespace Dott.Editor
             animations = Timeline.GetComponents<MonoBehaviour>().Select(DottAnimation.FromComponent).Where(animation => animation != null).ToArray();
             selection.Validate(animations);
 
+            // 更新 AutoPlay 状态
+            UpdateAutoPlayState();
+
             view.DrawTimeline(animations, selection.Animation, controller.IsPlaying, controller.ElapsedTime,
                 controller.Loop, controller.Paused);
 
@@ -74,11 +77,15 @@ namespace Dott.Editor
             view.FlipClicked += Flip;
             view.LoopToggled += ToggleLoop;
             view.SnapToggled += ToggleSnap;
+            view.AutoPlayToggled += ToggleAutoPlay;
 
             view.InspectorUpButtonClicked += MoveSelectedUp;
             view.InspectorDownButtonClicked += MoveSelectedDown;
 
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+
+            // 初始化 AutoPlay 状态
+            UpdateAutoPlayState();
         }
 
         private void OnDisable()
@@ -102,6 +109,7 @@ namespace Dott.Editor
             view.FlipClicked -= Flip;
             view.LoopToggled -= ToggleLoop;
             view.SnapToggled -= ToggleSnap;
+            view.AutoPlayToggled -= ToggleAutoPlay;
 
             view.InspectorUpButtonClicked -= MoveSelectedUp;
             view.InspectorDownButtonClicked -= MoveSelectedDown;
@@ -301,6 +309,28 @@ namespace Dott.Editor
         private void ToggleSnap()
         {
             EditorPrefs.SetBool("Dott.Snap", view.IsSnapping);
+        }
+
+        private void ToggleAutoPlay(bool value)
+        {
+            var doTweenAnimations = Timeline.GetComponents<DOTweenAnimation>();
+            foreach (var anim in doTweenAnimations)
+            {
+                Undo.RecordObject(anim, "Toggle AutoPlay");
+                anim.autoPlay = value;
+                EditorUtility.SetDirty(anim);
+            }
+        }
+
+        /// <summary>
+        /// 更新 view 中的 AutoPlay 状态（检查所有动画是否都开启了 AutoPlay）
+        /// </summary>
+        private void UpdateAutoPlayState()
+        {
+            if (Timeline == null) return;
+
+            var doTweenAnimations = Timeline.GetComponents<DOTweenAnimation>();
+            view.AllAutoPlay = doTweenAnimations.Length > 0 && doTweenAnimations.All(a => a.autoPlay);
         }
 
         private void MoveSelectedUp()

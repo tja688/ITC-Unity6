@@ -33,9 +33,16 @@ namespace Dott.Editor
         public event Action FlipClicked;
         public event Action<bool> LoopToggled;
         public event Action SnapToggled;
+        public event Action<bool> AutoPlayToggled;
         public event Action PreviewDisabled;
         public event Action InspectorUpButtonClicked;
         public event Action InspectorDownButtonClicked;
+
+
+        /// <summary>
+        /// 当前所有动画是否都开启了 AutoPlay
+        /// </summary>
+        public bool AllAutoPlay { get; set; } = true;
 
         public void DrawTimeline(IDOTweenAnimation[] animations, [CanBeNull] IDOTweenAnimation selected, bool isPlaying, float currentPlayingTime, bool isLooping, bool isPaused)
         {
@@ -141,6 +148,13 @@ namespace Dott.Editor
             if (loopResult != isLooping)
             {
                 LoopToggled?.Invoke(loopResult);
+            }
+
+            var autoPlayResult = DottGUI.AutoPlayToggle(rect, AllAutoPlay);
+            if (autoPlayResult != AllAutoPlay)
+            {
+                AllAutoPlay = autoPlayResult;
+                AutoPlayToggled?.Invoke(autoPlayResult);
             }
 
             if (DottGUI.PreviewEye(headerRect, isPlaying, isPaused, isTimeDragging))
