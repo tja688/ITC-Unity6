@@ -1,0 +1,53 @@
+title: Test
+tags: test ta
+---
+Narrator: Start of Text Animator + Yarn tests. #meta
+<<declare $count = 0>>
+<<set $count = 3>>
+<<declare $flag = true>>
+Narrator: Substitution {$count} and placeholder {0}.
+Narrator: Line break demo - first line, second line.
+Narrator: Effects <shake>shake</shake> <wiggle>wiggle</wiggle> <wave>wave</wave> <bounce>bounce</bounce>.
+Narrator: More effects <dangle>dangle</dangle> <swing>swing</swing> <rot>rot</rot> <incr>incr</incr>.
+Narrator: More effects <expand>expand</expand> <slideh>slideh</slideh> <slidev>slidev</slidev> <fade>fade</fade> <rainb>rainb</rainb>.
+Narrator: Nested effects <wave><rainb>rainbow wave</rainb></wave>.
+Narrator: Modifiers <wave s=2>fast wave</wave> <shake a=2>strong shake</shake>.
+Narrator: Actions <waitfor=0.2> after wait.
+Narrator: Wait for input <waitinput> continue.
+Narrator: Speed test <speed=0.5>slow <speed=2>fast <speed=1>normal.
+Narrator: DOTween 动画即将播放... <waitfor=0.5><?dotween>
+Narrator: 动画完成后，再次播放 <waitfor=0.5><?dotween=restart>
+Narrator: 现在倒回动画 <waitfor=0.5><?dotween=rewind>
+<<if $flag>>
+    Narrator: Condition true.
+<<else>>
+    Narrator: Condition false.
+<<endif>>
+-> Option A
+    Narrator: Option A chosen.
+    <<jump TestDialogue_OptionA>>
+-> Option B <<if $count > 5>>
+    Narrator: Option B chosen.
+    <<jump TestDialogue_OptionB>>
+-> Option C
+    Narrator: Option C chosen.
+    <<jump TestDialogue_End>>
+===
+
+title: TestDialogue_OptionA
+---
+Narrator: Option A node.
+<<jump TestDialogue_End>>
+===
+
+title: TestDialogue_OptionB
+---
+Narrator: Option B node.
+<<jump TestDialogue_End>>
+===
+
+title: TestDialogue_End
+---
+Narrator: End of test.
+<<stop>>
+===
