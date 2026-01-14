@@ -32,6 +32,9 @@ namespace ITC.Dialogue
         [SerializeField] private TMP_Text characterNameText;
         [SerializeField] private CanvasGroup canvasGroup;
 
+        [Tooltip("可选：单独用于文本区域的 CanvasGroup，用于行间过渡。如果设置，行间切换只淡入淡出文本，不影响角色名和按钮")]
+        [SerializeField] private CanvasGroup lineTextCanvasGroup;
+
         [Header("显示设置")]
         [SerializeField] private bool showCharacterName = true;
         [SerializeField] private bool useFadeEffect = true;
@@ -53,6 +56,8 @@ namespace ITC.Dialogue
 
         private bool isShowingLine = false;
         private bool isSkipping = false;
+        private bool isTextFullyShown = false;
+        private bool isFirstLineOfDialogue = true; // 用于区分首行和后续行的淡入淡出
         private Action onTextShowComplete;
         private System.Threading.Tasks.TaskCompletionSource<bool> currentTextShowCompletionSource;
 
@@ -96,6 +101,7 @@ namespace ITC.Dialogue
             currentTextShowCompletionSource?.TrySetResult(true);
             isShowingLine = false;
             isSkipping = false;
+            isTextFullyShown = false;
         }
 
         #endregion
@@ -105,6 +111,7 @@ namespace ITC.Dialogue
         public override async YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
         {
             isShowingLine = true;
+            isTextFullyShown = false;
             onLineStart?.Invoke();
 
             // 1. 处理角色名
@@ -123,25 +130,55 @@ namespace ITC.Dialogue
             // 2. 获取文本内容（移除角色名前缀）
             string displayText = line.TextWithoutCharacterName.Text;
 
-            // 3. 淡入 UI
-            if (useFadeEffect && canvasGroup != null)
-            {
-                await FadeAlphaAsync(canvasGroup, 0, 1, fadeInDuration, token.HurryUpToken);
-            }
-            else if (canvasGroup != null)
-            {
-                canvasGroup.alpha = 1;
-            }
-
-            // 4. 设置文本并启动打字机
+            // 3. 设置文本（隐藏），避免淡入时显示上一行文字
             var textShowCompletionSource = new System.Threading.Tasks.TaskCompletionSource<bool>();
             currentTextShowCompletionSource = textShowCompletionSource;
             onTextShowComplete = () => textShowCompletionSource.TrySetResult(true);
             isSkipping = false;
 
-            typewriter.ShowText(displayText);
+            // 使用 TextAnimator 设置文本并启动打字机
+            // 注：不使用 typewriter.ShowText()，因为它依赖内部初始化可能失败
+            textAnimator.SetText(displayText, true);
 
-            // 5. 注册加速/跳过处理（带兜底）
+            // 4. 淡入 UI
+            // 智能淡入：首行时淡入整个面板，后续行只淡入文本区域（避免角色名和按钮闪烁）
+            if (useFadeEffect && canvasGroup != null)
+            {
+                if (isFirstLineOfDialogue)
+                {
+                    // 首次：淡入整个面板
+                    if (lineTextCanvasGroup != null)
+                        lineTextCanvasGroup.alpha = 1; // 确保文本区域可见
+                    await FadeAlphaAsync(canvasGroup, 0, 1, fadeInDuration, token.HurryUpToken);
+                    isFirstLineOfDialogue = false;
+                }
+                else if (lineTextCanvasGroup != null)
+                {
+                    // 后续行：只淡入文本区域
+                    await FadeAlphaAsync(lineTextCanvasGroup, 0, 1, fadeInDuration, token.HurryUpToken);
+                }
+                // 如果没有 lineTextCanvasGroup，后续行不做淡入动画，直接显示
+            }
+            else if (canvasGroup != null)
+            {
+                canvasGroup.alpha = 1;
+                if (lineTextCanvasGroup != null)
+                    lineTextCanvasGroup.alpha = 1;
+            }
+
+            // 5. 启动打字机
+            typewriter.StartShowingText(true);
+
+            // 5.1 边界情况：纯标签无可见文本（如 "<waitfor=1>"）
+            // TextAnimator 解析后可见字符数为 0 时，onTextShowed 事件不会触发，
+            // 需要手动触发完成，否则会死等
+            if (textAnimator.CharactersCount == 0)
+            {
+                // 没有可见字符，直接完成
+                textShowCompletionSource.TrySetResult(true);
+            }
+
+            // 6. 注册加速/跳过处理（带兜底）
             // 注意: textShowCompletionSource 只代表"文字已完整呈现或被强制完成"
             // 兜底触发来源: onTextShowed / HurryUpToken(Skip) / OnDisable
             using var hurryUpRegistration = token.HurryUpToken.Register(() =>
@@ -150,22 +187,24 @@ namespace ITC.Dialogue
                 {
                     isSkipping = true;
                     typewriter.SkipTypewriter();
+                    isTextFullyShown = true;
                     // 兜底：确保 completion 被触发，防止死等
                     textShowCompletionSource.TrySetResult(true);
                 }
             });
 
-            // 6. 等待文本显示完成
+            // 7. 等待文本显示完成
             // 注意: 不注册 NextContentToken，保持语义隔离:
             // - textShowCompletionSource: 文字显示完成
             // - NextContentToken: 用户确认继续
             await textShowCompletionSource.Task;
 
+            isTextFullyShown = true;
             isSkipping = false;
             currentTextShowCompletionSource = null;
             onLineFinished?.Invoke();
 
-            // 7. 等待用户确认或自动前进 (第二阶段等待)
+            // 8. 等待用户确认或自动前进 (第二阶段等待)
             if (autoAdvance)
             {
                 // 创建延迟任务
@@ -178,9 +217,17 @@ namespace ITC.Dialogue
                 await YarnTask.WaitUntilCanceled(token.NextContentToken);
             }
 
-            // 8. 淡出 UI
-            if (useFadeEffect && canvasGroup != null)
+            // 9. 淡出 UI
+            // 智能淡出：只淡出文本区域（如果有），不淡出整个面板
+            // 这样角色名和按钮保持可见，不会闪烁
+            if (useFadeEffect && lineTextCanvasGroup != null)
             {
+                // 只淡出文本区域
+                await FadeAlphaAsync(lineTextCanvasGroup, 1, 0, fadeOutDuration, token.HurryUpToken);
+            }
+            else if (useFadeEffect && canvasGroup != null)
+            {
+                // 回退：如果没有 lineTextCanvasGroup，使用整个面板（会有闪烁）
                 await FadeAlphaAsync(canvasGroup, 1, 0, fadeOutDuration, token.HurryUpToken);
             }
             else if (canvasGroup != null)
@@ -189,11 +236,13 @@ namespace ITC.Dialogue
             }
 
             isShowingLine = false;
+            isTextFullyShown = false;
         }
 
         public override YarnTask OnDialogueStartedAsync()
         {
-            // 对话开始时可以进行初始化
+            // 对话开始时重置状态
+            isFirstLineOfDialogue = true;
             return YarnTask.CompletedTask;
         }
 
@@ -218,6 +267,7 @@ namespace ITC.Dialogue
 
         private void OnTextShowedHandler()
         {
+            isTextFullyShown = true;
             onTextShowComplete?.Invoke();
             onTextShowComplete = null;
         }
@@ -271,6 +321,11 @@ namespace ITC.Dialogue
         /// 检查是否正在跳过 (Skip 期间为 true，可用于事件过滤)
         /// </summary>
         public bool IsSkipping => isSkipping;
+
+        /// <summary>
+        /// 当前行文字是否已经完整显示
+        /// </summary>
+        public bool IsTextFullyShown => isTextFullyShown;
 
         #endregion
     }

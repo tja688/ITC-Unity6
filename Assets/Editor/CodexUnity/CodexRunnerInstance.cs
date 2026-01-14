@@ -147,7 +147,7 @@ namespace CodexUnity
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[CodexUnity] 检查 codex 失败: {e.Message}");
+
                 return (false, null);
             }
         }
@@ -395,7 +395,7 @@ namespace CodexUnity
                     }
                     catch (Exception e)
                     {
-                        Debug.LogWarning($"[CodexUnity] [{_instanceId}] 进程退出事件处理失败: {e.Message}");
+
                     }
                 };
 
@@ -419,7 +419,7 @@ namespace CodexUnity
                 _state.activeStatus = "running";
                 SaveState();
 
-                Debug.Log($"[CodexUnity] [{_instanceId}] 启动 codex 进程 PID={process.Id}, runId={_currentRunId}");
+
                 OnStatusChanged?.Invoke(InstanceStatus.Running);
             }
             catch (Exception e)
@@ -465,7 +465,7 @@ namespace CodexUnity
             var exitInfo = _pendingExit;
             _pendingExit = null;
 
-            Debug.Log($"[CodexUnity] [{_instanceId}] 进程已退出: runId={exitInfo.runId}, exitCode={exitInfo.exitCode}, killed={exitInfo.killed}");
+
 
             _isRunning = false;
             _activeProcess = null;
@@ -518,7 +518,7 @@ namespace CodexUnity
 
             if (!IsProcessAlive(_state.activePid))
             {
-                Debug.Log($"[CodexUnity] [{_instanceId}] 检测到进程 {_state.activePid} 已退出");
+
                 var isSuccess = HasValidOutputContent(_state.activeRunId);
                 _pendingExit = new ExitInfo
                 {
@@ -765,11 +765,11 @@ namespace CodexUnity
             ReloadState();
 
             var runId = !string.IsNullOrEmpty(_state.activeRunId) ? _state.activeRunId : _state.lastRunId;
-            Debug.Log($"[CodexUnity] [{_instanceId}] CheckAndRecoverPendingRun: runId={runId}, status={_state.activeStatus}, pid={_state.activePid}");
+
 
             if (string.IsNullOrEmpty(runId))
             {
-                Debug.Log($"[CodexUnity] [{_instanceId}] 没有找到需要恢复的运行");
+
                 return;
             }
 
@@ -787,14 +787,14 @@ namespace CodexUnity
 
             if (_state.activePid > 0 && IsProcessAlive(_state.activePid))
             {
-                Debug.Log($"[CodexUnity] [{_instanceId}] 进程 {_state.activePid} 仍在运行，继续轮询输出");
+
                 _isRunning = true;
                 _state.status = InstanceStatus.Running;
                 AppendSystemMessage(runId, "info", $"检测到进程 {_state.activePid} 仍在运行，继续监控...");
             }
             else
             {
-                Debug.Log($"[CodexUnity] [{_instanceId}] 进程 {_state.activePid} 已结束");
+
                 TailActiveRunFilesForce(runId);
 
                 _state.activeStatus = "completed";

@@ -163,7 +163,7 @@ namespace CodexUnity
         {
             AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
             AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
-            Debug.Log("[CodexUnity] Assembly Reload 事件已绑定");
+
         }
 
         private static void OnBeforeAssemblyReload()
@@ -174,7 +174,7 @@ namespace CodexUnity
             var wasRunning = _isRunning || state.activeStatus == "running";
 
 
-            Debug.Log($"[CodexUnity] OnBeforeAssemblyReload: _isRunning={_isRunning}, state.activeStatus={state.activeStatus}");
+
 
 
             if (wasRunning && state.activePid > 0)
@@ -182,7 +182,7 @@ namespace CodexUnity
                 // 记录 Domain Reload 发生时的状态
                 state.lastReloadTime = DateTime.UtcNow.Ticks;
                 CodexStore.SaveState(state);
-                Debug.Log($"[CodexUnity] 检测到运行中任务 (PID={state.activePid})，已记录 reload 时间");
+
             }
 
             // 清除内存中的进程引用（会被 Domain Reload 销毁）
@@ -413,7 +413,7 @@ namespace CodexUnity
                     }
                     catch (Exception e)
                     {
-                        Debug.LogWarning($"[CodexUnity] 进程退出事件处理失败: {e.Message}");
+
                     }
                 };
 
@@ -437,11 +437,11 @@ namespace CodexUnity
                 state.activeStatus = "running";
                 CodexStore.SaveState(state);
 
-                Debug.Log($"[CodexUnity] 启动 codex 进程 PID={process.Id}, runId={_currentRunId}");
+
                 DebugLog($"[CodexUnity] 命令: cmd.exe {cmdArgs}");
                 DebugLog($"[CodexUnity] 运行目录: {runDir}");
                 DebugLog($"[CodexUnity] 工作目录: {CodexStore.ProjectRoot}");
-                Debug.Log("[CodexUnity] 使用文件轮询模式读取输出（Domain Reload 安全）");
+
             }
             catch (Exception e)
             {
@@ -534,7 +534,7 @@ namespace CodexUnity
             var exitInfo = _pendingExit;
             _pendingExit = null;
 
-            Debug.Log($"[CodexUnity] 进程已退出: runId={exitInfo.runId}, exitCode={exitInfo.exitCode}, killed={exitInfo.killed}");
+
 
             _isRunning = false;
             _activeProcess = null;
@@ -597,7 +597,7 @@ namespace CodexUnity
             // 检查进程是否还在运行
             if (!IsProcessAlive(state.activePid))
             {
-                Debug.Log($"[CodexUnity] 检测到进程 {state.activePid} 已退出（可能在 Domain Reload 期间）");
+
 
                 // 进程已死，完成最后的清理
                 // 由于无法获取真实退出码，通过检查输出文件判断是否成功
@@ -1170,12 +1170,12 @@ namespace CodexUnity
             var runId = !string.IsNullOrEmpty(state.activeRunId) ? state.activeRunId : state.lastRunId;
 
 
-            Debug.Log($"[CodexUnity] CheckAndRecoverPendingRun: runId={runId}, status={state.activeStatus}, pid={state.activePid}");
+
 
 
             if (string.IsNullOrEmpty(runId))
             {
-                Debug.Log("[CodexUnity] 没有找到需要恢复的运行");
+
                 return;
             }
 
@@ -1198,14 +1198,14 @@ namespace CodexUnity
             if (state.activePid > 0 && IsProcessAlive(state.activePid))
             {
                 // 进程还在！继续轮询输出
-                Debug.Log($"[CodexUnity] 进程 {state.activePid} 仍在运行，继续轮询输出");
+
                 _isRunning = true; // 标记为运行中，但不持有进程引用
                 AppendSystemMessage(runId, "info", $"检测到进程 {state.activePid} 仍在运行，继续监控...");
             }
             else
             {
                 // 进程已死
-                Debug.Log($"[CodexUnity] 进程 {state.activePid} 已结束");
+
 
                 // 读取最后的输出
 

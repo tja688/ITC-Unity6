@@ -67,7 +67,7 @@ namespace CodexUnity
             // 检查是否需要迁移
             if (CodexStore.NeedsMigration())
             {
-                Debug.Log("[CodexUnity] 检测到旧版数据，开始迁移...");
+
                 CodexStore.MigrateLegacyData();
             }
 
@@ -81,7 +81,7 @@ namespace CodexUnity
             }
 
             _isInitialized = true;
-            Debug.Log($"[CodexUnity] InstanceManager 初始化完成，共 {_registry.instances.Length} 个实例");
+
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace CodexUnity
             GetOrCreateRunner(instanceId);
 
             OnInstanceListChanged?.Invoke();
-            Debug.Log($"[CodexUnity] 创建实例: {name} ({instanceId})");
+
 
             return info;
         }
@@ -186,7 +186,7 @@ namespace CodexUnity
             var info = _registry.instances.FirstOrDefault(i => i.id == instanceId);
             if (info == null)
             {
-                Debug.LogWarning($"[CodexUnity] 实例不存在: {instanceId}");
+
                 return false;
             }
 
@@ -215,7 +215,7 @@ namespace CodexUnity
             CodexStore.DeleteInstanceDir(instanceId);
 
             OnInstanceListChanged?.Invoke();
-            Debug.Log($"[CodexUnity] 删除实例: {info.name} ({instanceId})");
+
 
             return true;
         }
@@ -275,7 +275,7 @@ namespace CodexUnity
                 info.name = newName;
                 UpdateInstanceInfo(info);
                 OnInstanceListChanged?.Invoke();
-                Debug.Log($"[CodexUnity] 重命名实例: {instanceId} -> {newName}");
+
             }
         }
 
@@ -288,7 +288,7 @@ namespace CodexUnity
             if (runner != null)
             {
                 runner.ClearHistory();
-                Debug.Log($"[CodexUnity] 清空实例历史: {instanceId}");
+
             }
         }
 

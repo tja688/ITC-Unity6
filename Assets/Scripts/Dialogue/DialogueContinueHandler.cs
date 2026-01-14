@@ -27,6 +27,7 @@ namespace ITC.Dialogue
 
         [Header("UI 按钮（可选）")]
         [SerializeField] private UnityEngine.UI.Button continueButton;
+        [SerializeField] private UnityEngine.UI.Button skipButton;
 
         private void Start()
         {
@@ -46,6 +47,12 @@ namespace ITC.Dialogue
             if (continueButton != null)
             {
                 continueButton.onClick.AddListener(OnContinueClicked);
+            }
+
+            // 绑定 Skip 按钮事件
+            if (skipButton != null)
+            {
+                skipButton.onClick.AddListener(OnSkipClicked);
             }
         }
 
@@ -88,6 +95,11 @@ namespace ITC.Dialogue
             RequestContinue();
         }
 
+        private void OnSkipClicked()
+        {
+            RequestSkip();
+        }
+
         /// <summary>
         /// 请求继续对话
         /// </summary>
@@ -98,13 +110,19 @@ namespace ITC.Dialogue
             // 如果正在显示文本，先跳过打字机
             if (linePresenter != null && linePresenter.IsShowingLine)
             {
-                linePresenter.SkipCurrentLine();
+                if (linePresenter.IsTextFullyShown)
+                {
+                    dialogueRunner.RequestNextLine();
+                }
+                else
+                {
+                    linePresenter.SkipCurrentLine();
+                }
+                return;
             }
-            else
-            {
-                // 否则请求继续
-                dialogueRunner.RequestNextLine();
-            }
+
+            // 否则请求继续
+            dialogueRunner.RequestNextLine();
         }
 
         /// <summary>

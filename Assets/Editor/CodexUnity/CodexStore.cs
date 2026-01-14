@@ -238,7 +238,7 @@ namespace CodexUnity
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[CodexUnity] 读取 instances.json 失败: {e.Message}");
+
                 return new InstanceRegistry();
             }
         }
@@ -281,7 +281,7 @@ namespace CodexUnity
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[CodexUnity] 读取实例状态失败 ({instanceId}): {e.Message}");
+
             }
 
             return InstanceState.CreateDefault(instanceId);
@@ -330,7 +330,7 @@ namespace CodexUnity
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[CodexUnity] 读取实例历史失败 ({instanceId}): {e.Message}");
+
             }
 
             return history;
@@ -393,7 +393,7 @@ namespace CodexUnity
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[CodexUnity] 读取 state.json 失败: {e.Message}");
+
                 return CreateDefaultState();
             }
         }
@@ -435,7 +435,7 @@ namespace CodexUnity
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[CodexUnity] 读取 history.jsonl 失败: {e.Message}");
+
             }
 
             return history;
@@ -484,7 +484,7 @@ namespace CodexUnity
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[CodexUnity] 读取 meta.json 失败: {e.Message}");
+
                 return null;
             }
         }
@@ -631,7 +631,7 @@ namespace CodexUnity
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[CodexUnity] 读取 phrases.json 失败: {e.Message}");
+
                 return new List<string>();
             }
         }
@@ -718,11 +718,11 @@ namespace CodexUnity
 
                     // 备份并删除旧文件
                     File.Move(LegacyStateFilePath, LegacyStateFilePath + ".bak");
-                    Debug.Log($"[CodexUnity] 已迁移 state.json 到实例 {instanceId}");
+
                 }
                 catch (Exception e)
                 {
-                    Debug.LogWarning($"[CodexUnity] 迁移 state.json 失败: {e.Message}");
+
                 }
             }
 
@@ -734,11 +734,11 @@ namespace CodexUnity
                 {
                     File.Copy(LegacyHistoryFilePath, destPath);
                     File.Move(LegacyHistoryFilePath, LegacyHistoryFilePath + ".bak");
-                    Debug.Log($"[CodexUnity] 已迁移 history.jsonl 到实例 {instanceId}");
+
                 }
                 catch (Exception e)
                 {
-                    Debug.LogWarning($"[CodexUnity] 迁移 history.jsonl 失败: {e.Message}");
+
                 }
             }
 
@@ -759,7 +759,7 @@ namespace CodexUnity
             };
             SaveRegistry(registry);
 
-            Debug.Log($"[CodexUnity] 数据迁移完成，创建实例: {instanceId}");
+
             return instanceId;
         }
 

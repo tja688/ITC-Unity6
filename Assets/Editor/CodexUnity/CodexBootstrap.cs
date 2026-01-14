@@ -21,7 +21,7 @@ namespace CodexUnity
 
         private static void Initialize()
         {
-            Debug.Log("[CodexUnity] 初始化中（多实例模式）...");
+
 
             // 确保目录存在
             CodexStore.EnsureDirectoriesExist();
@@ -37,15 +37,15 @@ namespace CodexUnity
             }
             catch (System.Exception e)
             {
-                Debug.LogWarning($"[CodexUnity] 旧版 CodexRunner 初始化跳过: {e.Message}");
+
             }
 
-            Debug.Log("[CodexUnity] 初始化完成");
+
         }
 
         private static void OnBeforeAssemblyReload()
         {
-            Debug.Log("[CodexUnity] Domain Reload 前保存所有实例状态...");
+
 
             // 保存所有实例状态
             InstanceManager.Instance.SaveAllStates();
