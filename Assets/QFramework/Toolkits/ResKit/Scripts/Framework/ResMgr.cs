@@ -14,9 +14,12 @@ namespace QFramework
 {
     using System.Collections.Generic;
     using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+    using UnityEngine.InputSystem;
+#endif
 
     [MonoSingletonPath("QFramework/ResKit/ResManager")]
-    public class ResMgr : MonoBehaviour,ISingleton
+    public class ResMgr : MonoBehaviour, ISingleton
     {
         public static ResMgr Instance => MonoSingletonProperty<ResMgr>.Instance;
 
@@ -25,7 +28,7 @@ namespace QFramework
         private static bool mResMgrInited = false;
 
         public static bool ResMgrInited => mResMgrInited;
-        
+
         /// <summary>
         /// 初始化bin文件
         /// </summary>
@@ -68,7 +71,7 @@ namespace QFramework
             get { return mTable.Count(); }
         }
 
-        public static bool IsApplicationQuit { get;private set; }
+        public static bool IsApplicationQuit { get; private set; }
 
         private void OnApplicationQuit()
         {
@@ -85,6 +88,10 @@ namespace QFramework
 
         //Res 在ResMgr中 删除的问题，ResMgr定时收集列表中的Res然后删除
         private bool mIsResMapDirty;
+
+#if ENABLE_INPUT_SYSTEM
+        public InputActionReference ResKitDebugAction;
+#endif
 
         #endregion
 
@@ -158,7 +165,7 @@ namespace QFramework
 
                 foreach (var outRes in outResult)
                 {
-                 
+
                     AssetBundleSettings.AssetBundleConfigFile.LoadFromFile(outRes);
                 }
             }
@@ -242,7 +249,7 @@ namespace QFramework
                     {
                         mTable.Remove(res);
 
-                        
+
                         res.Recycle2Cache();
                     }
                 }
@@ -251,17 +258,24 @@ namespace QFramework
 
         private void OnGUI()
         {
+#if ENABLE_INPUT_SYSTEM
+            bool isPressed = (ResKitDebugAction != null && ResKitDebugAction.action != null && ResKitDebugAction.action.IsPressed())
+                             || (Keyboard.current != null && Keyboard.current.f1Key.isPressed);
+
+            if (PlatformCheck.IsEditor && isPressed)
+#else
             if (PlatformCheck.IsEditor && Input.GetKey(KeyCode.F1))
+#endif
             {
                 GUILayout.BeginVertical("box");
 
-                GUILayout.Label("ResKit", new GUIStyle {fontSize = 30});
+                GUILayout.Label("ResKit", new GUIStyle { fontSize = 30 });
                 GUILayout.Space(10);
-                GUILayout.Label("ResInfo", new GUIStyle {fontSize = 20});
+                GUILayout.Label("ResInfo", new GUIStyle { fontSize = 20 });
                 mTable.ToList().ForEach(res => { GUILayout.Label((res as Res).ToString()); });
                 GUILayout.Space(10);
 
-                GUILayout.Label("Pools", new GUIStyle() {fontSize = 20});
+                GUILayout.Label("Pools", new GUIStyle() { fontSize = 20 });
                 GUILayout.Label(string.Format("ResSearchRule:{0}",
                     SafeObjectPool<ResSearchKeys>.Instance.CurCount));
                 GUILayout.Label(string.Format("ResLoader:{0}",
@@ -296,10 +310,10 @@ namespace QFramework
         }
 
         #endregion
-        
+
         public void OnSingletonInit()
         {
-            
+
         }
     }
 }

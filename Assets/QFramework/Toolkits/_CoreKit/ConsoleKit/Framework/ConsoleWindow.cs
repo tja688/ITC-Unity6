@@ -5,6 +5,10 @@ using UnityEditor;
 #endif
 using System.IO;
 using System.Linq;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+#endif
 
 namespace QFramework
 {
@@ -41,8 +45,12 @@ namespace QFramework
             540 - (2 * margin));
 
         public bool OpenInAwake = false;
-        
-        
+
+#if ENABLE_INPUT_SYSTEM
+        public InputActionReference ToggleConsoleAction;
+#endif
+
+
         void Awake()
         {
             ConsoleKit.Modules.ForEach(m => m.OnInit());
@@ -60,6 +68,49 @@ namespace QFramework
 
         void Update()
         {
+#if ENABLE_INPUT_SYSTEM
+            // New Input System Logic
+            bool toggle = false;
+
+            // 1. Check Action
+            if (ToggleConsoleAction != null && ToggleConsoleAction.action != null && ToggleConsoleAction.action.WasPerformedThisFrame())
+            {
+                toggle = true;
+            }
+            // 2. Check Default Keys (Fallback)
+#if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN
+            else if (Keyboard.current != null && Keyboard.current.f1Key.wasReleasedThisFrame)
+            {
+                toggle = true;
+            }
+#elif UNITY_ANDROID
+            else if (Keyboard.current != null && Keyboard.current.escapeKey.wasReleasedThisFrame)
+            {
+                toggle = true;
+            }
+#elif UNITY_IOS
+            if (Touchscreen.current != null)
+            {
+                // Note: Getting exact touch count of 4 pressing fingers
+                var touchCount = Touchscreen.current.touches.Count(t => t.press.isPressed);
+                if (!mTouching && touchCount == 4) 
+                {
+                    mTouching = true;
+                    toggle = true;
+                } 
+                else if (touchCount == 0) 
+                {
+                    mTouching = false;
+                }
+            }
+#endif
+
+            if (toggle)
+            {
+                this.showGUI = !this.showGUI;
+            }
+#else
+            // Legacy Input System (Commented out by Antigravity but kept for reference/fallback if symbol not defined)
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN
             if (Input.GetKeyUp(KeyCode.F1))
                 this.showGUI = !this.showGUI;
@@ -74,13 +125,14 @@ namespace QFramework
                 mTouching = false;
             }
 #endif
+#endif
 
             if (this.onUpdateCallback != null)
                 this.onUpdateCallback();
         }
 
         private int mIndex = 0;
-        
+
 
         void OnGUI()
         {

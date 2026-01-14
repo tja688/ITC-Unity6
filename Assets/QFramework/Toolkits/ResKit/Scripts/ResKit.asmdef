@@ -2,7 +2,8 @@
     "name": "ResKit",
     "references": [
         "QFramework",
-        "QFramework.CoreKit"
+        "QFramework.CoreKit",
+        "Unity.InputSystem"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
