@@ -9,14 +9,17 @@
 
 1. `{}` 只用于 Yarn 插值/替换
    - 允许：`{$var}`、`{0}`、`{1}` 等
-   - 禁止：`{fade}...{/fade}`、`{waitfor=1}` 等 Text Animator 标签
-2. Text Animator 标签统一使用 `<>`
+   - **Text Animator Appearance/Disappearance 改用 `|` 符号**（见下文）
+2. Text Animator Behavior 标签统一使用 `<>`
    - 例：`<shake>...</shake>`、`<waitfor=1.5>`、`<?playSound=ding>`
-3. Yarn 的 `[]` 标记体系默认禁止
+3. Text Animator Appearance/Disappearance 标签使用 `|`
+   - 例：`|fade|`、`|writer|`
+   - 解决了与 Yarn `{}` 的冲突，现可自由使用退场效果
+4. Yarn 的 `[]` 标记体系默认禁止
    - 当前项目默认不启用 `YarnMarkupConverter`
-4. 不混用两套标记系统
+5. 不混用两套标记系统
    - 若启用 `YarnMarkupConverter`：脚本只能写 `[]` 标签，禁止 `<>`
-5. 事件只用 `<?event>` 触发
+6. 事件只用 `<?event>` 触发
    - 事件只在 Typewriter 启用时触发
 
 ---
@@ -216,13 +219,31 @@ title: NodeName
 - 修饰符是否生效取决于具体效果脚本与数据库配置。
 - 同一标签内重复参数时，最后一个生效。
 
+### 4.5 进场与退场效果（Appearances / Disappearances）
+
+> 项目特殊配置：使用 `|` 作为解析符号，避免与 Yarn `{}` 冲突。
+
+- **进场 (Appearances)**: 控制文字如何出现。
+  - 语法：`|tag|` 或 `|tag=value|`
+  - 示例：`|fade|` (淡入), `|typewriter|` (打字机), `|size|` (缩放进场)
+  - 通常放在文本开头：`|fade|这是进场文本`
+
+- **退场 (Disappearances)**: 控制文字如何消失。
+  - 语法：`|tag|` (依据设置可能需包含 `#`，例如 `|#fade|` 或 `|fade s=0.5 #|`)
+  - 注意：退场效果需配合 Text Animator 的 Disappearing 逻辑使用。
+
 ---
 
-## 5. Yarn 与 Text Animator 冲突说明
+## 5. Yarn 与 Text Animator 冲突说明（已解决）
 
-1. Yarn 的 `[]` 标记会被解析并从文本中移除。
+1. Yarn 的 `[]` 标记会被解析并从文本中移除（保持原状）。
 2. `TALinePresenter` 使用 `line.TextWithoutCharacterName.Text`，导致 `[]` 标记无法传递给 Text Animator。
-3. 因为 `{}` 已被 Yarn 占用，Text Animator 的 `{}` 外观/消失标签禁用。
+3. **Appearance/Disappearance 冲突已解决**：
+   - 原冲突点：Text Animator 默认使用 `{}`，被 Yarn 占用。
+   - **解决方案**：项目已将 Text Animator 的 Appearance/Disappearance 解析符号修改为 `|`（竖线）。
+   - **结果**：现在可以自由使用 Text Animator 的进场/退场效果，无需“放弃能力”。
+   - 语法示例：`|fade|` (进场), `|size|` (进场) 等。
+
 
 ---
 
@@ -299,6 +320,7 @@ title: NodeName
 角色: <waitfor=0.5>暂停后继续
 角色: <speed=0.5>慢 <speed=2>快
 角色: <?playsound=ding>触发音效
+角色: |fade|这是淡入进场的文本
 ```
 
 ---

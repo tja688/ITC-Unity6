@@ -21,12 +21,12 @@ MonoBehaviour:
       closingBracket: 62
       middleSymbol: 0
     parsingAppearances:
-      openingBracket: 123
-      closingBracket: 125
+      openingBracket: 124
+      closingBracket: 124
       middleSymbol: 0
     parsingDisappearances:
-      openingBracket: 123
-      closingBracket: 125
+      openingBracket: 124
+      closingBracket: 124
       middleSymbol: 35
     fallbackPlayback: {fileID: 11400000, guid: b72fcf7d6bd4e5849914e4e9bc144c09, type: 2}
     fallbackStateCurve: {fileID: 11400000, guid: 4c22f7cea48d9b4429b507366bd9ae09, type: 2}

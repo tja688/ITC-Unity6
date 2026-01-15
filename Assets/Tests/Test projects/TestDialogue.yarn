@@ -15,9 +15,8 @@ Narrator: Modifiers <wave s=2>fast wave</wave> <shake a=2>strong shake</shake>.
 Narrator: Actions <waitfor=0.2> after wait.
 Narrator: Wait for input <waitinput> continue.
 Narrator: Speed test <speed=0.5>slow <speed=2>fast <speed=1>normal.
-Narrator: DOTween 动画即将播放... <waitfor=0.5><?dotween>
-Narrator: 动画完成后，再次播放 <waitfor=0.5><?dotween=restart>
-Narrator: 现在倒回动画 <waitfor=0.5><?dotween=rewind>
+Narrator: 现在测试事件,Log会打印一堆消息<?test_print_1_to_9>... .
+Narrator: 检查事件是否触发. 
 <<if $flag>>
     Narrator: Condition true.
 <<else>>
