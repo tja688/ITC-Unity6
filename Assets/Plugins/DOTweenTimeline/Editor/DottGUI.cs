@@ -484,21 +484,6 @@ namespace Dott.Editor
             return GUI.Toggle(toggleRect, value, iconContent, style);
         }
 
-        /// <summary>AutoPlay 切换按钮（一键控制所有动画的自动播放）</summary>
-        public static bool AutoPlayToggle(Rect rect, bool value)
-        {
-            var position = rect.position + new Vector2(rect.width - (LoopToggleSize.x + 1) * 3 - 2, (TIMELINE_HEADER_HEIGHT - LoopToggleSize.y) / 2);
-            var toggleRect = new Rect(position, LoopToggleSize);
-            var iconContent = EditorGUIUtility.TrIconContent("PlayButton On", $"Toggle AutoPlay for all animations\n\n当前状态: {(value ? "开启" : "关闭")}\n点击可一键{(value ? "关闭" : "开启")}所有动画的自动播放");
-            var style = new GUIStyle(GUI.skin.button) { padding = new RectOffset(0, 0, 0, 0) };
-
-            // 使用不同颜色表示开/关状态
-
-            var color = value ? new Color(0.5f, 1f, 0.5f, 0.9f) : ToggleFadeColor;
-            using var colorScope = new DeGUI.ColorScope(color, color);
-            return GUI.Toggle(toggleRect, value, iconContent, style);
-        }
-
         #region Playback Control Buttons
 
         /// <summary>倒播按钮（从当前位置向起点播放）</summary>

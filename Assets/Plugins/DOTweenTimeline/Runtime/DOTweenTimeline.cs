@@ -216,7 +216,8 @@ namespace Dott
             Sequence = DOTween.Sequence();
             Sequence.SetLink(gameObject, LinkBehaviour.KillOnDestroy);
             Sequence.OnKill(() => Sequence = null);
-            var components = GetComponents<MonoBehaviour>();
+            // 使用GetComponentsInChildren查找所有子对象下的动画组件
+            var components = GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
             foreach (var component in components)
             {
                 switch (component)
@@ -246,7 +247,8 @@ namespace Dott
 
         public void OnValidate()
         {
-            foreach (var doTweenAnimation in GetComponents<DOTweenAnimation>())
+            // 使用GetComponentsInChildren查找所有子对象下的DOTweenAnimation
+            foreach (var doTweenAnimation in GetComponentsInChildren<DOTweenAnimation>(includeInactive: true))
             {
                 doTweenAnimation.autoGenerate = false;
             }
