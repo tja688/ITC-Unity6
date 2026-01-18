@@ -20,7 +20,6 @@
     "com.unity.visualscripting": "1.9.9",
     "com.unitymcp.server": "file:D:/Unity Assist/UnityMCP__1.0.6_重构了服务和插件之间的交互方式，修复了windows问题/UnityMCP_Encrypted_1.0.6_20251214_014355/com.unitymcp.server",
     "dev.yarnspinner.unity": "https://github.com/YarnSpinnerTool/YarnSpinner-Unity.git#current",
-    "dev.yarnspinner.unity.samples": "https://github.com/YarnSpinnerTool/YarnSpinner-Unity-Samples.git#current",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.adaptiveperformance": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
