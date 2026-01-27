@@ -1,0 +1,38 @@
+title: Start
+tags: test skill_authoring
+---
+Narrator: Welcome to the Skill Authoring Test Script. |fade|
+Narrator: This is a script designed to test the <color=yellow>Yarn Spinner + Text Animator</color> integration.
+Narrator: Let's see some basic markup: <shake>Shake</shake>, <wave>Wave</wave>, <bounce>Bounce</bounce>. <?play_sfx_magic>
+Narrator: Let's trigger a test event now. <?test_event>
+Narrator: We can also use variables like {0} or variables from Yarn like {$count}.
+-> Pick Option 1
+    Narrator: You picked the first one. <bounce>Boing!</bounce>
+    <<jump Node_Option1>>
+-> Pick Option 2
+    Narrator: You picked the second one. <wiggle>Wiggle!</wiggle>
+    <<jump Node_Option2>>
+===
+
+title: Node_Option1
+---
+Narrator: This is the path for Option 1.
+Narrator: Do you like it?
+-> Yes
+    Narrator: Great!
+-> No
+    Narrator: Oh well.
+<<jump End_Test>>
+===
+
+title: Node_Option2
+---
+Narrator: This is the path for Option 2.
+Narrator: Hope you're enjoying the test.
+<<jump End_Test>>
+===
+
+title: End_Test
+---
+Narrator: Test completed. Goodbye! |fade|
+===
