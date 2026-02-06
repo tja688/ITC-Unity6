@@ -37,7 +37,7 @@ namespace UnityCodeIntel.Editor
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"[CodeIntel] Failed to load config: {e.Message}");
+                    CILogger.LogError($"[CodeIntel] Failed to load config: {e.Message}");
                 }
             }
             return new BridgeConfig();

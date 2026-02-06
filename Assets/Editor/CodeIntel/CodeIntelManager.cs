@@ -22,6 +22,20 @@ namespace UnityCodeIntel.Editor
             ? $"http://{Config.bindAddress}:{Bridge.Port}/"
             : "";
         public static string RuntimeStatePath => GetRuntimeStatePath();
+        private const string DEBUG_ENABLED_KEY = "CodeIntel_DebugEnabled";
+        public static bool DebugEnabled
+        {
+            get => EditorPrefs.GetBool(DEBUG_ENABLED_KEY, false);
+            set
+            {
+                if (value != DebugEnabled)
+                {
+                    EditorPrefs.SetBool(DEBUG_ENABLED_KEY, value);
+                    Debug.Log($"[CodeIntel] Debug Logging {(value ? "Enabled" : "Disabled")}");
+                }
+            }
+        }
+
 
         private static string _projectRoot;
         private const string PID_KEY = "CodeIntel_OmniSharp_PID";
@@ -254,7 +268,7 @@ namespace UnityCodeIntel.Editor
             {
                 IsDegraded = false;
                 _degradedSince = -1;
-                Debug.Log("[CodeIntel] OmniSharp heartbeat recovered.");
+                CILogger.Log("[CodeIntel] OmniSharp heartbeat recovered.");
             }
 
             SyncHealthSignalsToBridge(forceRuntimeState: true);
@@ -415,7 +429,7 @@ namespace UnityCodeIntel.Editor
                 if (now - _lastCircuitBreakLogAt >= 60.0)
                 {
                     _lastCircuitBreakLogAt = now;
-                    Debug.LogError("[CodeIntel] Max restart limit reached. Entering cooldown before next retry.");
+                    CILogger.LogError("[CodeIntel] Max restart limit reached. Entering cooldown before next retry.");
                 }
 
                 SyncHealthSignalsToBridge(forceRuntimeState: true);
@@ -432,7 +446,7 @@ namespace UnityCodeIntel.Editor
             BridgeServer.SetRestartReason(_lastRestartReason);
             BridgeServer.IncrementRestartSequence();
 
-            Debug.Log($"[CodeIntel] Attempting auto-restart... Reason: {_lastRestartReason}");
+            CILogger.Log($"[CodeIntel] Attempting auto-restart... Reason: {_lastRestartReason}");
             StopServicesInternal(clearHealthState: false);
             RequestStartServices();
             SyncHealthSignalsToBridge(forceRuntimeState: true);
@@ -508,7 +522,7 @@ namespace UnityCodeIntel.Editor
                         if (!proc.HasExited)
                         {
                             proc.Kill();
-                            Debug.Log($"[CodeIntel] Cleaned up zombie OmniSharp process (PID: {pid})");
+                            CILogger.Log($"[CodeIntel] Cleaned up zombie OmniSharp process (PID: {pid})");
                         }
                     }
                     catch

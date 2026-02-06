@@ -17,7 +17,7 @@ namespace UnityCodeIntel.Editor
         {
             CompilationPipeline.compilationStarted += OnCompilationStarted;
             CompilationPipeline.compilationFinished += OnCompilationFinished;
-            
+
             // If we are here, domain reload just finished (or editor started)
             // We can assume compilation was successful if we just reloaded? 
             // Not necessarily, but usually.
@@ -36,12 +36,12 @@ namespace UnityCodeIntel.Editor
             // We can't easily know success/fail here for all assemblies, 
             // but generally this event fires.
             // If there are compile errors, Domain Reload won't happen.
-            
+
             LastCompileSuccess = !EditorUtility.scriptCompilationFailed;
-            
+
             if (!LastCompileSuccess)
             {
-                Debug.LogWarning("[CodeIntel] Compilation failed. OmniSharp might be out of sync.");
+                CILogger.LogWarning("[CodeIntel] Compilation failed. OmniSharp might be out of sync.");
             }
         }
     }

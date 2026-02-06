@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using UnityCodeIntel.Editor.Models;
 using UnityEditor;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
+using Debug = UnityCodeIntel.Editor.CILogger;
 
 namespace UnityCodeIntel.Editor
 {

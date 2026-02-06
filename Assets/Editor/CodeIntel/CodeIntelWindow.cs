@@ -142,6 +142,8 @@ namespace UnityCodeIntel.Editor
                 {
                     CodeIntelManager.ReloadConfig();
                 }
+                CodeIntelManager.DebugEnabled = GUILayout.Toggle(CodeIntelManager.DebugEnabled, "Debug Logs", "Button");
+
             }
             
             if (GUILayout.Button("Check Health"))

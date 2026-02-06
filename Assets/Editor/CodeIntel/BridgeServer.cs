@@ -116,12 +116,12 @@ namespace UnityCodeIntel.Editor
                     EditorPrefs.SetInt(LAST_PORT_KEY, Port);
                     _bridgeBaseUrl = prefix;
                     UpdateRuntimeState(force: true);
-                    Debug.Log($"[CodeIntel] Bridge Server started at {prefix}");
+                    CILogger.Log($"[CodeIntel] Bridge Server started at {prefix}");
                     return;
                 }
                 catch (Exception e)
                 {
-                    Debug.LogWarning($"[CodeIntel] Failed to start Bridge Server on port {Port}: {e.Message}");
+                    CILogger.LogWarning($"[CodeIntel] Failed to start Bridge Server on port {Port}: {e.Message}");
                     try
                     {
                         _listener?.Stop();
@@ -134,7 +134,7 @@ namespace UnityCodeIntel.Editor
                 }
             }
 
-            Debug.LogError("[CodeIntel] Failed to start Bridge Server after multiple attempts.");
+            CILogger.LogError("[CodeIntel] Failed to start Bridge Server after multiple attempts.");
         }
 
         public void Stop()
@@ -166,7 +166,7 @@ namespace UnityCodeIntel.Editor
             }
             _bridgeBaseUrl = "";
             UpdateRuntimeState(force: true);
-            Debug.Log("[CodeIntel] Bridge Server stopped.");
+            CILogger.Log("[CodeIntel] Bridge Server stopped.");
         }
 
         public void UpdateRuntimeState(bool force = false)
@@ -190,7 +190,7 @@ namespace UnityCodeIntel.Editor
                 }
                 catch (Exception e)
                 {
-                    PostToUnityThread(() => Debug.LogError($"[CodeIntel] Server Error: {e.Message}"));
+                    PostToUnityThread(() => CILogger.LogError($"[CodeIntel] Server Error: {e.Message}"));
                 }
             }
         }
