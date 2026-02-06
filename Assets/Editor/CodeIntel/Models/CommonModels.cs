@@ -52,6 +52,9 @@ namespace UnityCodeIntel.Editor.Models
         public long lastCompileTimestamp;
         public int domainReloadCount;
         public string lastRestartReason;
+        public bool degraded;
+        public int restartCount10Min;
+        public string lastFatalCode;
     }
 
     // Phase 2 Models

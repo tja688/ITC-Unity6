@@ -11,5 +11,11 @@
   "restartDebounceMs": 8000,
   "restartCooldownMs": 15000,
   "maxRestartsPer10Min": 20,
-  "logDir": "Library/CodeIntelLogs"
+  "logDir": "Library/CodeIntelLogs",
+  "heartbeatFailThreshold": 2,
+  "heartbeatQuickRetryDelayMs": 1500,
+  "startupHealthTimeoutMs": 5000,
+  "compileGraceMs": 12000,
+  "logDedupWindowMs": 60000,
+  "fatalCooldownMs": 120000
 }

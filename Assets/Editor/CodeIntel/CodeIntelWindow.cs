@@ -18,6 +18,7 @@ namespace UnityCodeIntel.Editor
         private string _logContent = "";
         private float _lastLogUpdate = 0;
         private bool _autoScroll = true;
+        private bool _showOnlySevere = true;
 
         private void OnEnable()
         {
@@ -110,6 +111,14 @@ namespace UnityCodeIntel.Editor
                  string lastOkStr = lastOk > 0 ? DateTimeOffset.FromUnixTimeMilliseconds(lastOk).LocalDateTime.ToString("HH:mm:ss") : "Never";
                  EditorGUILayout.LabelField("Last Health Check:", lastOkStr);
             }
+
+            EditorGUILayout.LabelField("Resilience:", CodeIntelManager.IsDegraded ? "Degraded" : "Healthy");
+            EditorGUILayout.LabelField("Last Restart Reason:", string.IsNullOrEmpty(CodeIntelManager.LastRestartReason) ? "-" : CodeIntelManager.LastRestartReason);
+            EditorGUILayout.LabelField("Restarts (10m):", CodeIntelManager.RestartsInLast10Min.ToString());
+            if (!string.IsNullOrEmpty(CodeIntelManager.LastFatalCode))
+            {
+                EditorGUILayout.LabelField("Last Fatal Code:", CodeIntelManager.LastFatalCode);
+            }
         }
 
         private void DrawControls()
@@ -148,6 +157,7 @@ namespace UnityCodeIntel.Editor
             {
                 EditorGUILayout.LabelField("Logs (OmniSharp)", EditorStyles.boldLabel);
                 _autoScroll = EditorGUILayout.Toggle("Auto Scroll", _autoScroll);
+                _showOnlySevere = EditorGUILayout.Toggle("Only Severe", _showOnlySevere);
             }
 
             string logPath = CodeIntelManager.OmniSharp.LogFilePath;
@@ -186,7 +196,11 @@ namespace UnityCodeIntel.Editor
                 try
                 {
                     // Read last 50 lines
-                    var lines = File.ReadLines(logPath).Reverse().Take(50).Reverse().ToArray();
+                    var lines = File.ReadLines(logPath).Reverse().Take(200).Reverse().ToArray();
+                    if (_showOnlySevere)
+                    {
+                        lines = lines.Where(IsSevereLine).ToArray();
+                    }
                     _logContent = string.Join("\n", lines);
                     
                     if (_autoScroll) _scrollPos.y = float.MaxValue;
@@ -196,6 +210,17 @@ namespace UnityCodeIntel.Editor
                     // Ignore file access errors (e.g. being written to)
                 }
             }
+        }
+
+        private static bool IsSevereLine(string line)
+        {
+            if (string.IsNullOrEmpty(line)) return false;
+
+            return line.IndexOf("[STDERR]", StringComparison.OrdinalIgnoreCase) >= 0
+                || line.IndexOf("error", StringComparison.OrdinalIgnoreCase) >= 0
+                || line.IndexOf("exception", StringComparison.OrdinalIgnoreCase) >= 0
+                || line.IndexOf("fatal", StringComparison.OrdinalIgnoreCase) >= 0
+                || line.IndexOf("failed", StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
 }

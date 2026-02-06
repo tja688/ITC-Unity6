@@ -20,6 +20,12 @@ namespace UnityCodeIntel.Editor
         public int restartCooldownMs = 15000;
         public int maxRestartsPer10Min = 20;
         public string logDir = "Library/CodeIntelLogs";
+        public int heartbeatFailThreshold = 2;
+        public int heartbeatQuickRetryDelayMs = 1500;
+        public int startupHealthTimeoutMs = 5000;
+        public int compileGraceMs = 12000;
+        public int logDedupWindowMs = 60000;
+        public int fatalCooldownMs = 120000;
 
         public static BridgeConfig Load(string path)
         {

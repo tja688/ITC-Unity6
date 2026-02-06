@@ -21,15 +21,55 @@ namespace UnityCodeIntel.Editor
         private BridgeConfig _config;
         private SynchronizationContext _unityContext;
         private int _unityThreadId;
+        private string _bridgeBaseUrl = "";
+        private readonly object _runtimeStateLock = new object();
+        private string _lastRuntimeStateJson = "";
 
         public int Port { get; private set; }
         public bool IsRunning => _isRunning;
         public DateTime StartTime { get; private set; }
 
-        // P1 改进: 用于 health 响应的重启原因
-
+        private static readonly object _healthStateLock = new object();
         private static string _lastRestartReason = "";
-        public static void SetRestartReason(string reason) => _lastRestartReason = reason;
+        private static bool _isDegraded;
+        private static int _restartCount10Min;
+        private static string _lastFatalCode = "";
+        private static int _restartSeq;
+
+        public static void SetRestartReason(string reason)
+        {
+            lock (_healthStateLock)
+            {
+                _lastRestartReason = reason ?? "";
+            }
+        }
+
+        public static string GetLastRestartReason()
+        {
+            lock (_healthStateLock)
+            {
+                return _lastRestartReason ?? "";
+            }
+        }
+
+        public static void SetHealthSignals(bool degraded, int restartCount10Min, string lastFatalCode)
+        {
+            lock (_healthStateLock)
+            {
+                _isDegraded = degraded;
+                _restartCount10Min = restartCount10Min;
+                _lastFatalCode = lastFatalCode ?? "";
+            }
+        }
+
+        public static int IncrementRestartSequence()
+        {
+            lock (_healthStateLock)
+            {
+                _restartSeq++;
+                return _restartSeq;
+            }
+        }
 
         private const string LAST_PORT_KEY = "CodeIntel_Bridge_LastPort";
         private const string RUNTIME_STATE_FILENAME = "codeintel-endpoints.json";
@@ -74,7 +114,8 @@ namespace UnityCodeIntel.Editor
                     _serverThread.IsBackground = true;
                     _serverThread.Start();
                     EditorPrefs.SetInt(LAST_PORT_KEY, Port);
-                    WriteRuntimeState(isRunning: true, bridgeBaseUrl: prefix);
+                    _bridgeBaseUrl = prefix;
+                    UpdateRuntimeState(force: true);
                     Debug.Log($"[CodeIntel] Bridge Server started at {prefix}");
                     return;
                 }
@@ -123,8 +164,15 @@ namespace UnityCodeIntel.Editor
                 }
                 _serverThread = null;
             }
-            WriteRuntimeState(isRunning: false, bridgeBaseUrl: "");
+            _bridgeBaseUrl = "";
+            UpdateRuntimeState(force: true);
             Debug.Log("[CodeIntel] Bridge Server stopped.");
+        }
+
+        public void UpdateRuntimeState(bool force = false)
+        {
+            string baseUrl = _isRunning ? _bridgeBaseUrl : "";
+            WriteRuntimeState(_isRunning, baseUrl, force);
         }
 
         private void HandleRequests()
@@ -161,6 +209,18 @@ namespace UnityCodeIntel.Editor
             {
                 if (path == "/health" && request.HttpMethod == "GET")
                 {
+                    bool degraded;
+                    int restartCount10Min;
+                    string lastFatalCode;
+                    string lastRestartReason;
+                    lock (_healthStateLock)
+                    {
+                        degraded = _isDegraded;
+                        restartCount10Min = _restartCount10Min;
+                        lastFatalCode = _lastFatalCode ?? "";
+                        lastRestartReason = _lastRestartReason ?? "";
+                    }
+
                     // P1 改进: 增强 health 响应，包含更多可机读状态
                     var health = new HealthApiResponse
                     {
@@ -175,7 +235,10 @@ namespace UnityCodeIntel.Editor
 
                                 isCompiling = UnityCompilationWatcher.IsCompiling,
                                 isOmniSharpReady = _omnisharp.Status == ServiceStatus.Running,
-                                lastRestartReason = _lastRestartReason
+                                lastRestartReason = lastRestartReason,
+                                degraded = degraded,
+                                restartCount10Min = restartCount10Min,
+                                lastFatalCode = lastFatalCode
                             }
                         }
                     };
@@ -280,7 +343,16 @@ namespace UnityCodeIntel.Editor
             }
             catch (Exception e)
             {
-                PostToUnityThread(() => Debug.LogWarning($"[CodeIntel] Failed to write response: {e.Message}"));
+                if (_omnisharp != null && !string.IsNullOrEmpty(_omnisharp.LogFilePath))
+                {
+                    try
+                    {
+                        File.AppendAllText(_omnisharp.LogFilePath, $"[BRIDGE] Failed to write response: {e.Message}{Environment.NewLine}");
+                    }
+                    catch
+                    {
+                    }
+                }
             }
         }
 
@@ -322,7 +394,7 @@ namespace UnityCodeIntel.Editor
         }
 
 
-        private void WriteRuntimeState(bool isRunning, string bridgeBaseUrl)
+        private void WriteRuntimeState(bool isRunning, string bridgeBaseUrl, bool force)
         {
             try
             {
@@ -332,6 +404,20 @@ namespace UnityCodeIntel.Editor
                 Directory.CreateDirectory(logDirAbs);
 
                 string statePath = Path.Combine(logDirAbs, RUNTIME_STATE_FILENAME);
+                bool degraded;
+                int restartCount10Min;
+                string lastFatalCode;
+                string lastRestartReason;
+                int restartSeq;
+                lock (_healthStateLock)
+                {
+                    degraded = _isDegraded;
+                    restartCount10Min = _restartCount10Min;
+                    lastFatalCode = _lastFatalCode ?? "";
+                    lastRestartReason = _lastRestartReason ?? "";
+                    restartSeq = _restartSeq;
+                }
+
                 var state = new RuntimeState
                 {
                     generatedAtUtc = DateTime.UtcNow.ToString("o"),
@@ -345,14 +431,34 @@ namespace UnityCodeIntel.Editor
                     },
                     omnisharp = new RuntimeOmniSharpState
                     {
-                        isRunning = _omnisharp != null && _omnisharp.IsRunning,
+                        isRunning = _omnisharp != null && (_omnisharp.Status == ServiceStatus.Running || _omnisharp.Status == ServiceStatus.Starting),
+                        status = _omnisharp != null ? _omnisharp.Status.ToString() : ServiceStatus.Stopped.ToString(),
                         pid = _omnisharp?.Pid ?? 0,
                         port = _omnisharp?.Port ?? 0,
-                        baseUrl = _omnisharp?.BaseUrl ?? ""
+                        baseUrl = _omnisharp?.BaseUrl ?? "",
+                        lastOkTimestamp = _omnisharp?.LastOkTimestamp ?? 0
+                    },
+                    restart = new RuntimeRestartState
+                    {
+                        reason = lastRestartReason,
+                        seq = restartSeq,
+                        degraded = degraded,
+                        restartCount10Min = restartCount10Min,
+                        lastFatalCode = lastFatalCode
                     }
                 };
 
-                File.WriteAllText(statePath, JsonConvert.SerializeObject(state, Formatting.Indented));
+                string json = JsonConvert.SerializeObject(state, Formatting.Indented);
+                lock (_runtimeStateLock)
+                {
+                    if (!force && string.Equals(_lastRuntimeStateJson, json, StringComparison.Ordinal))
+                    {
+                        return;
+                    }
+
+                    File.WriteAllText(statePath, json);
+                    _lastRuntimeStateJson = json;
+                }
             }
             catch
             {
@@ -425,6 +531,7 @@ namespace UnityCodeIntel.Editor
             public string generatedAtUtc;
             public RuntimeBridgeState bridge;
             public RuntimeOmniSharpState omnisharp;
+            public RuntimeRestartState restart;
         }
 
         [Serializable]
@@ -441,9 +548,21 @@ namespace UnityCodeIntel.Editor
         private class RuntimeOmniSharpState
         {
             public bool isRunning;
+            public string status;
             public int pid;
             public int port;
             public string baseUrl;
+            public long lastOkTimestamp;
+        }
+
+        [Serializable]
+        private class RuntimeRestartState
+        {
+            public string reason;
+            public int seq;
+            public bool degraded;
+            public int restartCount10Min;
+            public string lastFatalCode;
         }
     }
 }
