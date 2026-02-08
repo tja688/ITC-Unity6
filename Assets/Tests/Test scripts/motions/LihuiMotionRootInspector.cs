@@ -105,7 +105,7 @@ public sealed class LihuiMotionRootInspector : MonoBehaviour
 
     private void DrawPanelWindow(int windowId)
     {
-        mScrollPosition = GUILayout.BeginScrollView(mScrollPosition, GUILayout.Width(mPanelRect.width - 10f), GUILayout.Height(mPanelRect.height - 40f));
+        mScrollPosition = GUILayout.BeginScrollView(mScrollPosition);
 
         GUILayout.Label("DOTween Transform/Scale/Rotate");
         for (var i = 0; i < LihuiMotionEffectCatalog.DotweenEffects.Length; i++)
@@ -294,8 +294,9 @@ public sealed class LihuiMotionRootInspector : MonoBehaviour
         {
             return;
         }
-        
+
         // Shader effects are overlays; keep source visible unless a DOTween clone is currently active.
+
         mSourceRenderer.enabled = mActiveDotweenIndex < 0;
     }
 
