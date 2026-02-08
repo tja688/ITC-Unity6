@@ -8,7 +8,7 @@ Goals: **safe changes, traceable commits, runnable project**.
 
 ## 1. Core Rules
 - Prefer **small, reversible** changes.
-- **Read the minimum** needed; use **CodeIntel** (Sec 6) for C# navigation before `grep`.
+- **Read the minimum** needed; use **CodeIntel** (Sec 7) for C# navigation before `grep`.
 - If anything is ambiguous, **show evidence** (status/diff/logs) and ask.
 
 ---
@@ -86,21 +86,48 @@ Wait for user direction unless explicitly told to resolve.
 
 ---
 
-## 6. Code Intelligence (CodeIntel)
+## 6. QFramework Governance (Mandatory in This Project)
+
+### 6.1 Architecture Standard
+- Any QFramework feature/refactor/review must follow `qframework-architecture` as the baseline skill.
+- Keep strict layer boundaries (`Controller`, `System`, `Model`, `Utility`) with one-way dependencies.
+- Enforce CQRS:
+  - model state writes go through `Command`
+  - reads stay side-effect free (`Query` only when composition is complex)
+  - upward notifications use typed events or bindables
+- Keep command/query behavior stateless (no mutable cross-frame cached runtime context).
+- Event/bindable subscriptions must have deterministic unregister paths.
+
+### 6.2 Three Independent QF Tool Skills (Use by Scenario)
+- `qframework-reskit` (resource loading scenario):
+  - use for asset/bundle/scene loading, `ResLoader` lifecycle, init mode, async loading flow
+  - required when implementing loader-pool integration for other QF modules
+- `qframework-uikit` (UI panel runtime scenario):
+  - use for panel lifecycle (`Open/Show/Hide/Close`), typed `IUIData`, layer/stack behavior, panel loader-pool rules
+- `qframework-audiokit` (audio runtime scenario):
+  - use for BGM/voice/SFX APIs, `AudioKit.Settings` bindables, anti-spam `PlaySoundMode`, audio loader-pool behavior
+
+### 6.3 Combination Rule
+- For any of the three scenarios above, apply the corresponding tool skill together with `qframework-architecture`.
+- If a task spans multiple scenarios, combine the relevant tool skills (`reskit`, `uikit`, `audiokit`) in the same turn.
+
+---
+
+## 7. Code Intelligence (CodeIntel)
 - **Strategy**: Semantic search first for C#; `grep` as fallback.
 - **Access**: Port/Token in `Library/CodeIntelLogs/codeintel-endpoints.json`.
 - **Flow**: `health` check -> `/v1/symbols` (get `symbolId`) -> `/v1/references`.
 
 ---
 
-## 7. Pre-Commit / Pre-Report Checklist
+## 8. Pre-Commit / Pre-Report Checklist
 - What you verified (compile and use Unity MCP to verify that no errors related to your changes have appeared in the Unity logs.).
 - Diff matches intent; no accidental formatting churn.
 - Commit message is explicit.
 
 ---
 
-## 8. Commit Message (Short Template)
+## 9. Commit Message (Short Template)
 `<type>(<scope>): <summary>`
 
 Optional body bullets:
