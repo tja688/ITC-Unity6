@@ -88,28 +88,16 @@ Wait for user direction unless explicitly told to resolve.
 
 ## 6. QFramework Governance (Mandatory in This Project)
 
-### 6.1 Architecture Standard
-- Any QFramework feature/refactor/review must follow `qframework-architecture` as the baseline skill.
-- Keep strict layer boundaries (`Controller`, `System`, `Model`, `Utility`) with one-way dependencies.
-- Enforce CQRS:
-  - model state writes go through `Command`
-  - reads stay side-effect free (`Query` only when composition is complex)
-  - upward notifications use typed events or bindables
-- Keep command/query behavior stateless (no mutable cross-frame cached runtime context).
-- Event/bindable subscriptions must have deterministic unregister paths.
+### 6.1 Scripts Business Code Must Use QF Architecture
+- All business code development under `Assets/Scripts/**` must follow QFramework architecture.
+- For implementation details, always read and follow:
+  - `./.claude/skills/qframework-architecture/SKILL.md`
 
-### 6.2 Three Independent QF Tool Skills (Use by Scenario)
-- `qframework-reskit` (resource loading scenario):
-  - use for asset/bundle/scene loading, `ResLoader` lifecycle, init mode, async loading flow
-  - required when implementing loader-pool integration for other QF modules
-- `qframework-uikit` (UI panel runtime scenario):
-  - use for panel lifecycle (`Open/Show/Hide/Close`), typed `IUIData`, layer/stack behavior, panel loader-pool rules
-- `qframework-audiokit` (audio runtime scenario):
-  - use for BGM/voice/SFX APIs, `AudioKit.Settings` bindables, anti-spam `PlaySoundMode`, audio loader-pool behavior
-
-### 6.3 Combination Rule
-- For any of the three scenarios above, apply the corresponding tool skill together with `qframework-architecture`.
-- If a task spans multiple scenarios, combine the relevant tool skills (`reskit`, `uikit`, `audiokit`) in the same turn.
+### 6.2 Three Key Scenarios Must Use Corresponding QF Skills
+- `res` scenario -> `./.claude/skills/qframework-reskit/SKILL.md`
+- `audio` scenario -> `./.claude/skills/qframework-audiokit/SKILL.md`
+- `ui` scenario -> `./.claude/skills/qframework-uikit/SKILL.md`
+- If a task spans multiple scenarios, combine the relevant skills; detailed rules are defined in each `SKILL.md`.
 
 ---
 
