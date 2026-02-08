@@ -1,4 +1,4 @@
-# agents.md — Unity Base (Minimal)
+# agents.md — Unity Base 
 
 ## 0. Scope
 A compact operating guide for an AI agent working in a Unity project.
@@ -91,12 +91,12 @@ Wait for user direction unless explicitly told to resolve.
 ### 6.1 Scripts Business Code Must Use QF Architecture
 - All business code development under `Assets/Scripts/**` must follow QFramework architecture.
 - For implementation details, always read and follow:
-  - `./.codex/skills/qframework-architecture/SKILL.md`
+  - `.agent/skills/qframework-architecture/SKILL.md`
 
 ### 6.2 Three Key Scenarios Must Use Corresponding QF Skills
-- `res` scenario -> `./.codex/skills/qframework-reskit/SKILL.md`
-- `audio` scenario -> `./.codex/skills/qframework-audiokit/SKILL.md`
-- `ui` scenario -> `./.codex/skills/qframework-uikit/SKILL.md`
+- `res` scenario -> `.agent/skills/qframework-reskit/SKILL.md`
+- `audio` scenario -> `.agent/skills/qframework-audiokit/SKILL.md`
+- `ui` scenario -> `.agent/skills/qframework-uikit/SKILL.md`
 - If a task spans multiple scenarios, combine the relevant skills; detailed rules are defined in each `SKILL.md`.
 
 ---
