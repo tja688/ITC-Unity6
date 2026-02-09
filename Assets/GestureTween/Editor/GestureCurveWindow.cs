@@ -402,28 +402,52 @@ namespace GestureTween.Editor
 
         private void SaveAsPreset()
         {
+            // 确保 Presets 目录存在
+            const string presetsFolder = "Assets/GestureTween/Presets";
+            if (!AssetDatabase.IsValidFolder(presetsFolder))
+            {
+                if (!AssetDatabase.IsValidFolder("Assets/GestureTween"))
+                {
+                    AssetDatabase.CreateFolder("Assets", "GestureTween");
+                }
+                AssetDatabase.CreateFolder("Assets/GestureTween", "Presets");
+            }
+
             string path = EditorUtility.SaveFilePanelInProject(
                 "保存曲线预设",
                 "NewGestureCurve",
                 "asset",
                 "选择保存位置",
-                "Assets/GestureTween/Presets"
+                presetsFolder
             );
 
-            if (string.IsNullOrEmpty(path)) return;
+            if (string.IsNullOrEmpty(path))
+            {
+                Debug.Log("[GestureTween] 保存已取消");
+                return;
+            }
 
-            var preset = CreateInstance<GestureCurvePreset>();
-            preset.easeCurve = new AnimationCurve(_generatedCurve.keys);
-            preset.recommendedDuration = 1f;
-            preset.description = $"手绘生成于 {System.DateTime.Now:yyyy-MM-dd HH:mm}";
+            try
+            {
+                var preset = CreateInstance<GestureCurvePreset>();
+                preset.easeCurve = new AnimationCurve(_generatedCurve.keys);
+                preset.recommendedDuration = 1f;
+                preset.description = $"手绘生成于 {System.DateTime.Now:yyyy-MM-dd HH:mm}";
 
-            AssetDatabase.CreateAsset(preset, path);
-            AssetDatabase.SaveAssets();
+                AssetDatabase.CreateAsset(preset, path);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
 
-            EditorUtility.FocusProjectWindow();
-            Selection.activeObject = preset;
+                EditorUtility.FocusProjectWindow();
+                Selection.activeObject = preset;
 
-            Debug.Log($"[GestureTween] 曲线预设已保存: {path}");
+                Debug.Log($"[GestureTween] 曲线预设已保存: {path}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[GestureTween] 保存失败: {e.Message}");
+                EditorUtility.DisplayDialog("GestureTween", $"保存失败: {e.Message}", "确定");
+            }
         }
 
         private void ApplyToSelectedAnimation()

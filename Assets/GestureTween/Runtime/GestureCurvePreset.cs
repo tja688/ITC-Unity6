@@ -37,7 +37,7 @@ namespace GestureTween
         /// <summary>
         /// 使用此曲线创建一个 virtual tween (用于预览)
         /// </summary>
-        public Tween CreatePreviewTween(TweenCallback<float> onUpdate, float duration = -1f)
+        public Tween CreatePreviewTween(DG.Tweening.TweenCallback<float> onUpdate, float duration = -1f)
         {
             float dur = duration > 0 ? duration : recommendedDuration;
             return DOVirtual.Float(0f, 1f, dur, onUpdate).SetEase(easeCurve);
