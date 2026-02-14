@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.3.0f1
-CRC: 866365278
+CRC: 3794641789
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1444b4ac7520d9b3e43413b81fa02df1
+    Hash: 51d7cbaa7b535dc2b216706e9e7da3b9
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5199ef7b8a63d590197e705e9744fdc7
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: ab0bbc6fdc134a000f19915867a412ff
+    Hash: 81c1dfc26be4b479311ace106df58231
 HashAppended: 1
 ClassTypes:
 - Class: 1
@@ -43,4 +43,5 @@ SerializeReferenceClassIdentifiers: []
 Assets:
 - Assets/Prefabs/UI/MainMenuPanel.prefab
 - "Assets/Arts/PSD\u7D20\u6750/\u4E3B\u83DC\u5355.psd"
+- Assets/Arts/Materials/MainMenuUnlit.mat
 Dependencies: []

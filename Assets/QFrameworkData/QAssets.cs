@@ -14,6 +14,7 @@ namespace QAssetBundle
     public class Menu_core
     {
         public const string BundleName = "menu_core";
+        public const string MAINMENUUNLIT = "MainMenuUnlit";
         public const string 主菜单 = "主菜单";
         public const string MAINMENUPANEL = "MainMenuPanel";
     }
