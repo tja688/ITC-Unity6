@@ -1,0 +1,162 @@
+[
+  {
+    "line_id": "041",
+    "speaker": "旁白",
+    "addressee": "玩家/观众",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.2：电梯 & 6楼",
+    "original_text": "电梯门打开，Barks走进了一个开放式办公区。突然，一个高大的身影挡在了她面前——一个穿着西装的骷髅。"
+  },
+  {
+    "line_id": "042",
+    "speaker": "OLD TOM",
+    "addressee": "旁白",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.2：电梯 & 6楼",
+    "original_text": "你好，年轻人。看起来你是来见Henet女士的？"
+  },
+  {
+    "line_id": "043",
+    "speaker": "Barks",
+    "addressee": "OLD TOM",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.2：电梯 & 6楼",
+    "original_text": "是的，先生。我在找Henet女士的办公室。"
+  },
+  {
+    "line_id": "044",
+    "speaker": "OLD TOM",
+    "addressee": "Barks",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.2：电梯 & 6楼",
+    "original_text": "啊，Henet女士。她的办公室就在那边。不过我得警告你，她今天心情不太好。似乎是因为昨天的灵魂配额没有达标。"
+  },
+  {
+    "line_id": "045",
+    "speaker": "Barks",
+    "addressee": "自己",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.2：电梯 & 6楼",
+    "original_text": "太棒了，刚来到这儿就要面对一个暴怒的老板。前景简直越来越值得期待了，就像是被邀请参加仙人掌拥抱大赛。"
+  },
+  {
+    "line_id": "046",
+    "speaker": "Barks",
+    "addressee": "自己/当前对话对象",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.2：电梯 & 6楼",
+    "original_text": "谢谢您的提醒，先生。我会尽量不成为她今天的第一个牺牲品。"
+  },
+  {
+    "line_id": "047",
+    "speaker": "OLD TOM",
+    "addressee": "Barks",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.2：电梯 & 6楼",
+    "original_text": "不用谢，孩子。对了，我是Old Tom。如果你需要任何帮助，随时来找我。"
+  },
+  {
+    "line_id": "048",
+    "speaker": "旁白",
+    "addressee": "玩家/观众",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "面前一个黑发黑西服的干练女士坐在一张巨大的书桌后面。她转过椅子看着Barks，好像一点都不觉得惊讶。Barks总觉得她看起来很眼熟——她的长相跟刚才Barks向上望时看见的那个恶魔长得一模一样，只是头发和服装换了个颜色。"
+  },
+  {
+    "line_id": "049",
+    "speaker": "Henet",
+    "addressee": "旁白",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "自我介绍一下，我是这家公司的老板：Henet。我们公司主要业务是灵魂契约以及——豆类罐头销售。你有什么特长吗？"
+  },
+  {
+    "line_id": "050",
+    "speaker": "Barks",
+    "addressee": "自己",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "快说点什么！不然她会觉得你是个无用的灵魂！既然记不起来，那就编一个吧。反正你已经在地狱公司了，再多一个谎言也无所谓。"
+  },
+  {
+    "line_id": "051",
+    "speaker": "Barks",
+    "addressee": "自己/当前对话对象",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "我，呃，我擅长...签订合同和...数豆子？"
+  },
+  {
+    "line_id": "052",
+    "speaker": "旁白",
+    "addressee": "玩家/观众",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "Henet的眼睛突然亮了起来——"
+  },
+  {
+    "line_id": "053",
+    "speaker": "Henet",
+    "addressee": "旁白",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "太棒了！你简直就是为公司量身定做的！欢迎加入ITC大家庭。希望你不介意我们的工作环境有点...热。"
+  },
+  {
+    "line_id": "054",
+    "speaker": "Barks",
+    "addressee": "自己",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "恭喜你，你刚刚把自己卖给了一家地狱公司。字面意义上的。"
+  },
+  {
+    "line_id": "055",
+    "speaker": "Barks",
+    "addressee": "自己/当前对话对象",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "等等...我入职了？就这样？甚至没有面试环节？"
+  },
+  {
+    "line_id": "056",
+    "speaker": "旁白",
+    "addressee": "玩家/观众",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "Barks有些恍惚地接过Henet递来的合同，上面写着："
+  },
+  {
+    "line_id": "057",
+    "speaker": "书面信息",
+    "addressee": "玩家/观众",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "> \"本人自愿成为 Infernal Transfer Company 公司的试工期文员，承诺在**13天**的试工期内，尽职尽责，永不背叛。如有违约，公司有权对员工进行**永恒的惩罚**。13天试工期结束后公司有权决定是否签订正式员工合同或停止雇佣关系。签字即生效，**不得反悔**。\""
+  },
+  {
+    "line_id": "058",
+    "speaker": "Barks",
+    "addressee": "书面信息",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "呃，这合同是不是有点......"
+  },
+  {
+    "line_id": "059",
+    "speaker": "Henet",
+    "addressee": "Barks",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "怎么，你有什么要补充的吗？"
+  },
+  {
+    "line_id": "060",
+    "speaker": "Barks",
+    "addressee": "自己",
+    "act": "第二幕：上班前剧情",
+    "scene": "场景 2.3：Henet办公室 - 签订试工合同",
+    "original_text": "快签！除非你想知道还有比这更糟糕的去处！"
+  }
+]
