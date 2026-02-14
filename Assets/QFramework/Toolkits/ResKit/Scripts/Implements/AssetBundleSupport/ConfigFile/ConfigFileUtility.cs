@@ -67,7 +67,8 @@ namespace QFramework
                 {
                     var hash = abFileNamePart.Last();
                     var abName = abFileName.GetFileName().RemoveString("_" + hash);
-                    abNameAndHash.Add(abName,hash);
+                    // Keep the latest discovered hash when stale duplicate files exist.
+                    abNameAndHash[abName] = hash;
                 }
             }
 
@@ -99,7 +100,10 @@ namespace QFramework
                 
                 foreach (var groupAssetBundleData in group.AssetBundleDatas)
                 {
-                    groupAssetBundleData.Hash = abNameAndHash[groupAssetBundleData.abName];
+                    if (abNameAndHash.TryGetValue(groupAssetBundleData.abName, out var hash))
+                    {
+                        groupAssetBundleData.Hash = hash;
+                    }
                 }
             }
             

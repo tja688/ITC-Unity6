@@ -7,13 +7,18 @@ public sealed class MainMenuExitButton : MonoBehaviour
     [SerializeField] private float hoverScale = 1.05f;
     [SerializeField] private float hoverLerpSpeed = 12f;
     [SerializeField] private bool enableHoverFeedback = true;
+    [SerializeField] private bool quitOnClick = true;
+    [SerializeField] private string exitNameKeyword = "退出";
 
     private Vector3 baseScale;
     private bool isHovered;
+    private bool canQuitOnClick;
 
     private void Awake()
     {
         baseScale = transform.localScale;
+        canQuitOnClick = quitOnClick &&
+                         (string.IsNullOrEmpty(exitNameKeyword) || gameObject.name.Contains(exitNameKeyword));
     }
 
     private void Update()
@@ -39,7 +44,10 @@ public sealed class MainMenuExitButton : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        Quit();
+        if (canQuitOnClick)
+        {
+            Quit();
+        }
     }
 
     private static void Quit()

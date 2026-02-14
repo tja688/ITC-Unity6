@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.3.0f1
+CRC: 2633059607
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 683c317ac082d03d8463c6f8488c0480
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: bc9f87c7e64ff656997db0f2b2a91703
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: f4165d3a22e798af2d8ab1994bca012c
+HashAppended: 1
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- "Assets/Arts/Texture2d\u56FE\u7247/\u4EBA\u7269/620/menu.png"
+Dependencies: []

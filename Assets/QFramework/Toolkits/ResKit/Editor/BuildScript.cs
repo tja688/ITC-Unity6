@@ -41,6 +41,8 @@ namespace QFramework
 
             // Choose the output path according to the build target.
             var outputPath = Path.Combine(ResKitAssetsMenu.AssetBundlesOutputPath, GetPlatformName());
+            // AppendHash mode can leave stale hashed files from previous builds, which causes duplicate keys later.
+            outputPath.DeleteDirIfExists();
             outputPath.CreateDirIfNotExists();
 
             if (ResKitView.AppendHash)
