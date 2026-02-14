@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity WebGL"
+  short_description: "Plan and self-check Unity WebGL decisions."
+  default_prompt: "Use $unity-webgl to plan and self-check a Unity WebGL change before implementation."
