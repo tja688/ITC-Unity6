@@ -11,50 +11,6 @@
 namespace QAssetBundle
 {
     
-    public class Dialogue_art_bg
-    {
-        public const string BundleName = "dialogue_art_bg";
-        public const string _13号窗口_外部反打 = "13号窗口 (外部反打)";
-        public const string HENET办公室 = "Henet办公室";
-        public const string ITC办公区 = "ITC办公区";
-        public const string ITC大厅 = "ITC大厅";
-        public const string ITC大楼外观 = "ITC大楼-外观";
-        public const string ITC电梯内部 = "ITC电梯内部";
-        public const string ITC门卫亭 = "ITC门卫亭";
-        public const string 主菜单 = "主菜单";
-        public const string 圣纽约市中心全景 = "圣纽约市-中心全景";
-        public const string 地狱旅馆客房 = "地狱旅馆-客房";
-        public const string 地狱旅馆浴室镜前 = "地狱旅馆-浴室镜前";
-        public const string 火焰之门 = "火焰之门";
-    }
-    public class Dialogue_art_portrait
-    {
-        public const string BundleName = "dialogue_art_portrait";
-        public const string 头像框素材 = "头像框素材";
-        public const string 通用标准人物头像 = "通用标准人物头像";
-        public const string 通用标准屏幕中心立绘 = "通用标准屏幕中心立绘";
-    }
-    public class Dialogue_core
-    {
-        public const string BundleName = "dialogue_core";
-        public const string ITC_DIALOGUESYSTEM = "ITC DialogueSystem";
-    }
-    public class Dialogue_flow
-    {
-        public const string BundleName = "dialogue_flow";
-        public const string DIALOGUESCENE = "DialogueScene";
-    }
-    public class Dialogue_text
-    {
-        public const string BundleName = "dialogue_text";
-        public const string ITC_YARN_DATA_TEXT_ANIM = "ITC_YARN_DATA_TEXT_ANIM";
-        public const string TESTPROJECT = "TestProject";
-    }
-    public class Entry_flow
-    {
-        public const string BundleName = "entry_flow";
-        public const string MAINMENU = "MainMenu";
-    }
     public class Menu_core
     {
         public const string BundleName = "menu_core";
