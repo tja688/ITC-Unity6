@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using Febucci.TextAnimatorForUnity;
 using Febucci.TextAnimatorForUnity.TextMeshPro;
@@ -62,6 +61,8 @@ namespace ITC.Dialogue
         private bool isFirstLineOfDialogue = true; // 用于区分首行和后续行的淡入淡出
         private Action onTextShowComplete;
         private System.Threading.Tasks.TaskCompletionSource<bool> currentTextShowCompletionSource;
+        private string[] baselineAppearanceTags = Array.Empty<string>();
+        private string[] baselineDisappearanceTags = Array.Empty<string>();
 
         #endregion
 
@@ -78,6 +79,8 @@ namespace ITC.Dialogue
 
             if (typewriter == null)
                 typewriter = GetComponent<TypewriterComponent>();
+
+            CacheBaselineEffectTags();
 
             // 初始隐藏
             if (canvasGroup != null)
@@ -131,7 +134,11 @@ namespace ITC.Dialogue
 
             // 2. 获取文本内容（移除角色名前缀）
             string displayText = line.TextWithoutCharacterName.Text;
-            string normalizedDisplayText = AutoCloseLeadingPipeTags(displayText);
+            string normalizedDisplayText = ExtractLeadingPipeTags(
+                displayText,
+                out var lineAppearanceTags,
+                out var lineDisappearanceTags);
+            ApplyLineDefaultTags(lineAppearanceTags, lineDisappearanceTags);
 
             // 3. 设置文本（隐藏），避免淡入时显示上一行文字
             var textShowCompletionSource = new System.Threading.Tasks.TaskCompletionSource<bool>();
@@ -275,99 +282,214 @@ namespace ITC.Dialogue
             onTextShowComplete = null;
         }
 
-        private static string AutoCloseLeadingPipeTags(string text)
+        private void CacheBaselineEffectTags()
         {
+            if (textAnimator == null)
+            {
+                return;
+            }
+
+            var appearanceTags = textAnimator.localSettings.defaultAppearanceTags;
+            var disappearanceTags = textAnimator.localSettings.defaultDisappearanceTags;
+
+            baselineAppearanceTags = appearanceTags != null
+                ? (string[])appearanceTags.Clone()
+                : Array.Empty<string>();
+            baselineDisappearanceTags = disappearanceTags != null
+                ? (string[])disappearanceTags.Clone()
+                : Array.Empty<string>();
+        }
+
+        private void ApplyLineDefaultTags(List<string> lineAppearanceTags, List<string> lineDisappearanceTags)
+        {
+            if (textAnimator == null)
+            {
+                return;
+            }
+
+            var appearanceTags = new List<string>(baselineAppearanceTags.Length + lineAppearanceTags.Count);
+            var disappearanceTags = new List<string>(baselineDisappearanceTags.Length + lineDisappearanceTags.Count);
+
+            AppendUnique(appearanceTags, baselineAppearanceTags);
+            AppendUnique(disappearanceTags, baselineDisappearanceTags);
+            AppendUnique(appearanceTags, lineAppearanceTags);
+            AppendUnique(disappearanceTags, lineDisappearanceTags);
+
+            textAnimator.localSettings.defaultAppearanceTags = appearanceTags.ToArray();
+            textAnimator.localSettings.defaultDisappearanceTags = disappearanceTags.ToArray();
+        }
+
+        private static string ExtractLeadingPipeTags(string text, out List<string> lineAppearanceTags, out List<string> lineDisappearanceTags)
+        {
+            lineAppearanceTags = new List<string>(2);
+            lineDisappearanceTags = new List<string>(1);
+
             if (string.IsNullOrEmpty(text) || text[0] != '|')
             {
                 return text;
             }
 
-            int cursor = 0;
-            var openedTags = new List<string>(2);
-
-            while (cursor < text.Length && text[cursor] == '|')
-            {
-                int closeIndex = text.IndexOf('|', cursor + 1);
-                if (closeIndex <= cursor + 1)
-                {
-                    break;
-                }
-
-                string tagContent = text.Substring(cursor + 1, closeIndex - cursor - 1);
-                if (tagContent.StartsWith("/", StringComparison.Ordinal))
-                {
-                    break;
-                }
-
-                if (!TryExtractPipeTagName(tagContent, out string tagName))
-                {
-                    break;
-                }
-
-                openedTags.Add(tagName);
-                cursor = closeIndex + 1;
-            }
-
-            if (openedTags.Count == 0)
+            if (!TryParseLeadingPipeTags(text, out var openingTags, out int contentStart))
             {
                 return text;
             }
 
-            var builder = new StringBuilder(text, text.Length + openedTags.Count * 10);
-            for (int i = openedTags.Count - 1; i >= 0; i--)
+            foreach (var openingTag in openingTags)
             {
-                string tagName = openedTags[i];
-                string closingTag = $"|/{tagName}|";
-
-                if (text.IndexOf(closingTag, StringComparison.OrdinalIgnoreCase) >= 0)
+                if (ShouldIgnoreLeadingPipeTag(openingTag.Name))
                 {
                     continue;
                 }
 
-                builder.Append(closingTag);
+                if (openingTag.IsDisappearance)
+                {
+                    AppendUnique(lineDisappearanceTags, openingTag.Name);
+                }
+                else
+                {
+                    AppendUnique(lineAppearanceTags, openingTag.Name);
+                }
             }
 
-            return builder.ToString();
+            return text.Substring(contentStart);
         }
 
-        private static bool TryExtractPipeTagName(string tagContent, out string tagName)
+        private static bool TryParseLeadingPipeTags(string text, out List<PipeOpeningTag> openingTags, out int contentStart)
         {
-            tagName = null;
+            openingTags = new List<PipeOpeningTag>(2);
+            contentStart = 0;
+
+            while (contentStart < text.Length && text[contentStart] == '|')
+            {
+                int closeIndex = text.IndexOf('|', contentStart + 1);
+                if (closeIndex <= contentStart + 1)
+                {
+                    break;
+                }
+
+                string tagContent = text.Substring(contentStart + 1, closeIndex - contentStart - 1);
+                if (!TryParsePipeOpeningTag(tagContent, out var openingTag))
+                {
+                    break;
+                }
+
+                openingTags.Add(openingTag);
+                contentStart = closeIndex + 1;
+            }
+
+            return openingTags.Count > 0;
+        }
+
+        private static bool TryParsePipeOpeningTag(string tagContent, out PipeOpeningTag openingTag)
+        {
+            openingTag = default;
 
             if (string.IsNullOrWhiteSpace(tagContent))
             {
                 return false;
             }
 
-            string normalized = tagContent.TrimStart('#');
+            string normalized = tagContent.Trim();
+            if (normalized.StartsWith("/", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            bool isDisappearance = normalized.StartsWith("#", StringComparison.Ordinal);
+            if (isDisappearance)
+            {
+                normalized = normalized.Substring(1);
+            }
+
             if (normalized.Length == 0)
             {
                 return false;
             }
 
-            int endIndex = normalized.IndexOf(' ');
-            if (endIndex < 0)
-            {
-                endIndex = normalized.Length;
-            }
+            int parameterStart = normalized.IndexOf(' ');
+            string candidateName = parameterStart < 0
+                ? normalized
+                : normalized.Substring(0, parameterStart);
 
-            string candidate = normalized.Substring(0, endIndex);
-            if (!char.IsLetter(candidate[0]))
+            if (!IsValidPipeTagName(candidateName))
             {
                 return false;
             }
 
-            for (int i = 0; i < candidate.Length; i++)
+            openingTag = new PipeOpeningTag(candidateName, isDisappearance);
+            return true;
+        }
+
+        private static bool IsValidPipeTagName(string candidateName)
+        {
+            if (string.IsNullOrWhiteSpace(candidateName))
             {
-                char c = candidate[i];
+                return false;
+            }
+
+            if (!char.IsLetter(candidateName[0]))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < candidateName.Length; i++)
+            {
+                char c = candidateName[i];
                 if (!char.IsLetterOrDigit(c) && c != '_' && c != '-')
                 {
                     return false;
                 }
             }
 
-            tagName = candidate;
             return true;
+        }
+
+        private static bool ShouldIgnoreLeadingPipeTag(string tagName)
+        {
+            return tagName.Equals("typewriter", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static void AppendUnique(List<string> target, IEnumerable<string> source)
+        {
+            if (source == null)
+            {
+                return;
+            }
+
+            foreach (var tag in source)
+            {
+                AppendUnique(target, tag);
+            }
+        }
+
+        private static void AppendUnique(List<string> target, string tag)
+        {
+            if (string.IsNullOrWhiteSpace(tag))
+            {
+                return;
+            }
+
+            for (int i = 0; i < target.Count; i++)
+            {
+                if (string.Equals(target[i], tag, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+            }
+
+            target.Add(tag);
+        }
+
+        private readonly struct PipeOpeningTag
+        {
+            public PipeOpeningTag(string name, bool isDisappearance)
+            {
+                Name = name;
+                IsDisappearance = isDisappearance;
+            }
+
+            public string Name { get; }
+            public bool IsDisappearance { get; }
         }
 
         /// <summary>
