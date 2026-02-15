@@ -1,0 +1,106 @@
+﻿{
+    "schemaVersion": "1.0.0",
+    "generatedAtUtc": "2026-02-15T04:15:48.0346784Z",
+    "scenePath": "Assets/Tests/Test scene/TestScene.unity",
+    "sourceNode": "TA_Effect_Annotation_Start",
+    "entries": [
+        {
+            "effectTag": "bounce",
+            "recommendationMode": 0,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:14:34.2252359Z"
+        },
+        {
+            "effectTag": "dangle",
+            "recommendationMode": 0,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:14:40.3983317Z"
+        },
+        {
+            "effectTag": "expand",
+            "recommendationMode": 1,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:14:45.5360836Z"
+        },
+        {
+            "effectTag": "fade",
+            "recommendationMode": 1,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:14:54.3721259Z"
+        },
+        {
+            "effectTag": "incr",
+            "recommendationMode": 1,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:00.0522830Z"
+        },
+        {
+            "effectTag": "pend",
+            "recommendationMode": 1,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:10.5651981Z"
+        },
+        {
+            "effectTag": "rainb",
+            "recommendationMode": 0,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:13.5697255Z"
+        },
+        {
+            "effectTag": "rot",
+            "recommendationMode": 1,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:19.0975711Z"
+        },
+        {
+            "effectTag": "shake",
+            "recommendationMode": 0,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:22.0621626Z"
+        },
+        {
+            "effectTag": "slideh",
+            "recommendationMode": 0,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:25.7297842Z"
+        },
+        {
+            "effectTag": "slidev",
+            "recommendationMode": 0,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:30.4846252Z"
+        },
+        {
+            "effectTag": "swing",
+            "recommendationMode": 1,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:33.7241106Z"
+        },
+        {
+            "effectTag": "wave",
+            "recommendationMode": 0,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:38.6331870Z"
+        },
+        {
+            "effectTag": "wiggle",
+            "recommendationMode": 2,
+            "loopCount": 1,
+            "durationSeconds": 1.0,
+            "updatedAtUtc": "2026-02-15T04:15:48.0346784Z"
+        }
+    ]
+}
