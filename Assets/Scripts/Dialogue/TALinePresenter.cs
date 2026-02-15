@@ -4,6 +4,8 @@
 // =============================================================================
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using Febucci.TextAnimatorForUnity;
 using Febucci.TextAnimatorForUnity.TextMeshPro;
@@ -129,6 +131,7 @@ namespace ITC.Dialogue
 
             // 2. 获取文本内容（移除角色名前缀）
             string displayText = line.TextWithoutCharacterName.Text;
+            string normalizedDisplayText = AutoCloseLeadingPipeTags(displayText);
 
             // 3. 设置文本（隐藏），避免淡入时显示上一行文字
             var textShowCompletionSource = new System.Threading.Tasks.TaskCompletionSource<bool>();
@@ -138,7 +141,7 @@ namespace ITC.Dialogue
 
             // 使用 TextAnimator 设置文本并启动打字机
             // 注：不使用 typewriter.ShowText()，因为它依赖内部初始化可能失败
-            textAnimator.SetText(displayText, true);
+            textAnimator.SetText(normalizedDisplayText, true);
 
             // 4. 淡入 UI
             // 智能淡入：首行时淡入整个面板，后续行只淡入文本区域（避免角色名和按钮闪烁）
@@ -270,6 +273,101 @@ namespace ITC.Dialogue
             isTextFullyShown = true;
             onTextShowComplete?.Invoke();
             onTextShowComplete = null;
+        }
+
+        private static string AutoCloseLeadingPipeTags(string text)
+        {
+            if (string.IsNullOrEmpty(text) || text[0] != '|')
+            {
+                return text;
+            }
+
+            int cursor = 0;
+            var openedTags = new List<string>(2);
+
+            while (cursor < text.Length && text[cursor] == '|')
+            {
+                int closeIndex = text.IndexOf('|', cursor + 1);
+                if (closeIndex <= cursor + 1)
+                {
+                    break;
+                }
+
+                string tagContent = text.Substring(cursor + 1, closeIndex - cursor - 1);
+                if (tagContent.StartsWith("/", StringComparison.Ordinal))
+                {
+                    break;
+                }
+
+                if (!TryExtractPipeTagName(tagContent, out string tagName))
+                {
+                    break;
+                }
+
+                openedTags.Add(tagName);
+                cursor = closeIndex + 1;
+            }
+
+            if (openedTags.Count == 0)
+            {
+                return text;
+            }
+
+            var builder = new StringBuilder(text, text.Length + openedTags.Count * 10);
+            for (int i = openedTags.Count - 1; i >= 0; i--)
+            {
+                string tagName = openedTags[i];
+                string closingTag = $"|/{tagName}|";
+
+                if (text.IndexOf(closingTag, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    continue;
+                }
+
+                builder.Append(closingTag);
+            }
+
+            return builder.ToString();
+        }
+
+        private static bool TryExtractPipeTagName(string tagContent, out string tagName)
+        {
+            tagName = null;
+
+            if (string.IsNullOrWhiteSpace(tagContent))
+            {
+                return false;
+            }
+
+            string normalized = tagContent.TrimStart('#');
+            if (normalized.Length == 0)
+            {
+                return false;
+            }
+
+            int endIndex = normalized.IndexOf(' ');
+            if (endIndex < 0)
+            {
+                endIndex = normalized.Length;
+            }
+
+            string candidate = normalized.Substring(0, endIndex);
+            if (!char.IsLetter(candidate[0]))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < candidate.Length; i++)
+            {
+                char c = candidate[i];
+                if (!char.IsLetterOrDigit(c) && c != '_' && c != '-')
+                {
+                    return false;
+                }
+            }
+
+            tagName = candidate;
+            return true;
         }
 
         /// <summary>
