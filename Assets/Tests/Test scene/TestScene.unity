@@ -1056,6 +1056,8 @@ GameObject:
   m_Component:
   - component: {fileID: 960981133}
   - component: {fileID: 960981134}
+  - component: {fileID: 960981136}
+  - component: {fileID: 960981135}
   m_Layer: 0
   m_Name: DialogueRunner
   m_TagString: Untagged
@@ -1091,15 +1093,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: YarnSpinner.Unity::Yarn.Unity.DialogueRunner
   yarnProject: {fileID: 7545569452688597077, guid: a3e4254994aeba5448305019a6b215fa, type: 3}
-  variableStorage: {fileID: 0}
-  lineProvider: {fileID: 0}
+  variableStorage: {fileID: 960981136}
+  lineProvider: {fileID: 960981135}
   saliencyStrategy: 0
   dialoguePresenters:
   - {fileID: 1886125627}
   - {fileID: 1847764031}
   verboseLogging: 1
   autoStart: 1
-  startNode: ITC_Start
+  startNode: TA_Effect_Annotation_Start
   runSelectedOptionAsLine: 0
   allowOptionFallthrough: 1
   onNodeStart:
@@ -1117,6 +1119,36 @@ MonoBehaviour:
   onUnhandledCommand:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &960981135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960981132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b6798449caec4a32a5ad27badb06624, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: YarnSpinner.Unity::Yarn.Unity.BuiltinLocalisedLineProvider
+  _textLocaleCode: zh
+  _assetLocaleCode: zh
+  _useFallback: 0
+  _fallbackLocaleCode: zh
+--- !u!114 &960981136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960981132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 610c541718d694070a21327d1ae62e75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: YarnSpinner.Unity::Yarn.Unity.InMemoryVariableStorage
+  showDebug: 0
+  debugTextView: {fileID: 0}
 --- !u!21 &1024123808
 Material:
   serializedVersion: 8
@@ -1236,6 +1268,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1719282003}
   - component: {fileID: 1719282004}
+  - component: {fileID: 1719282005}
   m_Layer: 0
   m_Name: DialogueEvents
   m_TagString: Untagged
@@ -1308,6 +1341,24 @@ MonoBehaviour:
   - expression
   - setvar
   skipEventFilterMode: 0
+--- !u!114 &1719282005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719282002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf4b980fd4bdae47927e0a1fdb0161c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.Tests.TextAnimatorEffectAnnotationPanel
+  dialogueRunner: {fileID: 0}
+  dialogueEvents: {fileID: 0}
+  markerPrefix: fx_
+  sourceNodeName: TA_Effect_Annotation_Start
+  jsonOutputRelativePath: Tests/Test scripts/TextAnimatorEffectRecommendations.json
+  markdownOutputRelativePath: Tests/Test scripts/TextAnimatorEffectRecommendations.md
 --- !u!1 &1784567608
 GameObject:
   m_ObjectHideFlags: 0
