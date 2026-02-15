@@ -30,6 +30,9 @@ tags: itc mainline base
 
 title: ITC_Act1_Scene11_Awake
 ---
+<<itc_debug act1_scene11_awake>>
+<<itc_bg hotel_room>>
+<<itc_portrait barks>>
 Narrator: |fade|Barks 睁开眼睛，<waitfor=0.18>发现自己身处一个小而简陋的接待室。
 Narrator: |fade|她试图回忆昨晚发生的事，<waitfor=0.18>但脑海<fade>一片空白</fade>。
 Barks: |typewriter|<speed=1.08>我是谁？<waitfor=0.18>我在哪？<waitfor=0.24>我为什么会在这里？
@@ -43,6 +46,9 @@ Narrator: |fade|<waitfor=0.12>突然，一阵<shake a=0.6>响亮的敲门声</sh
 
 title: ITC_Act1_Scene12_Doorman
 ---
+<<itc_debug act1_scene12_doorman>>
+<<itc_bg hotel_room>>
+<<itc_portrait skeleton_bellboy>>
 Narrator: |fade|Barks 打开门，<waitfor=0.12>看到一个穿着门童服装的<wiggle>骷髅</wiggle>。
 SkeletonBellboy: |typewriter|瞧你那模样，<waitfor=0.18>倒像是看到<wave s=0.8>活人</wave>了似的。
 Barks: |typewriter|你......<waitfor=0.42>我......<waitfor=0.55>我在哪里？
@@ -56,6 +62,9 @@ Narrator: |fade|<waitfor=0.85>
 
 title: ITC_Act1_Scene13_LetterKey
 ---
+<<itc_debug act1_scene13_letterkey>>
+<<itc_bg hotel_bathroom>>
+<<itc_portrait skeleton_bellboy>>
 SkeletonBellboy: |fade|小姐，<waitfor=0.12>新来的无魂者都这样，<waitfor=0.18>习惯就好。<waitfor=0.12>这是给你的信和钥匙。
 Narrator: |fade|钥匙上刻着<incr>圣纽约市</incr>，<waitfor=0.12>金属边缘泛着不自然的冷光。
 SkeletonBellboy: |fade|这把钥匙可以带你<wave s=0.7>回到人间</wave>，<waitfor=0.18>门就在旅馆外。
@@ -68,6 +77,9 @@ Barks: |typewriter|看来地狱之旅才<waitfor=0.12>刚刚开始。
 
 title: ITC_Act1_Scene14_FlameGate
 ---
+<<itc_debug act1_scene14_flamegate>>
+<<itc_bg flame_gate>>
+<<itc_portrait barks>>
 Narrator: |fade|Barks 来到旅馆外，<waitfor=0.18>看见那扇被火焰包围的门。
 Narrator: |fade|她将钥匙插入锁孔，<waitfor=0.12><shake a=0.45>火焰骤然暴涨</shake>。
 Narrator: |fade|门开了，<waitfor=0.18>一道刺眼光芒涌出，<waitfor=0.24>她踏入其中。
@@ -76,6 +88,9 @@ Narrator: |fade|门开了，<waitfor=0.18>一道刺眼光芒涌出，<waitfor=0.
 
 title: ITC_Act1_Scene15_City
 ---
+<<itc_debug act1_scene15_city>>
+<<itc_bg city_center>>
+<<itc_portrait barks>>
 Narrator: |fade|Barks 在圣纽约市中心醒来，<waitfor=0.18>城市繁华而荒诞。
 Barks: |typewriter|那边居然有人在向一棵树兜售保险，<waitfor=0.18>天呐。
 Barks: |typewriter|也许我们都<wiggle s=0.8>疯了</wiggle>。<waitfor=0.2>谁会清醒地来应聘地狱公司呢？
@@ -85,6 +100,9 @@ Narrator: |fade|她决定按请柬地址，<waitfor=0.12>前往 Infernal Transfe
 
 title: ITC_Act1_Scene16_Building
 ---
+<<itc_debug act1_scene16_building>>
+<<itc_bg itc_building>>
+<<itc_portrait barks>>
 Narrator: |fade|Barks 来到 ITC 大楼前，<waitfor=0.12>门框写着 Infernal Transfer Company。
 Narrator: |fade|下面还有一行小字，<waitfor=0.12><slideh s=0.6>Where souls meet beans</slideh>。
 Barks: |typewriter|既然来了，<waitfor=0.12>就入乡随俗吧。
@@ -93,6 +111,9 @@ Barks: |typewriter|既然来了，<waitfor=0.12>就入乡随俗吧。
 
 title: ITC_Act1_Scene17_GuardHenet
 ---
+<<itc_debug act1_scene17_guard>>
+<<itc_bg itc_guard>>
+<<itc_portrait oldguard>>
 Narrator: |fade|Barks 在门卫窗口前抬头，<waitfor=0.12>看见楼上窗边的 Henet。
 Narrator: |fade|她的目光像能洞穿灵魂，<waitfor=0.18>美艳而危险。
 Barks: |typewriter|她看起来像噩梦里走出来的<incr>恶魔</incr>。
@@ -104,6 +125,9 @@ OldGuard: |fade|<speed=0.92>在 ITC，<waitfor=0.12>我们遵从上级指令。<
 
 title: ITC_Act2_Scene21_Lobby
 ---
+<<itc_debug act2_scene21_lobby>>
+<<itc_bg itc_lobby>>
+<<itc_portrait receptionist>>
 <<set $Sys_CurrentPhase = "Day1_PreWork">>
 Narrator: |fade|DAY {$DAY}，<waitfor=0.12>Barks 推开 ITC 大门，走进大厅。
 Receptionist: |typewriter|<speed=1.05>欢迎来到 Infernal Transfer Company。<waitfor=0.12>请问你有预约吗？
@@ -115,6 +139,9 @@ Barks: |typewriter|6 层 66 号，<waitfor=0.18>真是毫不掩饰。
 
 title: ITC_Act2_Scene22_Elevator
 ---
+<<itc_debug act2_scene22_elevator>>
+<<itc_bg itc_elevator>>
+<<itc_portrait oldtom>>
 Narrator: |fade|Barks 乘电梯到 6 层，<waitfor=0.12>遇见了 OLD TOM。
 OldTom: |fade|你好，<waitfor=0.12>年轻人。<waitfor=0.18>你是来见 Henet 女士的？
 Barks: |typewriter|是的，<waitfor=0.12>我在找她办公室。
@@ -126,6 +153,9 @@ OldTom: |fade|我是 Old Tom。<waitfor=0.12>需要帮助时，<waitfor=0.12>随
 
 title: ITC_Act2_Scene23_OfficeContract
 ---
+<<itc_debug act2_scene23_officecontract>>
+<<itc_bg henet_office>>
+<<itc_portrait henet>>
 Narrator: |fade|Henet 坐在书桌后面，<waitfor=0.12>审视着 Barks。
 Henet: |fade|我是这家公司的老板 Henet。<waitfor=0.18>我们做<incr>灵魂契约</incr>和豆类罐头销售。<waitfor=0.24>你有什么特长？
 Barks: |typewriter|我......<waitfor=0.32>我擅长签合同和......<waitfor=0.4>数豆子？
@@ -142,6 +172,9 @@ Henet: |fade|如果你没通过试工期，<waitfor=0.18>你会在圣纽约过�
 
 title: ITC_Act2_Scene24_Training
 ---
+<<itc_debug act2_scene24_training>>
+<<itc_bg itc_office>>
+<<itc_portrait oldclerk13>>
 Narrator: |fade|Barks 来到 13 号窗口，<waitfor=0.12>一位老员工正在等她。
 OldClerk13: |fade|欢迎新人。<waitfor=0.18>我终于快退休了，<waitfor=0.18>先把工作流程交给你。
 OldClerk13: |typewriter|<speed=1.02>先问候，<waitfor=0.12>再聆听客户陈述，<waitfor=0.12>然后检查文件。
@@ -156,6 +189,9 @@ Barks: |typewriter|这就是我的未来吗？<waitfor=0.28>
 
 title: ITC_Act2_Scene25_WorkReady
 ---
+<<itc_debug act2_scene25_workready>>
+<<itc_bg window13>>
+<<itc_portrait oldtom>>
 OldTom: |fade|早上好，<waitfor=0.12>13 号窗口的试用期文员，Barks 小姐。
 Receptionist: |typewriter|<speed=1.06>这是早班咖啡。<waitfor=0.18>公司规定每日摄入至少 250 毫升。
 Barks: |typewriter|这比我喝过的任何东西都苦。<waitfor=0.18>
@@ -190,6 +226,9 @@ Narrator: |typewriter|DAY 1 客户序列开始。<waitfor=0.18>
 
 title: ITC_Client1_Emmett_Intro
 ---
+<<itc_debug client1_emmett_intro>>
+<<itc_bg window13>>
+<<itc_portrait emmett>>
 <<set $Route_CurrentClient = 1>>
 <<set $Sign_mistake = 0>>
 <<set $satisfaction = 3>>
@@ -240,19 +279,10 @@ Narrator: |typewriter|是否退回文件。<waitfor=0.18>
 
 title: ITC_Client1_TypewriterInput
 ---
-Narrator: |typewriter|打字机环节，<waitfor=0.12>4 个方向键 QTE。
--> 完美输入，无失误
-    <<set $Route_QTEErrorCount = 0>>
-    <<jump C2_D155>>
--> 出现一次失误
-    <<set $Route_QTEErrorCount = 1>>
-    <<jump C2_D155>>
--> 出现两次失误
-    <<set $Route_QTEErrorCount = 2>>
-    <<jump C2_D155>>
--> 出现三次及以上失误
-    <<set $Route_QTEErrorCount = 3>>
-    <<jump C2_D155>>
+<<itc_debug client1_typewriter_placeholder>>
+Narrator: |typewriter|【占位】打字机小游戏已在 WebGL 核心验证流中跳过，<waitfor=0.12>默认按一次失误处理。
+<<set $Route_QTEErrorCount = 1>>
+<<jump C2_D155>>
 ===
 
 title: ITC_Client1_StampInput
@@ -302,6 +332,9 @@ title: ITC_Client1_PostContract
 
 title: ITC_Client2_Thomas_Intro
 ---
+<<itc_debug client2_thomas_intro>>
+<<itc_bg window13>>
+<<itc_portrait thomas>>
 <<set $Route_CurrentClient = 2>>
 <<set $Sign_mistake = 0>>
 <<set $satisfaction = 3>>
@@ -330,19 +363,10 @@ Narrator: |typewriter|是否退回文件。<waitfor=0.18>
 
 title: ITC_Client2_TypewriterInput
 ---
-Narrator: |typewriter|打字机环节，<waitfor=0.12>4 个方向键 QTE。
--> 完美输入，无失误
-    <<set $Route_QTEErrorCount = 0>>
-    <<jump C2_D155>>
--> 出现一次失误
-    <<set $Route_QTEErrorCount = 1>>
-    <<jump C2_D155>>
--> 出现两次失误
-    <<set $Route_QTEErrorCount = 2>>
-    <<jump C2_D155>>
--> 出现三次及以上失误
-    <<set $Route_QTEErrorCount = 3>>
-    <<jump C2_D155>>
+<<itc_debug client2_typewriter_placeholder>>
+Narrator: |typewriter|【占位】打字机小游戏已在 WebGL 核心验证流中跳过，<waitfor=0.12>默认按一次失误处理。
+<<set $Route_QTEErrorCount = 1>>
+<<jump C2_D155>>
 ===
 
 title: ITC_Client2_StampInput
@@ -389,6 +413,8 @@ title: ITC_Client2_PostContract
 
 title: ITC_Day1_MoreClients
 ---
+<<itc_debug day1_more_clients_placeholder>>
+<<itc_portrait none>>
 Narrator: |fade|DAY 1 其余客户待扩展，<waitfor=0.12>包括巴塞洛缪 沙利文与瑞吉 威克斯等。
 Narrator: |fade|可沿用当前客户流程模板，<waitfor=0.12>补全后续客户节点。
 <<jump ITC_Act4_EndingEntry>>
@@ -396,12 +422,16 @@ Narrator: |fade|可沿用当前客户流程模板，<waitfor=0.12>补全后续�
 
 title: ITC_Day2_ClientSequence
 ---
+<<itc_debug day2_placeholder>>
+<<itc_portrait none>>
 Narrator: |fade|DAY 2 客户序列占位节点。<waitfor=0.12>后续在此接入新客户组。
 <<jump ITC_Act4_EndingEntry>>
 ===
 
 title: ITC_Day3Plus_ClientSequence
 ---
+<<itc_debug day3plus_placeholder>>
+<<itc_portrait none>>
 Narrator: |fade|DAY 3 及之后客户序列占位节点。<waitfor=0.12>后续在此接入长期循环内容。
 <<jump ITC_Act4_EndingEntry>>
 ===
@@ -517,6 +547,7 @@ title: C3_D252
 
 title: ITC_Act4_EndingEntry
 ---
+<<itc_debug act4_ending_entry>>
 Narrator: |typewriter|结局判定中。<waitfor=0.18>累计签约失误 {$Nmber_of_sign_mistake}，<waitfor=0.12>当前 DAY {$DAY}。
 <<if $Nmber_of_sign_mistake >= 3>>
     <<jump ITC_Ending_Fired>>
@@ -527,7 +558,8 @@ Narrator: |typewriter|结局判定中。<waitfor=0.18>累计签约失误 {$Nmber
         <<if $HiddenEndingTrigger>>
             <<jump ITC_Ending_Hidden>>
         <<else>>
-            <<jump ITC_Act5_AfterWork>>
+            Narrator: |fade|【占位】下班环节在 WebGL 核心验证流中已跳过，<waitfor=0.12>直接进入 Demo 结束节点。
+            <<jump ITC_End_Demo>>
         <<endif>>
     <<endif>>
 <<endif>>
@@ -563,18 +595,14 @@ Narrator: |fade|隐藏结局文本待后续补全。<waitfor=0.2>
 title: ITC_Act5_AfterWork
 ---
 <<set $Sys_CurrentPhase = "AfterWork">>
-Narrator: |fade|下班时间。<waitfor=0.12>Barks 离开窗口，<waitfor=0.12>为下一天做准备。
--> 进入下一天
-    <<set $DAY = $DAY + 1>>
-    <<set $Sys_CurrentDay = $DAY>>
-    <<set $Sys_CurrentPhase = "Contracting">>
-    <<jump ITC_Act3_Entry>>
--> 结束当前脚本
-    <<jump ITC_End_Demo>>
+Narrator: |fade|【占位】下班与次日循环已停用，<waitfor=0.12>用于当前 WebGL 对话主流程验收。
+<<jump ITC_End_Demo>>
 ===
 
 title: ITC_End_Demo
 ---
+<<itc_debug demo_end>>
+<<itc_hide_portrait>>
 Narrator: |fade|当前基础脚本到此结束，<waitfor=0.12>可继续扩展客户、结局与阵营分支。
 <<stop>>
 ===
