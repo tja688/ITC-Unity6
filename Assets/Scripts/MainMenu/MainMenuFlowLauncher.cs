@@ -5,6 +5,11 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class MainMenuFlowLauncher : MonoBehaviour, IController
 {
+    [Header("Dialogue Demo Flow")]
+    [SerializeField] private bool autoRunDialogueDemoFlow = true;
+    [SerializeField] private float autoRunDelaySeconds = 0.8f;
+    [SerializeField] private float waitPanelOpenTimeoutSeconds = 8f;
+
     private bool bootstrapped;
 
     private void Awake()
@@ -25,6 +30,25 @@ public sealed class MainMenuFlowLauncher : MonoBehaviour, IController
 
         this.SendCommand<MarkMainMenuResReadyCommand>();
         this.SendCommand<OpenMainMenuPanelCommand>();
+
+        if (autoRunDialogueDemoFlow)
+        {
+            yield return new WaitForSecondsRealtime(Mathf.Max(0f, autoRunDelaySeconds));
+            yield return WaitMainMenuPanelOpened();
+            this.SendCommand<RequestOpenDialoguePanelCommand>();
+        }
+    }
+
+    private IEnumerator WaitMainMenuPanelOpened()
+    {
+        var model = this.GetModel<MainMenuStateModel>();
+        var timeout = Mathf.Max(0.5f, waitPanelOpenTimeoutSeconds);
+        var elapsed = 0f;
+        while (!model.PanelOpened.Value && elapsed < timeout)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
     }
 
     public IArchitecture GetArchitecture()

@@ -1,0 +1,126 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.3.0f1
+CRC: 235832005
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 48318677196169886f712226232bbd6a
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: fc1307ab96ea1441abaeda596805deec
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 85b0e599371614e96d90ba5389c9d362
+HashAppended: 1
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: e8ace8ced0e81c847968cdca0aeda757, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ac6b0a2b8ddbab342ad54b5409ccffec, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4947c162791b3e64db778ab53cd6428d, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 89c6df86f5664558a34decf1f819db53, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5d1b11c4d4743b743973beec481907cb, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4c1826305467e07438adce96fa49ecdf, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d36f97a2fb87bde49b9444a12715cb9c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 6b6798449caec4a32a5ad27badb06624, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4bec29c0a230741bdac901dba8da47ee, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 610c541718d694070a21327d1ae62e75, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ca200c7010639400ab741813a61274b6, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+- Class: 225
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: ITC.Dialogue.ITCDialoguePanel/VisualAssetMapping
+- AssemblyName: Febucci.TextAnimatorCore
+  ClassName: Febucci.TextAnimatorCore.Settings.AnimatorSettings
+- AssemblyName: Febucci.TextAnimatorForUnity.Runtime
+  ClassName: Febucci.TextAnimatorForUnity.CharacterEvent
+- AssemblyName: Febucci.TextAnimatorForUnity.Runtime
+  ClassName: Febucci.TextAnimatorForUnity.CharacterWaitEvent
+- AssemblyName: Febucci.TextAnimatorForUnity.Runtime
+  ClassName: Febucci.TextAnimatorForUnity.MessageEvent
+- AssemblyName: Febucci.TextAnimatorForUnity.Runtime
+  ClassName: Febucci.TextAnimatorForUnity.UnityTypewriterSettings
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.FaceInfo_Legacy
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.FontAssetCreationSettings
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.KerningTable
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_Character
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_FontFeatureTable
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_FontWeightPair
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.VertexGradient
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.PersistentCallGroup
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.UnityEvent
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.UnityEvent`1
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.FaceInfo
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.Glyph
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.GlyphMetrics
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.GlyphRect
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.LowLevel.GlyphAdjustmentRecord
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.LowLevel.GlyphPairAdjustmentRecord
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.LowLevel.GlyphValueRecord
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
+- AssemblyName: YarnSpinner.Unity
+  ClassName: Yarn.Unity.UnityEventString
+Assets:
+- Assets/Prefabs/UI/ITC DialogueSystem.prefab
+Dependencies:
+- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_bg_f007d9034c5ad6c6be5e4c3f6f20d118
+- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_portrait_bb3c260fdfce07aa683b6987bc1d6e7e
+- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_script_53880153f233c0bdc3f424419d2e6b09

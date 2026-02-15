@@ -1,6 +1,6 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.3.0f1
-CRC: 3258442145
+CRC: 3514082733
 HashAppended: 1
 AssetBundleManifest:
   AssetBundleInfos:
@@ -11,5 +11,20 @@ AssetBundleManifest:
       Name: menu_fx_683c317ac082d03d8463c6f8488c0480
       Dependencies: {}
     Info_2:
-      Name: menu_core_51d7cbaa7b535dc2b216706e9e7da3b9
+      Name: menu_core_17217af13290ab9d12b0e920f6cc268f
       Dependencies: {}
+    Info_3:
+      Name: dialogue_bg_f007d9034c5ad6c6be5e4c3f6f20d118
+      Dependencies: {}
+    Info_4:
+      Name: dialogue_script_53880153f233c0bdc3f424419d2e6b09
+      Dependencies: {}
+    Info_5:
+      Name: dialogue_portrait_bb3c260fdfce07aa683b6987bc1d6e7e
+      Dependencies: {}
+    Info_6:
+      Name: dialogue_ui_48318677196169886f712226232bbd6a
+      Dependencies:
+        Dependency_0: dialogue_bg_f007d9034c5ad6c6be5e4c3f6f20d118
+        Dependency_1: dialogue_script_53880153f233c0bdc3f424419d2e6b09
+        Dependency_2: dialogue_portrait_bb3c260fdfce07aa683b6987bc1d6e7e

@@ -1,0 +1,35 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.3.0f1
+CRC: 1551215692
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f007d9034c5ad6c6be5e4c3f6f20d118
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: bc9f87c7e64ff656997db0f2b2a91703
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: d9b1f8a806505ef5ef1b966f620fbf19
+HashAppended: 1
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u5730\u72F1\u65C5\u9986-\u6D74\u5BA4\u955C\u524D.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u5723\u7EBD\u7EA6\u5E02-\u4E2D\u5FC3\u5168\u666F.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u7535\u68AF\u5185\u90E8.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u4E3B\u83DC\u5355.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u5927\u697C-\u5916\u89C2.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u706B\u7130\u4E4B\u95E8.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u5730\u72F1\u65C5\u9986-\u5BA2\u623F.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u529E\u516C\u533A.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u5927\u5385.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/13\u53F7\u7A97\u53E3
+  (\u5916\u90E8\u53CD\u6253).png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/Henet\u529E\u516C\u5BA4.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u95E8\u536B\u4EAD.png"
+Dependencies: []

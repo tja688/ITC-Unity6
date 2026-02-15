@@ -1,0 +1,36 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.3.0f1
+CRC: 3025258648
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 53880153f233c0bdc3f424419d2e6b09
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: dda98594b914e5de9d31c9e8f6ee5656
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 12b00ebd6772eae2ce467194690bf194
+HashAppended: 1
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: ff34614f4518d409d9e35af62a22851c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ca200c7010639400ab741813a61274b6, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: YarnSpinner.Unity
+  ClassName: Yarn.Unity.LineMetadata
+- AssemblyName: YarnSpinner.Unity
+  ClassName: Yarn.Unity.LineMetadata/StringDictionary
+- AssemblyName: YarnSpinner.Unity
+  ClassName: Yarn.Unity.Localization/LocalizationTableEntry
+- AssemblyName: YarnSpinner.Unity
+  ClassName: Yarn.Unity.SerializableDictionary`2
+Assets:
+- Assets/Doc/ITC Doc/dialogue/TestProject.yarnproject
+- Assets/Doc/ITC Doc/dialogue/ITC_YARN_DATA_TEXT_ANIM.yarn
+Dependencies: []

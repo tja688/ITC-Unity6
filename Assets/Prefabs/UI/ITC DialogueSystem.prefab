@@ -981,6 +981,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8443929080922508275}
+  - component: {fileID: 5178612070009376846}
   m_Layer: 0
   m_Name: ITC DialogueSystem
   m_TagString: Untagged
@@ -1006,6 +1007,114 @@ Transform:
   - {fileID: 2172637167602796621}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5178612070009376846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6433424480817055201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89c6df86f5664558a34decf1f819db53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.ITCDialoguePanel
+  dialogueRunner: {fileID: 0}
+  backgroundImage: {fileID: 0}
+  npcPortraitImage: {fileID: 0}
+  npcAvatarImage: {fileID: 0}
+  pcPortraitImage: {fileID: 0}
+  defaultBackgroundBundle: dialogue_bg
+  defaultPortraitBundle: dialogue_portrait
+  visualFadeDuration: 0.2
+  hidePortraitWhenMissing: 1
+  backgroundMappings:
+  - key: main_menu
+    assetName: "\u4E3B\u83DC\u5355"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u4E3B\u83DC\u5355.png"
+  - key: hotel_room
+    assetName: "\u5730\u72F1\u65C5\u9986-\u5BA2\u623F"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u5730\u72F1\u65C5\u9986-\u5BA2\u623F.png"
+  - key: mirror_room
+    assetName: "\u5730\u72F1\u65C5\u9986-\u6D74\u5BA4\u955C\u524D"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u5730\u72F1\u65C5\u9986-\u6D74\u5BA4\u955C\u524D.png"
+  - key: flame_gate
+    assetName: "\u706B\u7130\u4E4B\u95E8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u706B\u7130\u4E4B\u95E8.png"
+  - key: city_center
+    assetName: "\u5723\u7EBD\u7EA6\u5E02-\u4E2D\u5FC3\u5168\u666F"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/\u5723\u7EBD\u7EA6\u5E02-\u4E2D\u5FC3\u5168\u666F.png"
+  - key: itc_building
+    assetName: "ITC\u5927\u697C-\u5916\u89C2"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u5927\u697C-\u5916\u89C2.png"
+  - key: itc_guard
+    assetName: "ITC\u95E8\u536B\u4EAD"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u95E8\u536B\u4EAD.png"
+  - key: itc_lobby
+    assetName: "ITC\u5927\u5385"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u5927\u5385.png"
+  - key: itc_elevator
+    assetName: "ITC\u7535\u68AF\u5185\u90E8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u7535\u68AF\u5185\u90E8.png"
+  - key: henet_office
+    assetName: "Henet\u529E\u516C\u5BA4"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/Henet\u529E\u516C\u5BA4.png"
+  - key: itc_office
+    assetName: "ITC\u529E\u516C\u533A"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/ITC\u529E\u516C\u533A.png"
+  - key: window13
+    assetName: "13\u53F7\u7A97\u53E3 (\u5916\u90E8\u53CD\u6253)"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u80CC\u666F\u539F\u753B/13\u53F7\u7A97\u53E3
+      (\u5916\u90E8\u53CD\u6253).png"
+  portraitMappings:
+  - key: barks_default
+    assetName: "\u901A\u7528\u6807\u51C6\u4EBA\u7269\u5934\u50CF"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u4EBA\u7269\u5934\u50CF.png"
+  - key: skeletonbellboy_default
+    assetName: "\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
+  - key: oldguard_default
+    assetName: "\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
+  - key: receptionist_default
+    assetName: "\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
+  - key: oldtom_default
+    assetName: "\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
+  - key: henet_default
+    assetName: "\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
+  - key: oldclerk13_default
+    assetName: "\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
+  - key: emmett_default
+    assetName: "\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
+  - key: thomas_default
+    assetName: "\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8"
+    assetBundleName: 
+    editorAssetPath: "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
 --- !u!1 &6440718671240023380
 GameObject:
   m_ObjectHideFlags: 0

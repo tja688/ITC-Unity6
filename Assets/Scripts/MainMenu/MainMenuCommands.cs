@@ -1,4 +1,5 @@
 using QFramework;
+using ITC.Dialogue;
 
 public sealed class MarkMainMenuResReadyCommand : AbstractCommand
 {
@@ -36,5 +37,54 @@ public sealed class MarkMainMenuPanelOpenedCommand : AbstractCommand
     {
         var model = this.GetModel<MainMenuStateModel>();
         model.PanelOpened.Value = true;
+    }
+}
+
+public sealed class RequestOpenDialoguePanelCommand : AbstractCommand
+{
+    protected override void OnExecute()
+    {
+        var model = this.GetModel<MainMenuStateModel>();
+        if (!model.ResKitReady.Value || model.DialoguePanelOpenRequested.Value)
+        {
+            return;
+        }
+
+        model.DialoguePanelOpenRequested.Value = true;
+
+        UIKit.OpenPanelAsync<ITCDialoguePanel>(
+                UILevel.Common,
+                new ITCDialoguePanelData
+                {
+                    StartNode = "ITC_Start",
+                    AutoStartOnOpen = true
+                },
+                assetBundleName: "dialogue_ui",
+                prefabName: "ITC DialogueSystem")
+            .ToAction()
+            .StartGlobal(() =>
+            {
+                UIKit.ClosePanel<MainMenuPanel>();
+                this.SendCommand<MarkDialoguePanelOpenedCommand>();
+            });
+    }
+}
+
+public sealed class MarkDialoguePanelOpenedCommand : AbstractCommand
+{
+    protected override void OnExecute()
+    {
+        var model = this.GetModel<MainMenuStateModel>();
+        model.DialoguePanelOpened.Value = true;
+    }
+}
+
+public sealed class MarkDialoguePanelClosedCommand : AbstractCommand
+{
+    protected override void OnExecute()
+    {
+        var model = this.GetModel<MainMenuStateModel>();
+        model.DialoguePanelOpenRequested.Value = false;
+        model.DialoguePanelOpened.Value = false;
     }
 }

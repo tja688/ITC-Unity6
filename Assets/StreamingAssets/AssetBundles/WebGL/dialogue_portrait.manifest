@@ -1,0 +1,26 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.3.0f1
+CRC: 346573986
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: bb3c260fdfce07aa683b6987bc1d6e7e
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: bc9f87c7e64ff656997db0f2b2a91703
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 0a9af9ad0c8733c188463df7e10be6fe
+HashAppended: 1
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u5934\u50CF\u6846\u7D20\u67502.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u5934\u50CF\u6846\u7D20\u67503.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u4EBA\u7269\u5934\u50CF.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
+Dependencies: []
