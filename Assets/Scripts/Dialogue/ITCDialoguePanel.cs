@@ -42,6 +42,8 @@ namespace ITC.Dialogue
         [Header("Playback")]
         [SerializeField] private float visualFadeDuration = 0.2f;
         [SerializeField] private bool hidePortraitWhenMissing = true;
+        [SerializeField] private bool trimTransparentPixelsForPortrait = false;
+        [SerializeField] [Range(0, 255)] private int portraitAlphaThreshold = 10;
 
         [Header("Background Mapping")]
         [SerializeField] private List<VisualAssetMapping> backgroundMappings = new()
@@ -150,9 +152,9 @@ namespace ITC.Dialogue
             new VisualAssetMapping
             {
                 key = "barks_default",
-                assetName = "通用标准人物头像",
+                assetName = "通用标准屏幕中心立绘",
 #if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
 #endif
             },
             new VisualAssetMapping
@@ -235,6 +237,7 @@ namespace ITC.Dialogue
         private ITCDialoguePanelData panelData = new();
         private ResLoader resLoader;
         private bool commandsRegistered;
+        private bool portraitTrimReadable = true;
 
         private void Awake()
         {
@@ -323,6 +326,17 @@ namespace ITC.Dialogue
 
             BuildLookup(backgroundMappings, backgroundLookup);
             BuildLookup(portraitMappings, portraitLookup);
+            NormalizePortraitMappings();
+        }
+
+        private void NormalizePortraitMappings()
+        {
+            if (portraitLookup.TryGetValue("barks_default", out var barksMapping) &&
+                barksMapping != null &&
+                string.Equals(barksMapping.assetName, "通用标准人物头像", StringComparison.Ordinal))
+            {
+                barksMapping.assetName = "通用标准屏幕中心立绘";
+            }
         }
 
         private static void BuildLookup(IEnumerable<VisualAssetMapping> source, IDictionary<string, VisualAssetMapping> target)
@@ -383,18 +397,42 @@ namespace ITC.Dialogue
 
         private IEnumerator SwitchBackgroundCommand(string key)
         {
-            yield return SwapImageByKey(backgroundImage, key, backgroundLookup, defaultBackgroundBundle, preserveAspect: false);
+            yield return SwapImageByKey(
+                backgroundImage,
+                key,
+                backgroundLookup,
+                defaultBackgroundBundle,
+                preserveAspect: false,
+                trimTransparentPixels: false);
         }
 
         private IEnumerator SwitchNpcPortraitCommand(string key)
         {
-            yield return SwapImageByKey(npcPortraitImage, key, portraitLookup, defaultPortraitBundle, preserveAspect: true);
-            yield return SwapImageByKey(npcAvatarImage, key, portraitLookup, defaultPortraitBundle, preserveAspect: true);
+            yield return SwapImageByKey(
+                npcPortraitImage,
+                key,
+                portraitLookup,
+                defaultPortraitBundle,
+                preserveAspect: true,
+                trimTransparentPixels: trimTransparentPixelsForPortrait);
+            yield return SwapImageByKey(
+                npcAvatarImage,
+                key,
+                portraitLookup,
+                defaultPortraitBundle,
+                preserveAspect: true,
+                trimTransparentPixels: trimTransparentPixelsForPortrait);
         }
 
         private IEnumerator SwitchPcPortraitCommand(string key)
         {
-            yield return SwapImageByKey(pcPortraitImage, key, portraitLookup, defaultPortraitBundle, preserveAspect: true);
+            yield return SwapImageByKey(
+                pcPortraitImage,
+                key,
+                portraitLookup,
+                defaultPortraitBundle,
+                preserveAspect: true,
+                trimTransparentPixels: trimTransparentPixelsForPortrait);
         }
 
         private void HideNpcPortraitCommand()
@@ -413,7 +451,8 @@ namespace ITC.Dialogue
             string key,
             IReadOnlyDictionary<string, VisualAssetMapping> lookup,
             string defaultBundle,
-            bool preserveAspect)
+            bool preserveAspect,
+            bool trimTransparentPixels)
         {
             if (target == null || string.IsNullOrWhiteSpace(key))
             {
@@ -430,7 +469,7 @@ namespace ITC.Dialogue
             }
 
             Sprite sprite = null;
-            yield return LoadSpriteForMappingAsync(mapping, defaultBundle, s => sprite = s);
+            yield return LoadSpriteForMappingAsync(mapping, defaultBundle, trimTransparentPixels, s => sprite = s);
             if (sprite == null)
             {
                 if (hidePortraitWhenMissing)
@@ -446,12 +485,13 @@ namespace ITC.Dialogue
         private IEnumerator LoadSpriteForMappingAsync(
             VisualAssetMapping mapping,
             string defaultBundle,
+            bool trimTransparentPixels,
             Action<Sprite> onCompleted)
         {
             var bundle = string.IsNullOrWhiteSpace(mapping.assetBundleName)
                 ? defaultBundle
                 : mapping.assetBundleName.Trim();
-            var cacheKey = $"{bundle}:{mapping.assetName}";
+            var cacheKey = $"{bundle}:{mapping.assetName}:trim={(trimTransparentPixels ? 1 : 0)}";
 
             if (runtimeSpriteCache.TryGetValue(cacheKey, out var cachedSprite) && cachedSprite != null)
             {
@@ -467,9 +507,15 @@ namespace ITC.Dialogue
                 yield break;
             }
 
+            var spriteRect = new Rect(0, 0, texture.width, texture.height);
+            if (trimTransparentPixels && TryGetOpaqueRect(texture, out var opaqueRect))
+            {
+                spriteRect = opaqueRect;
+            }
+
             var sprite = Sprite.Create(
                 texture,
-                new Rect(0, 0, texture.width, texture.height),
+                spriteRect,
                 new Vector2(0.5f, 0.5f),
                 100f);
             sprite.name = $"{mapping.assetName}_runtime";
@@ -557,6 +603,57 @@ namespace ITC.Dialogue
             }
 
             onCompleted?.Invoke(loadedTexture);
+        }
+
+        private bool TryGetOpaqueRect(Texture2D texture, out Rect rect)
+        {
+            rect = default;
+
+            if (!portraitTrimReadable || texture == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                var pixels = texture.GetPixels32();
+                var width = texture.width;
+                var height = texture.height;
+                var minX = width;
+                var minY = height;
+                var maxX = -1;
+                var maxY = -1;
+                var threshold = (byte)Mathf.Clamp(portraitAlphaThreshold, 0, 255);
+
+                for (var i = 0; i < pixels.Length; i++)
+                {
+                    if (pixels[i].a <= threshold)
+                    {
+                        continue;
+                    }
+
+                    var x = i % width;
+                    var y = i / width;
+
+                    if (x < minX) minX = x;
+                    if (y < minY) minY = y;
+                    if (x > maxX) maxX = x;
+                    if (y > maxY) maxY = y;
+                }
+
+                if (maxX < 0 || maxY < 0 || minX > maxX || minY > maxY)
+                {
+                    return false;
+                }
+
+                rect = Rect.MinMaxRect(minX, minY, maxX + 1, maxY + 1);
+                return rect.width > 1f && rect.height > 1f;
+            }
+            catch (Exception)
+            {
+                portraitTrimReadable = false;
+                return false;
+            }
         }
 
         private IEnumerator FadeSwapImage(Image image, Sprite sprite, bool preserveAspect)
