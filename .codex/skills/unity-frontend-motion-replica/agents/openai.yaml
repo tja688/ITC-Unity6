@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity Frontend Motion Replica"
+  short_description: "复现前端动效到 Unity，支持 MCP 与离线一键部署兜底"
+  default_prompt: "Recreate frontend motion behavior in Unity with MCP-first checks, replica folder setup, playable UGUI/UI Toolkit scene wiring, and offline one-click deployment fallback when MCP is unavailable."

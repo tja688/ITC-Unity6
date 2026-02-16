@@ -1,0 +1,76 @@
+using System.IO;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+public static class ReplicaOfflineDeployTool
+{
+    private const string UGUIScenePath = "Assets/Scenes/UGUIReplicaScene.unity";
+    private const string UIToolkitScenePath = "Assets/Scenes/UIToolkitReplicaScene.unity";
+
+    [MenuItem("Tools/Replica/Deploy Pending Replica Assets")]
+    public static void DeployPendingReplicaAssets()
+    {
+        EnsureFolder("Assets/Tests");
+        EnsureFolder("Assets/Tests/Replica");
+        EnsureFolder("Assets/Editor");
+        EnsureFolder("Assets/Editor/Replica");
+
+        if (!EditorUtility.DisplayDialog(
+                "Replica Deploy",
+                "Choose target scene type for replica bootstrap.",
+                "UGUI",
+                "UI Toolkit"))
+        {
+            EnsureScene(UIToolkitScenePath, false);
+            EditorUtility.DisplayDialog("Replica Deploy", "UI Toolkit scene ensured.", "OK");
+            return;
+        }
+
+        EnsureScene(UGUIScenePath, true);
+        EditorUtility.DisplayDialog("Replica Deploy", "UGUI scene ensured.", "OK");
+    }
+
+    private static void EnsureScene(string scenePath, bool bootstrapUGUI)
+    {
+        var scene = File.Exists(scenePath)
+            ? EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single)
+            : EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+
+        if (bootstrapUGUI)
+        {
+            BootstrapUGUIRoot();
+        }
+
+        EditorSceneManager.SaveScene(scene, scenePath);
+        AssetDatabase.Refresh();
+        Debug.Log($"[ReplicaOfflineDeployTool] Scene ready: {scenePath}");
+    }
+
+    private static void BootstrapUGUIRoot()
+    {
+        var canvas = Object.FindObjectOfType<Canvas>();
+        if (canvas != null) return;
+
+        var root = new GameObject("ReplicaCanvas");
+        var c = root.AddComponent<Canvas>();
+        c.renderMode = RenderMode.ScreenSpaceOverlay;
+        root.AddComponent<CanvasScaler>();
+        root.AddComponent<GraphicRaycaster>();
+
+        new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem),
+            typeof(UnityEngine.EventSystems.StandaloneInputModule));
+    }
+
+    private static void EnsureFolder(string path)
+    {
+        if (AssetDatabase.IsValidFolder(path)) return;
+        var parent = Path.GetDirectoryName(path)?.Replace("\\", "/");
+        var name = Path.GetFileName(path);
+        if (string.IsNullOrEmpty(parent) || string.IsNullOrEmpty(name)) return;
+        if (!AssetDatabase.IsValidFolder(parent)) EnsureFolder(parent);
+        AssetDatabase.CreateFolder(parent, name);
+    }
+}
