@@ -39,6 +39,11 @@ namespace ITC.Dialogue
         [SerializeField] private string defaultBackgroundBundle = "dialogue_bg";
         [SerializeField] private string defaultPortraitBundle = "dialogue_portrait";
 
+        [Header("Portrait Slot Defaults")]
+        [SerializeField] private string npcMainPortraitDefaultKey = "barks_default";
+        [SerializeField] private string npcAvatarDefaultKey = "barks_default";
+        [SerializeField] private string pcAvatarDefaultKey = "barks_default";
+
         [Header("Playback")]
         [SerializeField] private float visualFadeDuration = 0.2f;
         [SerializeField] private bool hidePortraitWhenMissing = true;
@@ -375,8 +380,14 @@ namespace ITC.Dialogue
             dialogueRunner.AddCommandHandler<string>("itc_bg", SwitchBackgroundCommand);
             dialogueRunner.AddCommandHandler<string>("itc_npc", SwitchNpcPortraitCommand);
             dialogueRunner.AddCommandHandler<string>("itc_pc", SwitchPcPortraitCommand);
+            dialogueRunner.AddCommandHandler<string>("itc_npc_main", SwitchNpcMainPortraitCommand);
+            dialogueRunner.AddCommandHandler<string>("itc_npc_avatar", SwitchNpcAvatarCommand);
+            dialogueRunner.AddCommandHandler<string>("itc_pc_avatar", SwitchPcAvatarCommand);
             dialogueRunner.AddCommandHandler("itc_npc_hide", HideNpcPortraitCommand);
             dialogueRunner.AddCommandHandler("itc_pc_hide", HidePcPortraitCommand);
+            dialogueRunner.AddCommandHandler("itc_npc_main_hide", HideNpcMainPortraitCommand);
+            dialogueRunner.AddCommandHandler("itc_npc_avatar_hide", HideNpcAvatarCommand);
+            dialogueRunner.AddCommandHandler("itc_pc_avatar_hide", HidePcAvatarCommand);
             commandsRegistered = true;
         }
 
@@ -390,8 +401,14 @@ namespace ITC.Dialogue
             dialogueRunner.RemoveCommandHandler("itc_bg");
             dialogueRunner.RemoveCommandHandler("itc_npc");
             dialogueRunner.RemoveCommandHandler("itc_pc");
+            dialogueRunner.RemoveCommandHandler("itc_npc_main");
+            dialogueRunner.RemoveCommandHandler("itc_npc_avatar");
+            dialogueRunner.RemoveCommandHandler("itc_pc_avatar");
             dialogueRunner.RemoveCommandHandler("itc_npc_hide");
             dialogueRunner.RemoveCommandHandler("itc_pc_hide");
+            dialogueRunner.RemoveCommandHandler("itc_npc_main_hide");
+            dialogueRunner.RemoveCommandHandler("itc_npc_avatar_hide");
+            dialogueRunner.RemoveCommandHandler("itc_pc_avatar_hide");
             commandsRegistered = false;
         }
 
@@ -408,42 +425,75 @@ namespace ITC.Dialogue
 
         private IEnumerator SwitchNpcPortraitCommand(string key)
         {
-            yield return SwapImageByKey(
-                npcPortraitImage,
-                key,
-                portraitLookup,
-                defaultPortraitBundle,
-                preserveAspect: true,
-                trimTransparentPixels: trimTransparentPixelsForPortrait);
-            yield return SwapImageByKey(
-                npcAvatarImage,
-                key,
-                portraitLookup,
-                defaultPortraitBundle,
-                preserveAspect: true,
-                trimTransparentPixels: trimTransparentPixelsForPortrait);
+            yield return SwitchNpcMainPortraitCommand(key);
+            yield return SwitchNpcAvatarCommand(key);
         }
 
         private IEnumerator SwitchPcPortraitCommand(string key)
         {
-            yield return SwapImageByKey(
+            yield return SwitchPcAvatarCommand(key);
+        }
+
+        private IEnumerator SwitchNpcMainPortraitCommand(string key)
+        {
+            yield return SwapPortraitByKey(
+                npcPortraitImage,
+                key,
+                npcMainPortraitDefaultKey);
+        }
+
+        private IEnumerator SwitchNpcAvatarCommand(string key)
+        {
+            yield return SwapPortraitByKey(
+                npcAvatarImage,
+                key,
+                npcAvatarDefaultKey);
+        }
+
+        private IEnumerator SwitchPcAvatarCommand(string key)
+        {
+            yield return SwapPortraitByKey(
                 pcPortraitImage,
                 key,
-                portraitLookup,
-                defaultPortraitBundle,
-                preserveAspect: true,
-                trimTransparentPixels: trimTransparentPixelsForPortrait);
+                pcAvatarDefaultKey);
         }
 
         private void HideNpcPortraitCommand()
         {
-            HideImage(npcPortraitImage);
-            HideImage(npcAvatarImage);
+            HideNpcMainPortraitCommand();
+            HideNpcAvatarCommand();
         }
 
         private void HidePcPortraitCommand()
         {
+            HidePcAvatarCommand();
+        }
+
+        private void HideNpcMainPortraitCommand()
+        {
+            HideImage(npcPortraitImage);
+        }
+
+        private void HideNpcAvatarCommand()
+        {
+            HideImage(npcAvatarImage);
+        }
+
+        private void HidePcAvatarCommand()
+        {
             HideImage(pcPortraitImage);
+        }
+
+        private IEnumerator SwapPortraitByKey(Image target, string key, string fallbackKey)
+        {
+            yield return SwapImageByKey(
+                target,
+                key,
+                portraitLookup,
+                defaultPortraitBundle,
+                preserveAspect: true,
+                trimTransparentPixels: trimTransparentPixelsForPortrait,
+                fallbackKey: fallbackKey);
         }
 
         private IEnumerator SwapImageByKey(
@@ -452,14 +502,19 @@ namespace ITC.Dialogue
             IReadOnlyDictionary<string, VisualAssetMapping> lookup,
             string defaultBundle,
             bool preserveAspect,
-            bool trimTransparentPixels)
+            bool trimTransparentPixels,
+            string fallbackKey = null)
         {
-            if (target == null || string.IsNullOrWhiteSpace(key))
+            if (target == null)
             {
                 yield break;
             }
 
-            if (!lookup.TryGetValue(key.Trim(), out var mapping))
+            var resolvedFallbackKey = string.IsNullOrWhiteSpace(fallbackKey) ? null : fallbackKey.Trim();
+            var resolvedKey = string.IsNullOrWhiteSpace(key) ? resolvedFallbackKey : key.Trim();
+
+            if (!TryGetMapping(lookup, resolvedKey, out var mapping) &&
+                !TryGetMapping(lookup, resolvedFallbackKey, out mapping))
             {
                 if (hidePortraitWhenMissing)
                 {
@@ -480,6 +535,21 @@ namespace ITC.Dialogue
             }
 
             yield return FadeSwapImage(target, sprite, preserveAspect);
+        }
+
+        private static bool TryGetMapping(
+            IReadOnlyDictionary<string, VisualAssetMapping> lookup,
+            string key,
+            out VisualAssetMapping mapping)
+        {
+            mapping = null;
+
+            if (lookup == null || string.IsNullOrWhiteSpace(key))
+            {
+                return false;
+            }
+
+            return lookup.TryGetValue(key.Trim(), out mapping);
         }
 
         private IEnumerator LoadSpriteForMappingAsync(
