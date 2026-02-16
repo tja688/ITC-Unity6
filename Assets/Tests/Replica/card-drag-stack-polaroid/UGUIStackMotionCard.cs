@@ -27,6 +27,7 @@ public class UGUIStackMotionCard : MonoBehaviour,
     private Tween mRotationTween;
     private Tween mScaleTween;
     private Tween mShadowTween;
+    private Tween mSendToBackTween;
 
     private bool mInteractionEnabled;
     private bool mDragging;
@@ -169,7 +170,7 @@ public class UGUIStackMotionCard : MonoBehaviour,
         }
     }
 
-    internal void ApplyLayout(float targetRotationZ, float targetScale, bool animate, float duration)
+    internal void ApplyLayout(float targetRotationZ, float targetScale, bool animate, float duration, float returnDuration)
     {
         mLayoutRotationZ = targetRotationZ;
         mLayoutScale = Mathf.Clamp(targetScale, 0.7f, 1.05f);
@@ -200,8 +201,55 @@ public class UGUIStackMotionCard : MonoBehaviour,
 
         if (!mDragging)
         {
-            TweenBackToNeutral(duration * 0.85f);
+            TweenBackToNeutral(returnDuration);
         }
+    }
+
+    internal void PlaySendToBackTransition(float outDuration, float travelDistance, System.Action onReinsert)
+    {
+        if (mRootRect == null || mTiltRect == null || mVisualRect == null || mOwner == null)
+        {
+            onReinsert?.Invoke();
+            return;
+        }
+
+        var safeOutDuration = Mathf.Max(0.08f, outDuration);
+        var safeTravel = Mathf.Max(80f, travelDistance);
+        var direction = mDragOffset.sqrMagnitude > 1f
+            ? mDragOffset.normalized
+            : new Vector2(0.88f, 0.32f).normalized;
+
+        var outPosition = mDragOffset + (direction * safeTravel);
+        var outTilt = new Vector3(
+            -direction.y * mOwner.MaxTilt * 1.2f,
+            direction.x * mOwner.MaxTilt * 1.2f,
+            0f);
+
+        KillPositionTweensOnly();
+        mRotationTween?.Kill();
+        mScaleTween?.Kill();
+        mSendToBackTween?.Kill();
+
+        TweenShadow(outTilt.x, outTilt.y, 1f, safeOutDuration);
+
+        var sequence = DOTween.Sequence();
+        sequence.Join(mRootRect.DOAnchorPos(outPosition, safeOutDuration).SetEase(Ease.OutCubic));
+        sequence.Join(mTiltRect.DOLocalRotate(outTilt, safeOutDuration).SetEase(Ease.OutCubic));
+        sequence.Join(mVisualRect.DOScale(mLayoutScale * 0.95f, safeOutDuration).SetEase(Ease.OutQuad));
+        sequence.OnComplete(() =>
+        {
+            mRootRect.anchoredPosition = -direction * safeTravel * 0.42f;
+            mTiltRect.localRotation = Quaternion.Euler(
+                direction.y * mOwner.MaxTilt * 0.35f,
+                -direction.x * mOwner.MaxTilt * 0.35f,
+                0f);
+            mVisualRect.localScale = new Vector3(mLayoutScale * 0.9f, mLayoutScale * 0.9f, 1f);
+
+            mDragOffset = Vector2.zero;
+            onReinsert?.Invoke();
+        });
+
+        mSendToBackTween = sequence;
     }
 
     internal void SnapToNeutral()
@@ -379,6 +427,7 @@ public class UGUIStackMotionCard : MonoBehaviour,
         mMoveTween?.Kill();
         mTiltTween?.Kill();
         mShadowTween?.Kill();
+        mSendToBackTween?.Kill();
     }
 
     private void KillTweens()
@@ -388,6 +437,7 @@ public class UGUIStackMotionCard : MonoBehaviour,
         mRotationTween?.Kill();
         mScaleTween?.Kill();
         mShadowTween?.Kill();
+        mSendToBackTween?.Kill();
     }
 
     private static RectTransform GetOrCreateRect(string childName, RectTransform parent)
