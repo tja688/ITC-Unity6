@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.3.0f1
-CRC: 235832005
+CRC: 2839881932
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 48318677196169886f712226232bbd6a
+    Hash: b474ba756a3a42bd45a1c43c4a56fd8b
   TypeTreeHash:
     serializedVersion: 2
-    Hash: fc1307ab96ea1441abaeda596805deec
+    Hash: ae0539b6e20784f644b54dbf3d158e73
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 85b0e599371614e96d90ba5389c9d362
+    Hash: ab524660d8cad35223e8d7cf130f1ccd
 HashAppended: 1
 ClassTypes:
 - Class: 1
@@ -68,8 +68,6 @@ ClassTypes:
 - Class: 225
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers:
-- AssemblyName: Assembly-CSharp
-  ClassName: ITC.Dialogue.ITCDialoguePanel/VisualAssetMapping
 - AssemblyName: Febucci.TextAnimatorCore
   ClassName: Febucci.TextAnimatorCore.Settings.AnimatorSettings
 - AssemblyName: Febucci.TextAnimatorForUnity.Runtime
@@ -108,12 +106,6 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.TextCore.GlyphMetrics
 - AssemblyName: UnityEngine.TextCoreFontEngineModule
   ClassName: UnityEngine.TextCore.GlyphRect
-- AssemblyName: UnityEngine.TextCoreFontEngineModule
-  ClassName: UnityEngine.TextCore.LowLevel.GlyphAdjustmentRecord
-- AssemblyName: UnityEngine.TextCoreFontEngineModule
-  ClassName: UnityEngine.TextCore.LowLevel.GlyphPairAdjustmentRecord
-- AssemblyName: UnityEngine.TextCoreFontEngineModule
-  ClassName: UnityEngine.TextCore.LowLevel.GlyphValueRecord
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
 - AssemblyName: YarnSpinner.Unity
@@ -122,5 +114,5 @@ Assets:
 - Assets/Prefabs/UI/ITC DialogueSystem.prefab
 Dependencies:
 - C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_bg_f007d9034c5ad6c6be5e4c3f6f20d118
-- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_portrait_bb3c260fdfce07aa683b6987bc1d6e7e
-- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_script_53880153f233c0bdc3f424419d2e6b09
+- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_portrait_b9e332a767e840163aa93c86038d5d9b
+- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_script_c495fb06e68dd1c0afa029b363466534

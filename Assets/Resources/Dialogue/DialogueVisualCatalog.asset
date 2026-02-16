@@ -1,0 +1,297 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02e88a94558d75746b743fc0814957f3, type: 3}
+  m_Name: DialogueVisualCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.DialogueVisualCatalog
+  defaultBackgroundBundle: dialogue_bg
+  defaultPortraitBundle: dialogue_portrait
+  npcMainPortraitDefaultKey: barks_default
+  npcAvatarDefaultKey: barks_default
+  pcAvatarDefaultKey: barks_default
+  missingSpriteBundle: dialogue_portrait
+  missingSpriteAssetName: image missing
+  missingSpriteSubSpriteName: image missing_0
+  missingSpriteEditorAssetPath: "Assets/Arts/Texture2d图片/image missing.png"
+  mappings:
+  - key: main_menu
+    slot: 0
+    assetName: 主菜单
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: 
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/主菜单.png"
+  - key: hotel_room
+    slot: 0
+    assetName: 地狱旅馆-客房
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/地狱旅馆-客房.png"
+  - key: mirror_room
+    slot: 0
+    assetName: 地狱旅馆-浴室镜前
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/地狱旅馆-浴室镜前.png"
+  - key: flame_gate
+    slot: 0
+    assetName: 火焰之门
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/火焰之门.png"
+  - key: city_center
+    slot: 0
+    assetName: 圣纽约市-中心全景
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/圣纽约市-中心全景.png"
+  - key: itc_building
+    slot: 0
+    assetName: ITC大楼-外观
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/ITC大楼-外观.png"
+  - key: itc_guard
+    slot: 0
+    assetName: ITC门卫亭
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/ITC门卫亭.png"
+  - key: itc_lobby
+    slot: 0
+    assetName: ITC大厅
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/ITC大厅.png"
+  - key: itc_elevator
+    slot: 0
+    assetName: ITC电梯内部
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/ITC电梯内部.png"
+  - key: henet_office
+    slot: 0
+    assetName: Henet办公室
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/Henet办公室.png"
+  - key: itc_office
+    slot: 0
+    assetName: ITC办公区
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/ITC办公区.png"
+  - key: window13
+    slot: 0
+    assetName: "13号窗口 (外部反打)"
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: main_menu
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位背景原画/13号窗口 (外部反打).png"
+  - key: barks_default
+    slot: 1
+    assetName: 通用标准屏幕中心立绘
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: 
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
+  - key: skeletonbellboy_default
+    slot: 1
+    assetName: 通用标准屏幕中心立绘
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
+  - key: oldguard_default
+    slot: 1
+    assetName: 通用标准屏幕中心立绘
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
+  - key: receptionist_default
+    slot: 1
+    assetName: 通用标准屏幕中心立绘
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
+  - key: oldtom_default
+    slot: 1
+    assetName: 通用标准屏幕中心立绘
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
+  - key: henet_default
+    slot: 1
+    assetName: 通用标准屏幕中心立绘
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
+  - key: oldclerk13_default
+    slot: 1
+    assetName: 通用标准屏幕中心立绘
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
+  - key: emmett_default
+    slot: 1
+    assetName: 通用标准屏幕中心立绘
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
+  - key: thomas_default
+    slot: 1
+    assetName: 通用标准屏幕中心立绘
+    subSpriteName: 
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
+  - key: barks_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: 
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: skeletonbellboy_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: oldguard_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: receptionist_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: oldtom_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: henet_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: oldclerk13_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: emmett_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: thomas_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: barks_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: 
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: skeletonbellboy_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: oldguard_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: receptionist_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: oldtom_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: henet_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: oldclerk13_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: emmett_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: thomas_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"

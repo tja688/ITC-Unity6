@@ -17,17 +17,6 @@ namespace ITC.Dialogue
 
     public sealed class ITCDialoguePanel : UIPanel, IController
     {
-        [Serializable]
-        private sealed class VisualAssetMapping
-        {
-            public string key;
-            public string assetName;
-            public string assetBundleName;
-#if UNITY_EDITOR
-            public string editorAssetPath;
-#endif
-        }
-
         [Header("Dialogue References")]
         [SerializeField] private DialogueRunner dialogueRunner;
         [SerializeField] private Image backgroundImage;
@@ -35,214 +24,24 @@ namespace ITC.Dialogue
         [SerializeField] private Image npcAvatarImage;
         [SerializeField] private Image pcPortraitImage;
 
-        [Header("ResKit Bundles")]
-        [SerializeField] private string defaultBackgroundBundle = "dialogue_bg";
-        [SerializeField] private string defaultPortraitBundle = "dialogue_portrait";
-
-        [Header("Portrait Slot Defaults")]
-        [SerializeField] private string npcMainPortraitDefaultKey = "barks_default";
-        [SerializeField] private string npcAvatarDefaultKey = "barks_default";
-        [SerializeField] private string pcAvatarDefaultKey = "barks_default";
+        [Header("Visual Catalog")]
+        [SerializeField] private DialogueVisualCatalog visualCatalog;
+        [SerializeField] private string resourcesCatalogPath = "Dialogue/DialogueVisualCatalog";
 
         [Header("Playback")]
         [SerializeField] private float visualFadeDuration = 0.2f;
         [SerializeField] private bool hidePortraitWhenMissing = true;
-        [SerializeField] private bool trimTransparentPixelsForPortrait = false;
-        [SerializeField] [Range(0, 255)] private int portraitAlphaThreshold = 10;
 
-        [Header("Background Mapping")]
-        [SerializeField] private List<VisualAssetMapping> backgroundMappings = new()
-        {
-            new VisualAssetMapping
-            {
-                key = "main_menu",
-                assetName = "主菜单",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/主菜单.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "hotel_room",
-                assetName = "地狱旅馆-客房",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/地狱旅馆-客房.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "mirror_room",
-                assetName = "地狱旅馆-浴室镜前",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/地狱旅馆-浴室镜前.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "flame_gate",
-                assetName = "火焰之门",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/火焰之门.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "city_center",
-                assetName = "圣纽约市-中心全景",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/圣纽约市-中心全景.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "itc_building",
-                assetName = "ITC大楼-外观",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/ITC大楼-外观.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "itc_guard",
-                assetName = "ITC门卫亭",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/ITC门卫亭.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "itc_lobby",
-                assetName = "ITC大厅",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/ITC大厅.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "itc_elevator",
-                assetName = "ITC电梯内部",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/ITC电梯内部.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "henet_office",
-                assetName = "Henet办公室",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/Henet办公室.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "itc_office",
-                assetName = "ITC办公区",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/ITC办公区.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "window13",
-                assetName = "13号窗口 (外部反打)",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位背景原画/13号窗口 (外部反打).png"
-#endif
-            }
-        };
-
-        [Header("Portrait Mapping")]
-        [SerializeField] private List<VisualAssetMapping> portraitMappings = new()
-        {
-            new VisualAssetMapping
-            {
-                key = "barks_default",
-                assetName = "通用标准屏幕中心立绘",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "skeletonbellboy_default",
-                assetName = "通用标准屏幕中心立绘",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "oldguard_default",
-                assetName = "通用标准屏幕中心立绘",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "receptionist_default",
-                assetName = "通用标准屏幕中心立绘",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "oldtom_default",
-                assetName = "通用标准屏幕中心立绘",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "henet_default",
-                assetName = "通用标准屏幕中心立绘",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "oldclerk13_default",
-                assetName = "通用标准屏幕中心立绘",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "emmett_default",
-                assetName = "通用标准屏幕中心立绘",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
-#endif
-            },
-            new VisualAssetMapping
-            {
-                key = "thomas_default",
-                assetName = "通用标准屏幕中心立绘",
-#if UNITY_EDITOR
-                editorAssetPath = "Assets/Arts/Texture2d图片/占位人物立绘/通用标准屏幕中心立绘.png"
-#endif
-            }
-        };
-
-        private readonly Dictionary<string, VisualAssetMapping> backgroundLookup =
-            new(StringComparer.OrdinalIgnoreCase);
-
-        private readonly Dictionary<string, VisualAssetMapping> portraitLookup =
-            new(StringComparer.OrdinalIgnoreCase);
-
-        private readonly Dictionary<string, Sprite> runtimeSpriteCache =
+        private readonly Dictionary<string, DialogueSpriteRef> visualLookup =
             new(StringComparer.OrdinalIgnoreCase);
 
         private readonly Dictionary<Image, CanvasGroup> imageCanvasGroups = new();
+        private readonly HashSet<string> loggedVisualErrors = new(StringComparer.OrdinalIgnoreCase);
 
         private ITCDialoguePanelData panelData = new();
         private ResLoader resLoader;
+        private DialogueSpriteProvider spriteProvider;
         private bool commandsRegistered;
-        private bool portraitTrimReadable = true;
 
         private void Awake()
         {
@@ -267,8 +66,10 @@ namespace ITC.Dialogue
         private void BootstrapRuntimeBindings()
         {
             CacheReferences();
+            EnsureCatalog();
             BuildLookups();
             EnsureResLoader();
+            EnsureSpriteProvider();
             RegisterCommands();
         }
 
@@ -324,41 +125,39 @@ namespace ITC.Dialogue
             }
         }
 
-        private void BuildLookups()
+        private void EnsureCatalog()
         {
-            backgroundLookup.Clear();
-            portraitLookup.Clear();
-
-            BuildLookup(backgroundMappings, backgroundLookup);
-            BuildLookup(portraitMappings, portraitLookup);
-            NormalizePortraitMappings();
-        }
-
-        private void NormalizePortraitMappings()
-        {
-            if (portraitLookup.TryGetValue("barks_default", out var barksMapping) &&
-                barksMapping != null &&
-                string.Equals(barksMapping.assetName, "通用标准人物头像", StringComparison.Ordinal))
-            {
-                barksMapping.assetName = "通用标准屏幕中心立绘";
-            }
-        }
-
-        private static void BuildLookup(IEnumerable<VisualAssetMapping> source, IDictionary<string, VisualAssetMapping> target)
-        {
-            if (source == null)
+            if (visualCatalog != null || string.IsNullOrWhiteSpace(resourcesCatalogPath))
             {
                 return;
             }
 
-            foreach (var mapping in source)
+            visualCatalog = Resources.Load<DialogueVisualCatalog>(resourcesCatalogPath.Trim());
+        }
+
+        private void BuildLookups()
+        {
+            visualLookup.Clear();
+
+            if (visualCatalog == null || visualCatalog.Mappings == null)
+            {
+                return;
+            }
+
+            foreach (var mapping in visualCatalog.Mappings)
             {
                 if (mapping == null || string.IsNullOrWhiteSpace(mapping.key))
                 {
                     continue;
                 }
 
-                target[mapping.key.Trim()] = mapping;
+                var lookupKey = ComposeLookupKey(mapping.slot, mapping.key);
+                if (visualLookup.ContainsKey(lookupKey))
+                {
+                    LogKit.W($"[ITCDialoguePanel] Duplicate mapping overridden: {mapping.slot}:{mapping.key}");
+                }
+
+                visualLookup[lookupKey] = mapping;
             }
         }
 
@@ -370,6 +169,14 @@ namespace ITC.Dialogue
             }
         }
 
+        private void EnsureSpriteProvider()
+        {
+            if (spriteProvider == null && resLoader != null)
+            {
+                spriteProvider = new DialogueSpriteProvider(resLoader);
+            }
+        }
+
         private void RegisterCommands()
         {
             if (commandsRegistered || dialogueRunner == null)
@@ -378,13 +185,9 @@ namespace ITC.Dialogue
             }
 
             dialogueRunner.AddCommandHandler<string>("itc_bg", SwitchBackgroundCommand);
-            dialogueRunner.AddCommandHandler<string>("itc_npc", SwitchNpcPortraitCommand);
-            dialogueRunner.AddCommandHandler<string>("itc_pc", SwitchPcPortraitCommand);
             dialogueRunner.AddCommandHandler<string>("itc_npc_main", SwitchNpcMainPortraitCommand);
             dialogueRunner.AddCommandHandler<string>("itc_npc_avatar", SwitchNpcAvatarCommand);
             dialogueRunner.AddCommandHandler<string>("itc_pc_avatar", SwitchPcAvatarCommand);
-            dialogueRunner.AddCommandHandler("itc_npc_hide", HideNpcPortraitCommand);
-            dialogueRunner.AddCommandHandler("itc_pc_hide", HidePcPortraitCommand);
             dialogueRunner.AddCommandHandler("itc_npc_main_hide", HideNpcMainPortraitCommand);
             dialogueRunner.AddCommandHandler("itc_npc_avatar_hide", HideNpcAvatarCommand);
             dialogueRunner.AddCommandHandler("itc_pc_avatar_hide", HidePcAvatarCommand);
@@ -399,13 +202,9 @@ namespace ITC.Dialogue
             }
 
             dialogueRunner.RemoveCommandHandler("itc_bg");
-            dialogueRunner.RemoveCommandHandler("itc_npc");
-            dialogueRunner.RemoveCommandHandler("itc_pc");
             dialogueRunner.RemoveCommandHandler("itc_npc_main");
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar");
             dialogueRunner.RemoveCommandHandler("itc_pc_avatar");
-            dialogueRunner.RemoveCommandHandler("itc_npc_hide");
-            dialogueRunner.RemoveCommandHandler("itc_pc_hide");
             dialogueRunner.RemoveCommandHandler("itc_npc_main_hide");
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar_hide");
             dialogueRunner.RemoveCommandHandler("itc_pc_avatar_hide");
@@ -417,21 +216,8 @@ namespace ITC.Dialogue
             yield return SwapImageByKey(
                 backgroundImage,
                 key,
-                backgroundLookup,
-                defaultBackgroundBundle,
-                preserveAspect: false,
-                trimTransparentPixels: false);
-        }
-
-        private IEnumerator SwitchNpcPortraitCommand(string key)
-        {
-            yield return SwitchNpcMainPortraitCommand(key);
-            yield return SwitchNpcAvatarCommand(key);
-        }
-
-        private IEnumerator SwitchPcPortraitCommand(string key)
-        {
-            yield return SwitchPcAvatarCommand(key);
+                DialogueVisualSlot.Background,
+                preserveAspect: false);
         }
 
         private IEnumerator SwitchNpcMainPortraitCommand(string key)
@@ -439,7 +225,7 @@ namespace ITC.Dialogue
             yield return SwapPortraitByKey(
                 npcPortraitImage,
                 key,
-                npcMainPortraitDefaultKey);
+                DialogueVisualSlot.NpcMain);
         }
 
         private IEnumerator SwitchNpcAvatarCommand(string key)
@@ -447,7 +233,7 @@ namespace ITC.Dialogue
             yield return SwapPortraitByKey(
                 npcAvatarImage,
                 key,
-                npcAvatarDefaultKey);
+                DialogueVisualSlot.NpcAvatar);
         }
 
         private IEnumerator SwitchPcAvatarCommand(string key)
@@ -455,18 +241,7 @@ namespace ITC.Dialogue
             yield return SwapPortraitByKey(
                 pcPortraitImage,
                 key,
-                pcAvatarDefaultKey);
-        }
-
-        private void HideNpcPortraitCommand()
-        {
-            HideNpcMainPortraitCommand();
-            HideNpcAvatarCommand();
-        }
-
-        private void HidePcPortraitCommand()
-        {
-            HidePcAvatarCommand();
+                DialogueVisualSlot.PcAvatar);
         }
 
         private void HideNpcMainPortraitCommand()
@@ -484,245 +259,162 @@ namespace ITC.Dialogue
             HideImage(pcPortraitImage);
         }
 
-        private IEnumerator SwapPortraitByKey(Image target, string key, string fallbackKey)
+        private IEnumerator SwapPortraitByKey(Image target, string key, DialogueVisualSlot slot)
         {
             yield return SwapImageByKey(
                 target,
                 key,
-                portraitLookup,
-                defaultPortraitBundle,
-                preserveAspect: true,
-                trimTransparentPixels: trimTransparentPixelsForPortrait,
-                fallbackKey: fallbackKey);
+                slot,
+                preserveAspect: true);
         }
 
         private IEnumerator SwapImageByKey(
             Image target,
             string key,
-            IReadOnlyDictionary<string, VisualAssetMapping> lookup,
-            string defaultBundle,
-            bool preserveAspect,
-            bool trimTransparentPixels,
-            string fallbackKey = null)
+            DialogueVisualSlot slot,
+            bool preserveAspect)
         {
             if (target == null)
             {
                 yield break;
             }
 
-            var resolvedFallbackKey = string.IsNullOrWhiteSpace(fallbackKey) ? null : fallbackKey.Trim();
-            var resolvedKey = string.IsNullOrWhiteSpace(key) ? resolvedFallbackKey : key.Trim();
-
-            if (!TryGetMapping(lookup, resolvedKey, out var mapping) &&
-                !TryGetMapping(lookup, resolvedFallbackKey, out mapping))
+            if (visualCatalog == null || spriteProvider == null)
             {
+                LogOnceError($"catalog-missing:{slot}",
+                    $"[ITCDialoguePanel] Visual catalog/provider unavailable. Slot={slot}");
                 if (hidePortraitWhenMissing)
                 {
                     HideImage(target);
                 }
+
                 yield break;
             }
 
             Sprite sprite = null;
-            yield return LoadSpriteForMappingAsync(mapping, defaultBundle, trimTransparentPixels, s => sprite = s);
+            yield return ResolveSpriteByKeyWithFallbackAsync(
+                slot,
+                key,
+                visualCatalog.GetDefaultKey(slot),
+                s => sprite = s);
+
             if (sprite == null)
             {
                 if (hidePortraitWhenMissing)
                 {
                     HideImage(target);
                 }
+
                 yield break;
             }
 
             yield return FadeSwapImage(target, sprite, preserveAspect);
         }
 
-        private static bool TryGetMapping(
-            IReadOnlyDictionary<string, VisualAssetMapping> lookup,
-            string key,
-            out VisualAssetMapping mapping)
-        {
-            mapping = null;
-
-            if (lookup == null || string.IsNullOrWhiteSpace(key))
-            {
-                return false;
-            }
-
-            return lookup.TryGetValue(key.Trim(), out mapping);
-        }
-
-        private IEnumerator LoadSpriteForMappingAsync(
-            VisualAssetMapping mapping,
-            string defaultBundle,
-            bool trimTransparentPixels,
+        private IEnumerator ResolveSpriteByKeyWithFallbackAsync(
+            DialogueVisualSlot slot,
+            string requestedKey,
+            string slotDefaultKey,
             Action<Sprite> onCompleted)
         {
-            var bundle = string.IsNullOrWhiteSpace(mapping.assetBundleName)
-                ? defaultBundle
-                : mapping.assetBundleName.Trim();
-            var cacheKey = $"{bundle}:{mapping.assetName}:trim={(trimTransparentPixels ? 1 : 0)}";
+            var queue = new Queue<string>();
+            var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            if (runtimeSpriteCache.TryGetValue(cacheKey, out var cachedSprite) && cachedSprite != null)
+            EnqueueIfNotEmpty(queue, requestedKey);
+            EnqueueIfNotEmpty(queue, slotDefaultKey);
+
+            while (queue.Count > 0)
             {
-                onCompleted?.Invoke(cachedSprite);
-                yield break;
+                var currentKey = queue.Dequeue();
+                if (!visited.Add(currentKey))
+                {
+                    continue;
+                }
+
+                if (!TryGetMapping(slot, currentKey, out var mapping))
+                {
+                    continue;
+                }
+
+                Sprite loaded = null;
+                yield return LoadSpriteForMappingAsync(mapping, s => loaded = s);
+                if (loaded != null)
+                {
+                    onCompleted?.Invoke(loaded);
+                    yield break;
+                }
+
+                LogOnceError(
+                    $"load-failed:{slot}:{currentKey}",
+                    $"[ITCDialoguePanel] Sprite load failed. slot={slot}, key={currentKey}, bundle={mapping.assetBundleName}, asset={mapping.assetName}, subSprite={mapping.subSpriteName}");
+
+                EnqueueIfNotEmpty(queue, mapping.fallbackKey);
             }
 
-            Texture2D texture = null;
-            yield return LoadTextureForMappingAsync(mapping, defaultBundle, t => texture = t);
-            if (texture == null)
+            Sprite missing = null;
+            yield return LoadMissingSpriteAsync(s => missing = s);
+            onCompleted?.Invoke(missing);
+        }
+
+        private IEnumerator LoadSpriteForMappingAsync(DialogueSpriteRef mapping, Action<Sprite> onCompleted)
+        {
+            var defaultBundle = visualCatalog.GetDefaultBundle(mapping.slot);
+            yield return spriteProvider.LoadSpriteAsync(mapping, defaultBundle, onCompleted);
+        }
+
+        private IEnumerator LoadMissingSpriteAsync(Action<Sprite> onCompleted)
+        {
+            var missingBundle = string.IsNullOrWhiteSpace(visualCatalog.MissingSpriteBundle)
+                ? visualCatalog.DefaultPortraitBundle
+                : visualCatalog.MissingSpriteBundle.Trim();
+
+            if (string.IsNullOrWhiteSpace(visualCatalog.MissingSpriteAssetName))
             {
                 onCompleted?.Invoke(null);
                 yield break;
             }
 
-            var spriteRect = new Rect(0, 0, texture.width, texture.height);
-            if (trimTransparentPixels && TryGetOpaqueRect(texture, out var opaqueRect))
-            {
-                spriteRect = opaqueRect;
-            }
-
-            var sprite = Sprite.Create(
-                texture,
-                spriteRect,
-                new Vector2(0.5f, 0.5f),
-                100f);
-            sprite.name = $"{mapping.assetName}_runtime";
-            runtimeSpriteCache[cacheKey] = sprite;
-            onCompleted?.Invoke(sprite);
-        }
-
-        private IEnumerator LoadTextureForMappingAsync(
-            VisualAssetMapping mapping,
-            string defaultBundle,
-            Action<Texture2D> onCompleted)
-        {
-            var bundle = string.IsNullOrWhiteSpace(mapping.assetBundleName)
-                ? defaultBundle
-                : mapping.assetBundleName.Trim();
-
-            Texture2D texture = null;
-            yield return LoadTextureAsync(bundle, mapping.assetName, t => texture = t);
-
-            if (texture == null)
-            {
-                yield return LoadTextureAsync(string.Empty, mapping.assetName, t => texture = t);
-            }
-
+            yield return spriteProvider.LoadRawSpriteAsync(
+                missingBundle,
+                visualCatalog.MissingSpriteAssetName,
+                visualCatalog.MissingSpriteSubSpriteName,
 #if UNITY_EDITOR
-            if (texture == null &&
-                AssetBundlePathHelper.SimulationMode &&
-                !string.IsNullOrWhiteSpace(mapping.editorAssetPath))
-            {
-                texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(mapping.editorAssetPath);
-            }
+                visualCatalog.MissingSpriteEditorAssetPath,
+#else
+                null,
 #endif
-
-            onCompleted?.Invoke(texture);
+                onCompleted);
         }
 
-        private IEnumerator LoadTextureAsync(
-            string bundleName,
-            string assetName,
-            Action<Texture2D> onCompleted)
+        private bool TryGetMapping(DialogueVisualSlot slot, string key, out DialogueSpriteRef mapping)
         {
-            if (string.IsNullOrWhiteSpace(assetName))
-            {
-                onCompleted?.Invoke(null);
-                yield break;
-            }
-
-            EnsureResLoader();
-            var done = false;
-            var success = false;
-            Texture2D loadedTexture = null;
-
-            void OnLoaded(bool ok, IRes res)
-            {
-                success = ok;
-                loadedTexture = res?.Asset as Texture2D;
-                done = true;
-            }
-
-            if (string.IsNullOrWhiteSpace(bundleName))
-            {
-                resLoader.Add2Load<Texture2D>(assetName, OnLoaded);
-            }
-            else
-            {
-                resLoader.Add2Load<Texture2D>(bundleName, assetName, OnLoaded);
-            }
-
-            resLoader.LoadAsync();
-            while (!done)
-            {
-                yield return null;
-            }
-
-            if (!success && loadedTexture == null)
-            {
-                onCompleted?.Invoke(null);
-                yield break;
-            }
-
-            if (loadedTexture == null)
-            {
-                onCompleted?.Invoke(null);
-                yield break;
-            }
-
-            onCompleted?.Invoke(loadedTexture);
-        }
-
-        private bool TryGetOpaqueRect(Texture2D texture, out Rect rect)
-        {
-            rect = default;
-
-            if (!portraitTrimReadable || texture == null)
+            mapping = null;
+            if (string.IsNullOrWhiteSpace(key))
             {
                 return false;
             }
 
-            try
+            return visualLookup.TryGetValue(ComposeLookupKey(slot, key), out mapping);
+        }
+
+        private static string ComposeLookupKey(DialogueVisualSlot slot, string key)
+        {
+            return $"{slot}:{key.Trim()}";
+        }
+
+        private static void EnqueueIfNotEmpty(Queue<string> queue, string key)
+        {
+            if (!string.IsNullOrWhiteSpace(key))
             {
-                var pixels = texture.GetPixels32();
-                var width = texture.width;
-                var height = texture.height;
-                var minX = width;
-                var minY = height;
-                var maxX = -1;
-                var maxY = -1;
-                var threshold = (byte)Mathf.Clamp(portraitAlphaThreshold, 0, 255);
-
-                for (var i = 0; i < pixels.Length; i++)
-                {
-                    if (pixels[i].a <= threshold)
-                    {
-                        continue;
-                    }
-
-                    var x = i % width;
-                    var y = i / width;
-
-                    if (x < minX) minX = x;
-                    if (y < minY) minY = y;
-                    if (x > maxX) maxX = x;
-                    if (y > maxY) maxY = y;
-                }
-
-                if (maxX < 0 || maxY < 0 || minX > maxX || minY > maxY)
-                {
-                    return false;
-                }
-
-                rect = Rect.MinMaxRect(minX, minY, maxX + 1, maxY + 1);
-                return rect.width > 1f && rect.height > 1f;
+                queue.Enqueue(key.Trim());
             }
-            catch (Exception)
+        }
+
+        private void LogOnceError(string hash, string message)
+        {
+            if (loggedVisualErrors.Add(hash))
             {
-                portraitTrimReadable = false;
-                return false;
+                LogKit.E(message);
             }
         }
 
@@ -757,6 +449,7 @@ namespace ITC.Dialogue
                 {
                     canvasGroup.alpha = to;
                 }
+
                 yield break;
             }
 
@@ -804,14 +497,8 @@ namespace ITC.Dialogue
 
         private void ReleaseResLoader()
         {
-            foreach (var runtimeSprite in runtimeSpriteCache.Values)
-            {
-                if (runtimeSprite != null)
-                {
-                    Destroy(runtimeSprite);
-                }
-            }
-            runtimeSpriteCache.Clear();
+            spriteProvider?.ClearCache();
+            spriteProvider = null;
 
             if (resLoader == null)
             {

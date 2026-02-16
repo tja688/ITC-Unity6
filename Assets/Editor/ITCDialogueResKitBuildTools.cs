@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using QFramework;
 using UnityEditor;
@@ -23,6 +22,7 @@ namespace ITC.Editor
             changed |= SetBundleName(DialogueYarnProjectPath, "dialogue_script");
             changed |= SetBundleNameForFolderPng(BackgroundFolderPath, "dialogue_bg");
             changed |= SetBundleNameForFolderPng(PortraitFolderPath, "dialogue_portrait");
+            changed |= ITCDialogueVisualCatalogTools.ApplyCatalogAssetBundleLabels();
 
             if (changed)
             {
@@ -36,6 +36,13 @@ namespace ITC.Editor
         public static void BuildWebGLResKitBundles()
         {
             ApplyDialogueAssetBundleLabels();
+
+            if (!ITCDialogueVisualCatalogTools.ValidateVisualCatalog(logResults: true))
+            {
+                Debug.LogError("[ITCDialogueResKitBuildTools] Build canceled because DialogueVisualCatalog validation failed.");
+                return;
+            }
+
             EditorPrefs.SetBool(ResKitView.KEY_AUTOGENERATE_CLASS, false);
 
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.WebGL)
