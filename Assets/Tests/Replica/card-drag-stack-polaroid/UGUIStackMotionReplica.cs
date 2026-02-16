@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -34,11 +33,6 @@ public class UGUIStackMotionReplica : MonoBehaviour, IPointerEnterHandler, IPoin
     [SerializeField] private float mAutoplayDelay = 3f;
     [SerializeField] private bool mPauseOnHover = true;
 
-    [Header("Send To Back Transition")]
-    [SerializeField] private float mSendToBackOutDuration = 0.22f;
-    [SerializeField] private float mSendToBackRecoverDuration = 0.42f;
-    [SerializeField] private float mSendToBackTravelDistance = 220f;
-
     [Header("Cards")]
     [SerializeField] private CardPreset[] mCardPresets = null;
 
@@ -48,9 +42,7 @@ public class UGUIStackMotionReplica : MonoBehaviour, IPointerEnterHandler, IPoin
     private RectTransform mDeckRect = null;
     private bool mIsHoverPaused;
     private bool mIsDraggingCard;
-    private bool mIsSendToBackAnimating;
     private float mAutoplayTimer;
-    private Tween mSendToBackGateTween;
 
     private static readonly CardPreset[] sDefaultCards =
     {
@@ -98,12 +90,12 @@ public class UGUIStackMotionReplica : MonoBehaviour, IPointerEnterHandler, IPoin
         EnsureEventSystem();
         BuildLayout();
         BuildCards();
-        ApplyStackLayout(false, mLayoutDuration, mReturnDuration);
+        ApplyStackLayout(false);
     }
 
     private void Update()
     {
-        if (!mAutoplay || mCards.Count <= 1 || mIsDraggingCard || mIsSendToBackAnimating || (mPauseOnHover && mIsHoverPaused))
+        if (!mAutoplay || mCards.Count <= 1 || mIsDraggingCard || (mPauseOnHover && mIsHoverPaused))
         {
             return;
         }
@@ -116,11 +108,6 @@ public class UGUIStackMotionReplica : MonoBehaviour, IPointerEnterHandler, IPoin
 
         mAutoplayTimer = 0f;
         SendTopCardToBack();
-    }
-
-    private void OnDisable()
-    {
-        mSendToBackGateTween?.Kill();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -173,7 +160,7 @@ public class UGUIStackMotionReplica : MonoBehaviour, IPointerEnterHandler, IPoin
 
     internal void HandleCardClicked(UGUIStackMotionCard card)
     {
-        if (mIsSendToBackAnimating || !mSendToBackOnClick || !IsTopCard(card))
+        if (!mSendToBackOnClick || !IsTopCard(card))
         {
             return;
         }
@@ -199,34 +186,17 @@ public class UGUIStackMotionReplica : MonoBehaviour, IPointerEnterHandler, IPoin
 
     private void SendToBack(UGUIStackMotionCard card)
     {
-        if (card == null || mIsSendToBackAnimating)
+        if (card == null || !mCards.Remove(card))
         {
             return;
         }
 
-        mIsSendToBackAnimating = true;
-        card.PlaySendToBackTransition(
-            mSendToBackOutDuration,
-            mSendToBackTravelDistance,
-            () =>
-            {
-                if (!mCards.Remove(card))
-                {
-                    mIsSendToBackAnimating = false;
-                    return;
-                }
-
-                mCards.Insert(0, card);
-                ApplyStackLayout(true, mSendToBackRecoverDuration, mSendToBackRecoverDuration);
-                mSendToBackGateTween?.Kill();
-                mSendToBackGateTween = DOVirtual.DelayedCall(
-                    mSendToBackRecoverDuration,
-                    () => mIsSendToBackAnimating = false,
-                    false);
-            });
+        card.SnapToNeutral();
+        mCards.Insert(0, card);
+        ApplyStackLayout(true);
     }
 
-    private void ApplyStackLayout(bool animate, float layoutDuration, float returnDuration)
+    private void ApplyStackLayout(bool animate)
     {
         var count = mCards.Count;
         if (count == 0)
@@ -243,7 +213,7 @@ public class UGUIStackMotionReplica : MonoBehaviour, IPointerEnterHandler, IPoin
 
             card.SetInteractionEnabled(i == count - 1);
             card.SetSiblingIndex(i);
-            card.ApplyLayout(rotationZ, scale, animate, layoutDuration, returnDuration);
+            card.ApplyLayout(rotationZ, scale, animate, mLayoutDuration);
         }
     }
 
