@@ -578,8 +578,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u6D4B\u8BD5\u6D4B\u8BD5\u6D4B"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 14eef31d824ef1c4c8ba151ef6995043, type: 2}
-  m_sharedMaterial: {fileID: -2047394312705457421, guid: 14eef31d824ef1c4c8ba151ef6995043, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 49677f338e156e342a7ee21bf0bf10da, type: 2}
+  m_sharedMaterial: {fileID: -5979713651411808158, guid: 49677f338e156e342a7ee21bf0bf10da, type: 2}
   m_fontSharedMaterials:
   - {fileID: 0}
   m_fontMaterial: {fileID: 0}
@@ -1028,6 +1028,8 @@ MonoBehaviour:
   defaultPortraitBundle: dialogue_portrait
   visualFadeDuration: 0.2
   hidePortraitWhenMissing: 1
+  trimTransparentPixelsForPortrait: 0
+  portraitAlphaThreshold: 10
   backgroundMappings:
   - key: main_menu
     assetName: "\u4E3B\u83DC\u5355"

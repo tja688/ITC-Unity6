@@ -148,6 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecaded691bdee5a49836da8e2da5ab36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuFlowLauncher
+  autoRunDialogueDemoFlow: 0
+  autoRunDelaySeconds: 0.8
+  waitPanelOpenTimeoutSeconds: 8
 --- !u!4 &809546540
 Transform:
   m_ObjectHideFlags: 0

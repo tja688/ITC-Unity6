@@ -6,7 +6,7 @@ using UnityEngine;
 public sealed class MainMenuFlowLauncher : MonoBehaviour, IController
 {
     [Header("Dialogue Demo Flow")]
-    [SerializeField] private bool autoRunDialogueDemoFlow = true;
+    [SerializeField] private bool autoRunDialogueDemoFlow = false;
     [SerializeField] private float autoRunDelaySeconds = 0.8f;
     [SerializeField] private float waitPanelOpenTimeoutSeconds = 8f;
 
