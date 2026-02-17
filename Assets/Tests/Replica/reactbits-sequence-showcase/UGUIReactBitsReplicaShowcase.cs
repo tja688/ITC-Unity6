@@ -23,6 +23,11 @@ public class UGUIReactBitsReplicaShowcase : MonoBehaviour
 
     private static readonly string[] sEffectNames =
     {
+        "Dock",
+        "ElasticSlider",
+        "GlassIcons",
+        "ReflectiveCard",
+        "SpotlightCard",
         "BounceCards",
         "BubbleMenu",
         "CardSwap",
@@ -33,6 +38,11 @@ public class UGUIReactBitsReplicaShowcase : MonoBehaviour
 
     private static readonly Type[] sEffectTypes =
     {
+        typeof(UGUIDockReplica),
+        typeof(UGUIElasticSliderReplica),
+        typeof(UGUIGlassIconsReplica),
+        typeof(UGUIReflectiveCardReplica),
+        typeof(UGUISpotlightCardReplica),
         typeof(UGUIBounceCardsReplica),
         typeof(UGUIBubbleMenuReplica),
         typeof(UGUICardSwapReplica),
@@ -136,7 +146,7 @@ public class UGUIReactBitsReplicaShowcase : MonoBehaviour
         frameShadow.effectDistance = new Vector2(0f, -9f);
 
         var header = UGUIReplicaUIFactory.CreatePanel("Header", frame, new Color(0.10f, 0.14f, 0.24f, 0.95f));
-        header.anchorMin = new Vector2(0f, 0.88f);
+        header.anchorMin = new Vector2(0f, 0.74f);
         header.anchorMax = new Vector2(1f, 1f);
         header.offsetMin = Vector2.zero;
         header.offsetMax = Vector2.zero;
@@ -144,49 +154,65 @@ public class UGUIReactBitsReplicaShowcase : MonoBehaviour
         var title = UGUIReplicaUIFactory.CreateText(
             "Title",
             header,
-            "React Bits Motion Replica - Unity UGUI",
-            34,
+            "React Bits Motion Replica  |  Unity UGUI",
+            32,
             FontStyle.Bold,
             TextAnchor.MiddleLeft,
             new Color(0.95f, 0.97f, 1f, 1f));
         var titleRect = (RectTransform)title.transform;
-        titleRect.anchorMin = new Vector2(0f, 0.5f);
-        titleRect.anchorMax = new Vector2(0f, 0.5f);
-        titleRect.pivot = new Vector2(0f, 0.5f);
-        titleRect.sizeDelta = new Vector2(760f, 54f);
-        titleRect.anchoredPosition = new Vector2(40f, 0f);
+        titleRect.anchorMin = new Vector2(0f, 1f);
+        titleRect.anchorMax = new Vector2(0f, 1f);
+        titleRect.pivot = new Vector2(0f, 1f);
+        titleRect.sizeDelta = new Vector2(920f, 52f);
+        titleRect.anchoredPosition = new Vector2(30f, -22f);
+
+        var helper = UGUIReplicaUIFactory.CreateText(
+            "Helper",
+            header,
+            "Press 1-9/0 or click tab to switch",
+            18,
+            FontStyle.Bold,
+            TextAnchor.UpperRight,
+            new Color(0.84f, 0.90f, 1f, 0.86f));
+        var helperRect = (RectTransform)helper.transform;
+        helperRect.anchorMin = new Vector2(1f, 1f);
+        helperRect.anchorMax = new Vector2(1f, 1f);
+        helperRect.pivot = new Vector2(1f, 1f);
+        helperRect.sizeDelta = new Vector2(460f, 34f);
+        helperRect.anchoredPosition = new Vector2(-30f, -26f);
 
         var tabRow = UGUIReplicaUIFactory.CreateRect("Tabs", header);
-        tabRow.anchorMin = new Vector2(0.5f, 0.5f);
-        tabRow.anchorMax = new Vector2(1f, 0.5f);
-        tabRow.pivot = new Vector2(1f, 0.5f);
-        tabRow.sizeDelta = new Vector2(920f, 76f);
-        tabRow.anchoredPosition = new Vector2(-24f, 0f);
+        tabRow.anchorMin = new Vector2(0f, 0f);
+        tabRow.anchorMax = new Vector2(1f, 0f);
+        tabRow.pivot = new Vector2(0.5f, 0f);
+        tabRow.offsetMin = new Vector2(24f, 10f);
+        tabRow.offsetMax = new Vector2(-24f, 116f);
 
-        var layout = UGUIReplicaUIFactory.EnsureComponent<HorizontalLayoutGroup>(tabRow.gameObject);
-        layout.childAlignment = TextAnchor.MiddleRight;
-        layout.childControlHeight = true;
-        layout.childControlWidth = false;
-        layout.childForceExpandHeight = false;
-        layout.childForceExpandWidth = false;
-        layout.spacing = 10f;
+        var layout = UGUIReplicaUIFactory.EnsureComponent<GridLayoutGroup>(tabRow.gameObject);
+        layout.startAxis = GridLayoutGroup.Axis.Horizontal;
+        layout.startCorner = GridLayoutGroup.Corner.UpperLeft;
+        layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        layout.constraintCount = 6;
+        layout.cellSize = new Vector2(214f, 44f);
+        layout.spacing = new Vector2(8f, 8f);
+        layout.childAlignment = TextAnchor.MiddleCenter;
 
         for (var i = 0; i < sEffectNames.Length; i++)
         {
             var index = i;
             var tabButton = UGUIReplicaUIFactory.CreateButton($"Tab_{sEffectNames[i]}", tabRow, sTabIdle);
             var tabRect = (RectTransform)tabButton.transform;
-            tabRect.sizeDelta = new Vector2(136f, 52f);
+            tabRect.sizeDelta = layout.cellSize;
 
             var le = UGUIReplicaUIFactory.EnsureComponent<LayoutElement>(tabButton.gameObject);
-            le.preferredWidth = 136f;
-            le.preferredHeight = 52f;
+            le.preferredWidth = layout.cellSize.x;
+            le.preferredHeight = layout.cellSize.y;
 
             var label = UGUIReplicaUIFactory.CreateText(
                 "Label",
                 tabButton.transform,
                 sEffectNames[i],
-                20,
+                18,
                 FontStyle.Bold,
                 TextAnchor.MiddleCenter,
                 sTabTextIdle);
@@ -203,7 +229,7 @@ public class UGUIReactBitsReplicaShowcase : MonoBehaviour
 
         var content = UGUIReplicaUIFactory.CreatePanel("Content", frame, new Color(0.06f, 0.08f, 0.15f, 0.82f));
         content.anchorMin = new Vector2(0f, 0f);
-        content.anchorMax = new Vector2(1f, 0.88f);
+        content.anchorMax = new Vector2(1f, 0.74f);
         content.offsetMin = new Vector2(24f, 22f);
         content.offsetMax = new Vector2(-24f, -22f);
 

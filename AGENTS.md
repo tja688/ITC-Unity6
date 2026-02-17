@@ -5,7 +5,7 @@
 A compact operating guide for an AI agent working in a Unity project.
 Goals: **safe changes, traceable commits, runnable project**.
 
-Core philosophy: **不管外面怎么乱，自己搞自己的，自己提交自己的。**
+Core philosophy: **Focus on your own changes and commit only your own work, regardless of external state.**
 
 ---
 
@@ -33,18 +33,18 @@ Core philosophy: **不管外面怎么乱，自己搞自己的，自己提交自�
 
 ### 3.0 Guiding Policy (Read This First)
 
-**核心原则：自己搞自己的，自己提交自己的。**
+**Core Principle: Isolate your own changes and commit them independently.**
 
-* 工作区脏不脏**不管**，直接拉远端。
-* 只追踪、提交**自己本次任务的修改**。
-* 遇到冲突**不解决**，跳过冲突文件，提交其余部分，汇报了事。
-* 绝不 `rebase`、绝不 `reset --hard`、绝不 `git add .`。
+* **Ignore** workspace cleanliness; pull from remote directly.
+* Only track and commit **your own modifications** for the current task.
+* **Do not resolve** conflicts; skip conflicted files, commit the remainder, and report.
+* Never `rebase`, never `reset --hard`, and never `git add .`.
 
 ---
 
 ### 3.1 Before Work (mandatory)
 
-#### 3.1.1 Record anchor (锚点)
+#### 3.1.1 Record anchor
 
 Record the current HEAD **before** doing anything. This is used later to identify which files YOU changed.
 
@@ -169,7 +169,7 @@ Optional body:
 
    * **Report** which files were skipped:
 
-     > "以下文件与远端有冲突，本次未提交：`FileA.cs`, `FileB.prefab`。你的本地修改仍在工作区，请手动处理。"
+     > "The following files have conflicts with the remote and were not committed: `FileA.cs`, `FileB.prefab`. Your local modifications remain in the workspace; please handle them manually."
 
    * If `git pull --ff-only` still fails after all this → **Hard Stop** (see 3.5.1).
 
