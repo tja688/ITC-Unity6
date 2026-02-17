@@ -1,30 +1,40 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(RectTransform))]
-public class UGUIReflectiveCardReplica : MonoBehaviour
+public class UGUIReflectiveCardReplica : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] private float mTiltStrength = 10f;
-    [SerializeField] private float mParallaxStrength = 16f;
+    [SerializeField] private float mTiltStrength = 12f;
+    [SerializeField] private float mParallaxStrength = 18f;
+    [SerializeField] private float mTiltSmooth = 8f;
 
     private RectTransform mRootRect;
     private RectTransform mCardRect;
     private RectTransform mSheenRect;
     private RectTransform mSpotlightRect;
+    private RectTransform mStageRect;
     private Image mCardImage;
     private Image mSheenImage;
     private Image mSpotlightImage;
+    private CanvasGroup mSheenGroup;
+    private CanvasGroup mSpotlightGroup;
 
     private readonly List<RectTransform> mNoiseStrips = new();
     private readonly List<float> mNoiseBaseY = new();
     private readonly List<Image> mNoiseImages = new();
 
     private Vector2 mCurrentTilt;
+    private Vector2 mTargetTilt;
     private Vector2 mCurrentOffset;
+    private Vector2 mTargetOffset;
     private Vector2 mLastMousePos;
     private float mMotionEnergy;
+    private float mHoverBlend; // 0 = not hovering, 1 = hovering
+    private bool mHovered;
+    private Vector2 mNormalizedMouse;
 
     private static Sprite sRadialSprite;
 
@@ -42,10 +52,22 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
 
     private void Update()
     {
+        UpdateHoverBlend();
+        UpdateMouseNormalized();
         UpdateMotionEnergy();
         UpdateCardTransform();
         UpdateSheenAndSpotlight();
         UpdateNoise();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        mHovered = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        mHovered = false;
     }
 
     private void BuildView()
@@ -77,7 +99,7 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
         var hint = UGUIReplicaUIFactory.CreateText(
             "Hint",
             backdrop,
-            "ReflectiveCard  |  Move cursor for metallic sheen",
+            "ReflectiveCard  |  Hover card for metallic sheen",
             30,
             FontStyle.Bold,
             TextAnchor.MiddleCenter,
@@ -89,18 +111,24 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
         hintRect.sizeDelta = new Vector2(1080f, 58f);
         hintRect.anchoredPosition = new Vector2(0f, -42f);
 
-        var stage = UGUIReplicaUIFactory.CreatePanel("Stage", backdrop, new Color(0.08f, 0.10f, 0.17f, 0.90f));
-        stage.anchorMin = new Vector2(0.5f, 0.5f);
-        stage.anchorMax = new Vector2(0.5f, 0.5f);
-        stage.pivot = new Vector2(0.5f, 0.5f);
-        stage.sizeDelta = new Vector2(1080f, 760f);
-        stage.anchoredPosition = new Vector2(0f, -20f);
+        // Stage (contains the card)
+        mStageRect = UGUIReplicaUIFactory.CreatePanel("Stage", backdrop, new Color(0.08f, 0.10f, 0.17f, 0.90f));
+        mStageRect.anchorMin = new Vector2(0.5f, 0.5f);
+        mStageRect.anchorMax = new Vector2(0.5f, 0.5f);
+        mStageRect.pivot = new Vector2(0.5f, 0.5f);
+        mStageRect.sizeDelta = new Vector2(1080f, 760f);
+        mStageRect.anchoredPosition = new Vector2(0f, -20f);
 
-        var stageShadow = UGUIReplicaUIFactory.EnsureComponent<Shadow>(stage.gameObject);
+        // Add raycast target to stage for hover detection
+        var stageImage = mStageRect.GetComponent<Image>();
+        stageImage.raycastTarget = true;
+
+        var stageShadow = UGUIReplicaUIFactory.EnsureComponent<Shadow>(mStageRect.gameObject);
         stageShadow.effectColor = new Color(0f, 0f, 0f, 0.35f);
         stageShadow.effectDistance = new Vector2(0f, -10f);
 
-        mCardRect = UGUIReplicaUIFactory.CreatePanel("Card", stage, new Color(0.13f, 0.15f, 0.20f, 1f));
+        // Card
+        mCardRect = UGUIReplicaUIFactory.CreatePanel("Card", mStageRect, new Color(0.13f, 0.15f, 0.20f, 1f));
         mCardRect.anchorMin = new Vector2(0.5f, 0.5f);
         mCardRect.anchorMax = new Vector2(0.5f, 0.5f);
         mCardRect.pivot = new Vector2(0.5f, 0.5f);
@@ -118,6 +146,7 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
 
         var overlayTint = UGUIReplicaUIFactory.CreatePanel("OverlayTint", mCardRect, new Color(0.90f, 0.92f, 0.98f, 0.08f));
         Stretch(overlayTint);
+        overlayTint.GetComponent<Image>().raycastTarget = false;
 
         var content = UGUIReplicaUIFactory.CreateRect("Content", mCardRect);
         Stretch(content);
@@ -137,17 +166,32 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
         header.sizeDelta = new Vector2(-44f, 70f);
         header.anchoredPosition = new Vector2(0f, -26f);
 
+        // Separator line under header
+        var headerLine = UGUIReplicaUIFactory.CreatePanel("HeaderLine", content, new Color(1f, 1f, 1f, 0.18f));
+        headerLine.anchorMin = new Vector2(0f, 1f);
+        headerLine.anchorMax = new Vector2(1f, 1f);
+        headerLine.pivot = new Vector2(0.5f, 1f);
+        headerLine.sizeDelta = new Vector2(-44f, 1f);
+        headerLine.anchoredPosition = new Vector2(0f, -96f);
+        headerLine.GetComponent<Image>().raycastTarget = false;
+
         var secure = UGUIReplicaUIFactory.CreatePanel("SecureBadge", header, new Color(1f, 1f, 1f, 0.14f));
         secure.anchorMin = new Vector2(0f, 0.5f);
         secure.anchorMax = new Vector2(0f, 0.5f);
         secure.pivot = new Vector2(0f, 0.5f);
         secure.sizeDelta = new Vector2(170f, 34f);
         secure.anchoredPosition = new Vector2(0f, 0f);
+
+        // Secure badge border
+        var secureBorder = UGUIReplicaUIFactory.EnsureComponent<Outline>(secure.gameObject);
+        secureBorder.effectColor = new Color(1f, 1f, 1f, 0.18f);
+        secureBorder.effectDistance = new Vector2(1f, -1f);
+
         var secureLabel = UGUIReplicaUIFactory.CreateText(
             "Label",
             secure,
-            "SECURE ACCESS",
-            15,
+            "\u25CF  SECURE ACCESS",
+            14,
             FontStyle.Bold,
             TextAnchor.MiddleCenter,
             new Color(0.94f, 0.96f, 1f, 0.92f));
@@ -179,16 +223,25 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
             "Role",
             content,
             "SENIOR DEVELOPER",
-            18,
+            16,
             FontStyle.Bold,
             TextAnchor.MiddleCenter,
-            new Color(0.92f, 0.94f, 1f, 0.68f));
+            new Color(0.92f, 0.94f, 1f, 0.58f));
         var roleRect = (RectTransform)role.transform;
         roleRect.anchorMin = new Vector2(0.5f, 0.5f);
         roleRect.anchorMax = new Vector2(0.5f, 0.5f);
         roleRect.pivot = new Vector2(0.5f, 0.5f);
         roleRect.sizeDelta = new Vector2(300f, 40f);
         roleRect.anchoredPosition = new Vector2(0f, -68f);
+
+        // Footer separator
+        var footerLine = UGUIReplicaUIFactory.CreatePanel("FooterLine", content, new Color(1f, 1f, 1f, 0.18f));
+        footerLine.anchorMin = new Vector2(0f, 0f);
+        footerLine.anchorMax = new Vector2(1f, 0f);
+        footerLine.pivot = new Vector2(0.5f, 0f);
+        footerLine.sizeDelta = new Vector2(-44f, 1f);
+        footerLine.anchoredPosition = new Vector2(0f, 108f);
+        footerLine.GetComponent<Image>().raycastTarget = false;
 
         var footer = UGUIReplicaUIFactory.CreateRect("Footer", content);
         footer.anchorMin = new Vector2(0f, 0f);
@@ -201,10 +254,10 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
             "IDLabel",
             footer,
             "ID NUMBER",
-            12,
+            11,
             FontStyle.Bold,
             TextAnchor.UpperLeft,
-            new Color(0.94f, 0.96f, 1f, 0.55f));
+            new Color(0.94f, 0.96f, 1f, 0.50f));
         var idLabelRect = (RectTransform)idLabel.transform;
         idLabelRect.anchorMin = new Vector2(0f, 1f);
         idLabelRect.anchorMax = new Vector2(0f, 1f);
@@ -216,7 +269,7 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
             "IDValue",
             footer,
             "8901-2345-6789",
-            22,
+            20,
             FontStyle.Bold,
             TextAnchor.LowerLeft,
             new Color(0.94f, 0.97f, 1f, 0.90f));
@@ -230,11 +283,11 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
         var mark = UGUIReplicaUIFactory.CreateText(
             "Fingerprint",
             footer,
-            "ID",
-            32,
+            "\u25A3",
+            38,
             FontStyle.Bold,
             TextAnchor.MiddleCenter,
-            new Color(0.95f, 0.98f, 1f, 0.46f));
+            new Color(0.95f, 0.98f, 1f, 0.36f));
         var markRect = (RectTransform)mark.transform;
         markRect.anchorMin = new Vector2(1f, 0.5f);
         markRect.anchorMax = new Vector2(1f, 0.5f);
@@ -247,6 +300,10 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
     {
         var noiseRoot = UGUIReplicaUIFactory.CreateRect("Noise", parent);
         Stretch(noiseRoot);
+
+        // Add mask so noise strips don't overflow the card
+        UGUIReplicaUIFactory.EnsureComponent<RectMask2D>(noiseRoot.gameObject);
+
         mNoiseStrips.Clear();
         mNoiseBaseY.Clear();
         mNoiseImages.Clear();
@@ -263,6 +320,7 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
             strip.sizeDelta = new Vector2(mCardRect.sizeDelta.x + 56f, height + 2f);
             var y = i * height;
             strip.anchoredPosition = new Vector2(0f, y);
+            strip.GetComponent<Image>().raycastTarget = false;
 
             mNoiseStrips.Add(strip);
             mNoiseBaseY.Add(y);
@@ -272,15 +330,19 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
 
     private void BuildSheen(RectTransform parent)
     {
-        mSheenRect = UGUIReplicaUIFactory.CreatePanel("Sheen", parent, new Color(1f, 1f, 1f, 0.18f));
+        mSheenRect = UGUIReplicaUIFactory.CreatePanel("Sheen", parent, new Color(1f, 1f, 1f, 0.22f));
         mSheenRect.anchorMin = new Vector2(0.5f, 0.5f);
         mSheenRect.anchorMax = new Vector2(0.5f, 0.5f);
         mSheenRect.pivot = new Vector2(0.5f, 0.5f);
-        mSheenRect.sizeDelta = new Vector2(180f, 820f);
+        mSheenRect.sizeDelta = new Vector2(160f, 820f);
         mSheenRect.anchoredPosition = new Vector2(-220f, 0f);
         mSheenRect.localRotation = Quaternion.Euler(0f, 0f, 24f);
         mSheenImage = mSheenRect.GetComponent<Image>();
         mSheenImage.raycastTarget = false;
+
+        mSheenGroup = UGUIReplicaUIFactory.EnsureComponent<CanvasGroup>(mSheenRect.gameObject);
+        mSheenGroup.alpha = 0f;
+        mSheenGroup.blocksRaycasts = false;
     }
 
     private void BuildSpotlight(RectTransform parent)
@@ -296,77 +358,101 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
         mSpotlightImage.sprite = GetOrCreateRadialSprite();
         mSpotlightImage.color = new Color(0.82f, 0.88f, 1f, 0.16f);
         mSpotlightImage.raycastTarget = false;
+
+        mSpotlightGroup = UGUIReplicaUIFactory.EnsureComponent<CanvasGroup>(mSpotlightRect.gameObject);
+        mSpotlightGroup.alpha = 0f;
+        mSpotlightGroup.blocksRaycasts = false;
+    }
+
+    private void UpdateHoverBlend()
+    {
+        var target = mHovered ? 1f : 0f;
+        mHoverBlend = Mathf.Lerp(mHoverBlend, target, Time.unscaledDeltaTime * 4f);
+    }
+
+    private void UpdateMouseNormalized()
+    {
+        if (mCardRect == null) return;
+
+        _ = RectTransformUtility.ScreenPointToLocalPointInRectangle(mCardRect, Input.mousePosition, null, out var localPos);
+        var halfW = Mathf.Max(1f, mCardRect.rect.width * 0.5f);
+        var halfH = Mathf.Max(1f, mCardRect.rect.height * 0.5f);
+        mNormalizedMouse = new Vector2(
+            Mathf.Clamp(localPos.x / halfW, -1f, 1f),
+            Mathf.Clamp(localPos.y / halfH, -1f, 1f));
     }
 
     private void UpdateMotionEnergy()
     {
         var mouse = (Vector2)Input.mousePosition;
-        var speed = Vector2.Distance(mouse, mLastMousePos) / 90f;
-        mMotionEnergy = Mathf.Lerp(mMotionEnergy, Mathf.Clamp01(speed), Time.unscaledDeltaTime * 7f);
+        var speed = Vector2.Distance(mouse, mLastMousePos) / 60f;
+        mMotionEnergy = Mathf.Lerp(mMotionEnergy, Mathf.Clamp01(speed), Time.unscaledDeltaTime * 10f);
         mLastMousePos = mouse;
     }
 
     private void UpdateCardTransform()
     {
-        if (mCardRect == null)
-        {
-            return;
-        }
+        if (mCardRect == null) return;
 
-        _ = RectTransformUtility.ScreenPointToLocalPointInRectangle(mCardRect, Input.mousePosition, null, out var localPos);
-        var halfW = Mathf.Max(1f, mCardRect.rect.width * 0.5f);
-        var halfH = Mathf.Max(1f, mCardRect.rect.height * 0.5f);
-        var normalized = new Vector2(
-            Mathf.Clamp(localPos.x / halfW, -1f, 1f),
-            Mathf.Clamp(localPos.y / halfH, -1f, 1f));
+        // Tilt towards mouse position with hover falloff
+        mTargetTilt = new Vector2(
+            -mNormalizedMouse.y * mTiltStrength,
+            mNormalizedMouse.x * mTiltStrength) * mHoverBlend;
 
-        var targetTilt = new Vector2(-normalized.y * mTiltStrength, normalized.x * mTiltStrength);
-        var targetOffset = new Vector2(normalized.x * mParallaxStrength, normalized.y * (mParallaxStrength * 0.8f));
+        mTargetOffset = new Vector2(
+            mNormalizedMouse.x * mParallaxStrength,
+            mNormalizedMouse.y * (mParallaxStrength * 0.7f)) * mHoverBlend;
 
-        mCurrentTilt = Vector2.Lerp(mCurrentTilt, targetTilt, Time.unscaledDeltaTime * 6f);
-        mCurrentOffset = Vector2.Lerp(mCurrentOffset, targetOffset, Time.unscaledDeltaTime * 5f);
+        mCurrentTilt = Vector2.Lerp(mCurrentTilt, mTargetTilt, Time.unscaledDeltaTime * mTiltSmooth);
+        mCurrentOffset = Vector2.Lerp(mCurrentOffset, mTargetOffset, Time.unscaledDeltaTime * (mTiltSmooth * 0.8f));
 
-        mCardRect.localRotation = Quaternion.Euler(mCurrentTilt.x, mCurrentTilt.y, -normalized.x * 2f);
+        mCardRect.localRotation = Quaternion.Euler(mCurrentTilt.x, mCurrentTilt.y, -mNormalizedMouse.x * 1.5f * mHoverBlend);
         mCardRect.anchoredPosition = mCurrentOffset;
     }
 
     private void UpdateSheenAndSpotlight()
     {
-        _ = RectTransformUtility.ScreenPointToLocalPointInRectangle(mCardRect, Input.mousePosition, null, out var localPos);
-        var halfW = Mathf.Max(1f, mCardRect.rect.width * 0.5f);
-        var halfH = Mathf.Max(1f, mCardRect.rect.height * 0.5f);
-        var normalized = new Vector2(
-            Mathf.Clamp(localPos.x / halfW, -1f, 1f),
-            Mathf.Clamp(localPos.y / halfH, -1f, 1f));
+        if (mSheenRect == null || mSpotlightRect == null) return;
 
-        var sweep = Mathf.Sin(Time.unscaledTime * 0.8f);
-        var sheenX = Mathf.Lerp(-250f, 250f, (sweep + 1f) * 0.5f) + (normalized.x * 100f);
+        // Sheen follows mouse X with a subtle auto-sweep
+        var autoSweep = Mathf.Sin(Time.unscaledTime * 0.6f) * 40f;
+        var mouseInfluence = mNormalizedMouse.x * 180f;
+        var sheenX = (autoSweep + mouseInfluence) * mHoverBlend;
         mSheenRect.anchoredPosition = new Vector2(sheenX, 0f);
-        mSheenImage.color = new Color(1f, 1f, 1f, Mathf.Lerp(0.12f, 0.30f, mMotionEnergy));
 
-        mSpotlightRect.anchoredPosition = new Vector2(normalized.x * 100f, normalized.y * 130f);
-        mSpotlightImage.color = new Color(0.82f, 0.88f, 1f, Mathf.Lerp(0.12f, 0.34f, mMotionEnergy));
+        // Sheen visibility driven by hover + motion
+        var sheenAlpha = mHoverBlend * Mathf.Lerp(0.4f, 1f, mMotionEnergy);
+        mSheenGroup.alpha = Mathf.Lerp(mSheenGroup.alpha, sheenAlpha, Time.unscaledDeltaTime * 6f);
+        mSheenImage.color = new Color(1f, 1f, 1f, Mathf.Lerp(0.15f, 0.35f, mMotionEnergy));
 
-        mCardImage.color = Color.Lerp(
-            new Color(0.12f, 0.15f, 0.20f, 1f),
-            new Color(0.26f, 0.30f, 0.38f, 1f),
-            mMotionEnergy * 0.45f);
+        // Spotlight follows mouse
+        var spotTarget = new Vector2(mNormalizedMouse.x * 120f, mNormalizedMouse.y * 160f) * mHoverBlend;
+        mSpotlightRect.anchoredPosition = Vector2.Lerp(mSpotlightRect.anchoredPosition, spotTarget, Time.unscaledDeltaTime * 8f);
+        var spotAlpha = mHoverBlend * Mathf.Lerp(0.2f, 0.6f, mMotionEnergy);
+        mSpotlightGroup.alpha = Mathf.Lerp(mSpotlightGroup.alpha, spotAlpha, Time.unscaledDeltaTime * 6f);
+        mSpotlightImage.color = new Color(0.82f, 0.88f, 1f, 0.5f);
+
+        // Card base color responds to hover + motion
+        var restColor = new Color(0.12f, 0.15f, 0.20f, 1f);
+        var activeColor = new Color(0.22f, 0.26f, 0.34f, 1f);
+        mCardImage.color = Color.Lerp(restColor, activeColor, mHoverBlend * Mathf.Lerp(0.3f, 1f, mMotionEnergy));
     }
 
     private void UpdateNoise()
     {
+        var effectStrength = mHoverBlend;
         for (var i = 0; i < mNoiseStrips.Count; i++)
         {
             var strip = mNoiseStrips[i];
-            var wave = Mathf.Sin((Time.unscaledTime * 8.2f) + (i * 0.52f));
+            var wave = Mathf.Sin((Time.unscaledTime * 7f) + (i * 0.52f));
             var direction = (i % 2 == 0) ? 1f : -1f;
-            var offset = direction * wave * (4f + (14f * mMotionEnergy));
+            var offset = direction * wave * (2f + (16f * mMotionEnergy)) * effectStrength;
 
             strip.anchoredPosition = new Vector2(offset, mNoiseBaseY[i]);
 
-            var alphaWave = 0.55f + (0.45f * Mathf.Sin((Time.unscaledTime * 10.2f) + (i * 0.73f)));
+            var alphaWave = 0.55f + (0.45f * Mathf.Sin((Time.unscaledTime * 9f) + (i * 0.73f)));
             var color = mNoiseImages[i].color;
-            color.a = Mathf.Lerp(0.01f, 0.16f, mMotionEnergy) * alphaWave;
+            color.a = Mathf.Lerp(0.005f, 0.12f, mMotionEnergy * effectStrength) * alphaWave;
             mNoiseImages[i].color = color;
         }
     }
@@ -387,7 +473,7 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
         };
 
         var center = (size - 1) * 0.5f;
-        var maxDistance = Mathf.Sqrt((center * center) + (center * center));
+        var maxDistance = center; // Use radius not diagonal for circular gradient
 
         for (var y = 0; y < size; y++)
         {
@@ -396,8 +482,9 @@ public class UGUIReflectiveCardReplica : MonoBehaviour
                 var dx = x - center;
                 var dy = y - center;
                 var distance = Mathf.Sqrt((dx * dx) + (dy * dy)) / maxDistance;
+                // Softer falloff: cubic ease out for smooth gradient
                 var alpha = Mathf.Clamp01(1f - distance);
-                alpha *= alpha;
+                alpha = alpha * alpha * (3f - 2f * alpha); // smoothstep
                 texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
             }
         }

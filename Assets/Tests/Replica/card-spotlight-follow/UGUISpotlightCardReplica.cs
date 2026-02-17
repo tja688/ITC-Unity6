@@ -16,6 +16,8 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
     private Vector2 mTargetLocalPos;
     private Vector2 mCurrentLocalPos;
     private bool mHovered;
+    private float mTargetAlpha;
+    private float mCurrentAlpha;
 
     private static Sprite sRadialSprite;
 
@@ -37,6 +39,8 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
         mHovered = false;
         mTargetLocalPos = Vector2.zero;
         mCurrentLocalPos = Vector2.zero;
+        mCurrentAlpha = 0f;
+        mTargetAlpha = 0f;
         if (mSpotlightGroup != null)
         {
             mSpotlightGroup.alpha = 0f;
@@ -50,20 +54,22 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
             return;
         }
 
-        mCurrentLocalPos = Vector2.Lerp(mCurrentLocalPos, mTargetLocalPos, Time.unscaledDeltaTime * 10f);
+        // Smooth spotlight position tracking — slower lerp for organic, fluid movement
+        mCurrentLocalPos = Vector2.Lerp(mCurrentLocalPos, mTargetLocalPos, Time.unscaledDeltaTime * 6f);
         mSpotlightRect.anchoredPosition = mCurrentLocalPos;
 
-        var targetAlpha = mHovered ? 0.72f : 0f;
-        mSpotlightGroup.alpha = Mathf.Lerp(mSpotlightGroup.alpha, targetAlpha, Time.unscaledDeltaTime * 9f);
+        // Smooth opacity transition matching CSS transition: opacity 0.5s ease
+        mTargetAlpha = mHovered ? 0.6f : 0f;
+        mCurrentAlpha = Mathf.Lerp(mCurrentAlpha, mTargetAlpha, Time.unscaledDeltaTime * 4f);
+        mSpotlightGroup.alpha = mCurrentAlpha;
 
+        // Border glow transition — smooth and gradual
         if (mBorderImage != null)
         {
-            mBorderImage.color = Color.Lerp(
-                mBorderImage.color,
-                mHovered
-                    ? new Color(0.44f, 0.86f, 1f, 0.88f)
-                    : new Color(0.30f, 0.38f, 0.48f, 0.92f),
-                Time.unscaledDeltaTime * 8f);
+            var targetBorderColor = mHovered
+                ? new Color(0.44f, 0.86f, 1f, 0.72f)
+                : new Color(0.22f, 0.28f, 0.38f, 0.70f);
+            mBorderImage.color = Color.Lerp(mBorderImage.color, targetBorderColor, Time.unscaledDeltaTime * 4f);
         }
     }
 
@@ -112,6 +118,7 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
         hintRect.sizeDelta = new Vector2(980f, 58f);
         hintRect.anchoredPosition = new Vector2(0f, -42f);
 
+        // Card container — receives pointer events
         mCardRect = UGUIReplicaUIFactory.CreatePanel("SpotlightCard", backdrop, new Color(0.07f, 0.09f, 0.16f, 0.96f));
         mCardRect.anchorMin = new Vector2(0.5f, 0.5f);
         mCardRect.anchorMax = new Vector2(0.5f, 0.5f);
@@ -119,15 +126,20 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
         mCardRect.sizeDelta = new Vector2(900f, 500f);
         mCardRect.anchoredPosition = new Vector2(0f, -24f);
 
-        mBorderImage = UGUIReplicaUIFactory.CreatePanel("Border", mCardRect, new Color(0.30f, 0.38f, 0.48f, 0.92f)).GetComponent<Image>();
-        Stretch(mBorderImage.rectTransform);
-        mBorderImage.rectTransform.offsetMin = new Vector2(2f, 2f);
-        mBorderImage.rectTransform.offsetMax = new Vector2(-2f, -2f);
+        // Rounded border effect — outer frame
+        var borderFrame = UGUIReplicaUIFactory.CreatePanel("BorderFrame", mCardRect, new Color(0.22f, 0.28f, 0.38f, 0.70f));
+        Stretch(borderFrame.GetComponent<RectTransform>());
+        mBorderImage = borderFrame.GetComponent<Image>();
+        mBorderImage.raycastTarget = false;
 
+        // Inner card background (sits inside border)
         var inner = UGUIReplicaUIFactory.CreatePanel("Inner", mCardRect, new Color(0.05f, 0.07f, 0.13f, 0.98f));
         Stretch(inner);
-        inner.offsetMin = new Vector2(6f, 6f);
-        inner.offsetMax = new Vector2(-6f, -6f);
+        inner.offsetMin = new Vector2(2f, 2f);
+        inner.offsetMax = new Vector2(-2f, -2f);
+
+        // Mask to contain the spotlight effect within the card
+        UGUIReplicaUIFactory.EnsureComponent<RectMask2D>(inner.gameObject);
 
         var title = UGUIReplicaUIFactory.CreateText(
             "Title",
@@ -151,7 +163,7 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
             28,
             FontStyle.Normal,
             TextAnchor.UpperLeft,
-            new Color(0.84f, 0.90f, 1f, 0.86f));
+            new Color(0.84f, 0.90f, 1f, 0.72f));
         var bodyRect = (RectTransform)body.transform;
         bodyRect.anchorMin = new Vector2(0f, 0f);
         bodyRect.anchorMax = new Vector2(1f, 1f);
@@ -159,16 +171,17 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
         bodyRect.sizeDelta = new Vector2(-72f, -180f);
         bodyRect.anchoredPosition = new Vector2(36f, -140f);
 
+        // Spotlight effect — large soft radial gradient
         mSpotlightRect = UGUIReplicaUIFactory.CreateRect("Spotlight", inner);
         mSpotlightRect.anchorMin = new Vector2(0.5f, 0.5f);
         mSpotlightRect.anchorMax = new Vector2(0.5f, 0.5f);
         mSpotlightRect.pivot = new Vector2(0.5f, 0.5f);
-        mSpotlightRect.sizeDelta = new Vector2(620f, 620f);
+        mSpotlightRect.sizeDelta = new Vector2(700f, 700f);
         mSpotlightRect.anchoredPosition = Vector2.zero;
 
         var spotlightImage = UGUIReplicaUIFactory.EnsureComponent<Image>(mSpotlightRect.gameObject);
         spotlightImage.sprite = GetOrCreateRadialSprite();
-        spotlightImage.color = new Color(0.48f, 0.84f, 1f, 0.66f);
+        spotlightImage.color = new Color(0.48f, 0.84f, 1f, 0.5f);
         spotlightImage.raycastTarget = false;
 
         mSpotlightGroup = UGUIReplicaUIFactory.EnsureComponent<CanvasGroup>(mSpotlightRect.gameObject);
@@ -189,10 +202,6 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
             return;
         }
 
-        var halfW = Mathf.Max(1f, mCardRect.rect.width * 0.5f);
-        var halfH = Mathf.Max(1f, mCardRect.rect.height * 0.5f);
-        localPos.x = Mathf.Clamp(localPos.x, -halfW + 40f, halfW - 40f);
-        localPos.y = Mathf.Clamp(localPos.y, -halfH + 40f, halfH - 40f);
         mTargetLocalPos = localPos;
     }
 
@@ -212,7 +221,7 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
         };
 
         var center = (size - 1) * 0.5f;
-        var maxDistance = Mathf.Sqrt((center * center) + (center * center));
+        var maxDistance = center; // Use radius for circular gradient
 
         for (var y = 0; y < size; y++)
         {
@@ -221,8 +230,11 @@ public class UGUISpotlightCardReplica : MonoBehaviour, IPointerEnterHandler, IPo
                 var dx = x - center;
                 var dy = y - center;
                 var distance = Mathf.Sqrt((dx * dx) + (dy * dy)) / maxDistance;
+                // Softer falloff: smoothstep for natural CSS radial-gradient feel
                 var alpha = Mathf.Clamp01(1f - distance);
-                alpha *= alpha;
+                alpha = alpha * alpha * (3f - 2f * alpha); // smoothstep
+                // Additional softening at edges (transparency at 80% from original CSS)
+                alpha *= Mathf.Clamp01(1f - (distance * 0.8f));
                 texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
             }
         }
