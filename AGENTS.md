@@ -1,9 +1,11 @@
-# AGENTS.md — Unity Base (Git-first, Stable Workflow)
+# AGENTS.md — Unity Base (Git-first, Isolate-Own-Changes)
 
 ## 0. Scope
 
 A compact operating guide for an AI agent working in a Unity project.
-Goals: **safe changes, traceable commits, runnable project**, and **stable VCS automation**.
+Goals: **safe changes, traceable commits, runnable project**.
+
+Core philosophy: **不管外面怎么乱，自己搞自己的，自己提交自己的。**
 
 ---
 
@@ -12,7 +14,8 @@ Goals: **safe changes, traceable commits, runnable project**, and **stable VCS a
 * Prefer **small, reversible** changes.
 * **Show evidence** whenever anything is ambiguous: `status` / `diff` / logs.
 * Do not claim actions you did not actually perform.
-* Keep commits focused: **only task-related diffs** in the task commit.
+* Only commit **your own modifications** — never bundle others' uncommitted changes.
+* If in doubt, **skip and report** rather than force-resolve.
 
 ---
 
@@ -26,84 +29,43 @@ Goals: **safe changes, traceable commits, runnable project**, and **stable VCS a
 
 ---
 
-## 3. Git Mode (Stable / Noise-Resistant)
+## 3. Git Mode (Isolate Own Changes)
 
 ### 3.0 Guiding Policy (Read This First)
 
-This project prioritizes **stability over clever history operations**:
+**核心原则：自己搞自己的，自己提交自己的。**
 
-* Avoid `rebase` in routine automation (too easy to fail on “noise”).
-* Prefer **fast-forward only** sync.
-* If the branch is diverged and cannot fast-forward: **stop and report**.
+* 工作区脏不脏**不管**，直接拉远端。
+* 只追踪、提交**自己本次任务的修改**。
+* 遇到冲突**不解决**，跳过冲突文件，提交其余部分，汇报了事。
+* 绝不 `rebase`、绝不 `reset --hard`、绝不 `git add .`。
 
-### 3.1 Before Work (always, mandatory sequence)
+---
 
-#### 3.1.1 Snapshot current state (evidence)
+### 3.1 Before Work (mandatory)
 
-* `git status`
-* `git status --porcelain`
-* Optional (if needed): `git branch --show-current` and `git rev-parse --short HEAD`
+#### 3.1.1 Record anchor (锚点)
 
-#### 3.1.2 If working tree is NOT clean → isolate preexisting changes (mandatory)
+Record the current HEAD **before** doing anything. This is used later to identify which files YOU changed.
 
-If `git status --porcelain` is non-empty, do **NOT** blindly hide everything.
-Goal: keep **preexisting tracked edits** from polluting the task, while allowing **useful untracked files** to remain available when needed.
+```bash
+git rev-parse HEAD
+```
 
-**A) Default: stash tracked changes only (recommended)**
-Use this when there are **staged/unstaged tracked changes**, and you do not explicitly need to hide untracked files.
+Save this hash as `$BASE` (in memory / variable).
 
-1. Create a stash **without** `-u`:
+#### 3.1.2 Pull remote (fast-forward only)
 
-   * `git stash push -m "pre-task stash (tracked only): <task-brief>"`
-2. Record the stash ref:
+```bash
+git pull --ff-only
+```
 
-   * `git stash list` (capture top entry)
-3. Verify “clean enough for work”:
+* **Succeeded** → continue to work.
+* **Failed** (conflict / diverged / "local changes would be overwritten") →
+  **Hard Stop**: report evidence (see 3.5.1) and wait for user direction.
+  Do NOT attempt rebase, merge, or stash.
 
-   * `git status --porcelain` should contain **only** untracked (`?? ...`) entries, or be empty.
-4. Important:
-
-   * Preexisting changes are **NOT part of this task** by default.
-   * Untracked files that remain visible must **not** be added/committed unless the task explicitly creates/needs them.
-
-**B) Escalate: stash tracked + untracked (only when necessary)**
-Only use `-u` when **any** of the following is true:
-
-* You must make the working tree totally empty to avoid tooling confusion, OR
-* You expect `pull --ff-only` could fail due to “untracked working tree files would be overwritten”, OR
-* There are too many untracked files and they clearly block safe operation.
-
-Steps:
-
-1. Create a stash that includes untracked files:
-
-   * `git stash push -u -m "pre-task stash (with untracked): <task-brief>"`
-2. Record the stash ref:
-
-   * `git stash list` (capture top entry)
-3. Verify clean:
-
-   * `git status --porcelain` **must be empty**
-4. Important:
-
-   * If you need to keep using a particular file during the task, do **not** use `-u` unless necessary.
-
-> Rationale: “Not mine → isolate” prevents noise from blocking sync/commit, but **untracked files can be legitimate inputs** (e.g., newly created local files you still need). Defaulting to “tracked-only stash” preserves usability while keeping the task commit clean.
-
-#### 3.1.3 Sync with remote WITHOUT rebase (fast-forward only)
-
-1. Fetch:
-
-   * `git fetch --prune`
-2. Update local branch with fast-forward only:
-
-   * Preferred: `git pull --ff-only`
-   * Or explicit: `git merge --ff-only @{u}` (if upstream exists)
-
-If fast-forward fails (diverged history / no upstream / remote changed unexpectedly):
-
-* Stop and report evidence (see 3.4).
-* Do **not** attempt rebase automatically.
+> Note: dirty working tree is OK. If `pull --ff-only` can handle it, proceed; if it can't, stop.
 
 ---
 
@@ -111,118 +73,150 @@ If fast-forward fails (diverged history / no upstream / remote changed unexpecte
 
 * Keep diffs minimal and localized.
 * Avoid renames/moves unless required (Unity GUID churn risk).
-* Do not modify unrelated files “while you’re here”.
+* Do not modify unrelated files "while you're here".
 * If you must touch adjacent code for correctness, explain why in commit body.
 
 ---
 
-### 3.3 After Work (if anything changed) — MUST commit task changes
+### 3.3 After Work — Identify & Commit ONLY Own Changes
 
-This section is designed so the agent reliably produces a task commit.
+#### 3.3.1 Identify your own changes (diff against anchor)
 
-#### 3.3.1 Self-check (evidence)
+Use the `$BASE` hash recorded in 3.1.1 to find files **you** changed:
 
-* `git status`
-* `git diff`
-* If staged content exists: `git diff --staged`
+```bash
+git diff $BASE --name-only
+git diff $BASE --stat
+```
 
-#### 3.3.2 Stage intentionally
+This lists every file that differs from the anchor — these are **your modifications** for this task.
+Review the list; only files you intentionally changed should be committed.
 
-* Preferred (review-by-hunk): `git add -p`
-* Or targeted paths: `git add <paths>`
-* Avoid `git add .` unless you explicitly verified every file belongs to the task.
+#### 3.3.2 Stage only your files
 
-#### 3.3.3 Commit (mandatory if task changed anything)
+```bash
+git add <your-file-1> <your-file-2> ...
+```
 
-If there are staged changes:
+**Rules:**
 
-* `git commit -m "<type>(<scope>): <summary>"`
+* ✅ Use explicit file paths: `git add Assets/Scripts/Foo.cs Assets/Scripts/Foo.cs.meta`
+* ✅ For many files, use targeted paths from the diff list in 3.3.1.
+* ❌ Never `git add .` or `git add -A` — these may scoop up others' uncommitted files.
+* ❌ Never stage files you did not intentionally modify.
 
-If you need a body:
+#### 3.3.3 Commit
 
-* `git commit` then write:
+```bash
+git commit -m "<type>(<scope>): <summary>"
+```
 
-  * Why:
-  * Change:
-  * Verify:
-  * Risk/Rollback:
+Optional body:
 
-If nothing is staged but working tree has changes:
+* Why:
+* Change:
+* Verify:
+* Risk/Rollback:
 
-* This means you forgot to stage or staged nothing intentionally.
-* Re-run staging or explain why you are leaving changes uncommitted (rare; must be explicit).
+#### 3.3.4 Push (with conflict-skip logic)
 
-#### 3.3.4 Push (mandatory if commit created)
+1. **Try push:**
 
-* `git push`
+   ```bash
+   git push
+   ```
 
-If push is blocked by policy/permission:
+2. **Push succeeded** → done. ✅
 
-* Stop and report evidence (see 3.4.3).
+3. **Push rejected** (remote has new commits) → enter conflict-skip flow:
 
-#### 3.3.5 Restore pre-task stash (mandatory if created)
+   ```bash
+   # a) Fetch latest
+   git fetch
 
-If you created a “pre-task stash” in 3.1.2:
+   # b) Find files changed on remote since your anchor
+   git diff $BASE..origin/<branch> --name-only
+   ```
 
-* Preferred (safer): `git stash apply`
-  (keeps stash entry in case of conflict)
-* If apply succeeded cleanly and you want to drop it:
+   Compare this list against your committed files.
 
-  * `git stash drop stash@{0}` (only if you are certain it’s the right one)
-* Or if you explicitly want pop:
+   * **No overlap** → safe to pull and push:
 
-  * `git stash pop`
+     ```bash
+     git pull --ff-only
+     git push
+     ```
 
-If conflicts happen during apply/pop:
+   * **Overlap exists** (some files you changed were also changed on remote) →
+     these are **conflicted files**. Handle as follows:
 
-* Stop and report evidence (see 3.4.2).
-* Do not resolve unless explicitly told to.
+     ```bash
+     # c) Soft-reset your commit (undo commit but keep changes staged)
+     git reset --soft HEAD~1
 
-> Important: restoring the stash happens **after** task commit/push, so preexisting work does not pollute the task commit.
+     # d) Unstage the conflicted files
+     git reset HEAD -- <conflicted-file-1> <conflicted-file-2> ...
+
+     # e) Pull latest
+     git pull --ff-only
+
+     # f) Re-commit only the non-conflicted files (still staged)
+     git commit -m "<type>(<scope>): <summary> (excluding conflicted files)"
+
+     # g) Push
+     git push
+     ```
+
+   * **Report** which files were skipped:
+
+     > "以下文件与远端有冲突，本次未提交：`FileA.cs`, `FileB.prefab`。你的本地修改仍在工作区，请手动处理。"
+
+   * If `git pull --ff-only` still fails after all this → **Hard Stop** (see 3.5.1).
 
 ---
 
-### 3.4 Hard Stop Conditions & Required Report (Git)
+### 3.4 Post-Task Cleanup
 
-Whenever any command fails, do NOT “handwave”.
+* **Skipped files**: your local modifications remain in the working tree, untouched. Do NOT discard them.
+* **Others' uncommitted files**: if you edited a file that was already dirty before your task, and it's not in your `$BASE` diff, leave it alone — do not stage, commit, or revert it.
+* **No stash restore needed**: this workflow does not use stash.
+
+---
+
+### 3.5 Hard Stop Conditions & Required Report (Git)
+
+Whenever any command fails, do NOT "handwave".
 Always stop and report the following.
 
-#### 3.4.1 Sync failed (ff-only not possible)
+#### 3.5.1 Pull / Sync failed
 
 Report:
 
 * `git status`
 * `git branch --show-current`
 * `git log --oneline -5 --decorate`
-* `git remote -v`
 * The failed command + full error output
 * A short diagnosis:
 
-  * “branch diverged; cannot ff-only” OR “no upstream set” OR “auth blocked”
+  * "branch diverged; cannot ff-only" OR "local changes would be overwritten" OR "no upstream set" OR "auth blocked"
 
-#### 3.4.2 Stash restore conflict
-
-Report:
-
-* `git status`
-* `git diff`
-* Conflict file list
-* The stash entry you attempted to apply/pop (`git stash list`)
-  Wait for user direction unless explicitly told to resolve.
-
-#### 3.4.3 Commit/Push failed
+#### 3.5.2 Push failed (after conflict-skip flow)
 
 Report:
 
 * failed command + full error output
 * `git status`
-* `git diff --staged` (if commit failed)
-* `git config user.name` and `git config user.email` (if identity-related)
-* If signing might matter:
+* `git diff --staged` (if anything is staged)
+* List of files that were skipped due to remote conflict
 
-  * `git config commit.gpgsign`
-  * `git config gpg.format`
-    Wait for user direction unless explicitly told to fix config/hook requirements.
+#### 3.5.3 Commit failed
+
+Report:
+
+* failed command + full error output
+* `git status`
+* `git config user.name` and `git config user.email` (if identity-related)
+  Wait for user direction unless explicitly told to fix config/hook requirements.
 
 ---
 
@@ -263,7 +257,7 @@ Stop and report:
 ### 5.2 Safety Defaults
 
 * Avoid mass reimports / GUID churn.
-* Don’t rename/move assets unless required.
+* Don't rename/move assets unless required.
 * Prefer additive changes over destructive ones.
 
 ---
