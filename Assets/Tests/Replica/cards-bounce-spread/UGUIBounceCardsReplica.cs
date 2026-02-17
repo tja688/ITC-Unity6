@@ -15,6 +15,7 @@ public class UGUIBounceCardsReplica : MonoBehaviour
 
     private readonly List<BounceCardData> mCards = new();
     private RectTransform mContainer;
+    private int mCurrentHoveredIndex = -1;
 
     private static readonly Vector2[] sBaseOffsets =
     {
@@ -56,8 +57,9 @@ public class UGUIBounceCardsReplica : MonoBehaviour
         foreach (var card in mCards)
         {
             card.Rect.DOKill();
-            card.Visual.DOKill();
         }
+
+        mCurrentHoveredIndex = -1;
     }
 
     private void BuildView()
@@ -163,7 +165,6 @@ public class UGUIBounceCardsReplica : MonoBehaviour
         return new BounceCardData
         {
             Rect = cardRect,
-            Visual = cardRect,
             BasePos = sBaseOffsets[index],
             BaseRot = sBaseRotations[index]
         };
@@ -174,11 +175,11 @@ public class UGUIBounceCardsReplica : MonoBehaviour
         for (var i = 0; i < mCards.Count; i++)
         {
             var card = mCards[i];
-            card.Rect.localScale = Vector3.one;
+            card.Rect.localScale = Vector3.zero;
             card.Rect
-                .DOPunchScale(Vector3.one * 0.14f, 0.62f, 1, 0.45f)
+                .DOScale(Vector3.one, 0.7f)
                 .SetDelay(mEntryDelay + (i * mEntryStagger))
-                .SetEase(Ease.OutBack);
+                .SetEase(Ease.OutElastic);
         }
     }
 
@@ -188,68 +189,81 @@ public class UGUIBounceCardsReplica : MonoBehaviour
         {
             var card = mCards[i];
             card.Rect.DOKill();
-            card.Visual.DOKill();
             card.Rect.anchoredPosition = card.BasePos;
-            card.Visual.localRotation = Quaternion.Euler(0f, 0f, card.BaseRot);
+            card.Rect.localRotation = Quaternion.Euler(0f, 0f, card.BaseRot);
             card.Rect.localScale = Vector3.one;
         }
+
+        mCurrentHoveredIndex = -1;
     }
 
     internal void OnCardHovered(int hoveredIndex)
     {
+        // Skip redundant updates when hovering the same card
+        if (hoveredIndex == mCurrentHoveredIndex)
+        {
+            return;
+        }
+
+        mCurrentHoveredIndex = hoveredIndex;
+
         for (var i = 0; i < mCards.Count; i++)
         {
             var card = mCards[i];
-            card.Rect.DOKill();
-            card.Visual.DOKill();
 
             if (i == hoveredIndex)
             {
+                // Hovered card: straighten rotation, slight lift
                 card.Rect
-                    .DOAnchorPos(card.BasePos, 0.34f)
-                    .SetEase(Ease.OutBack);
-                card.Visual
-                    .DORotate(Vector3.zero, 0.34f)
-                    .SetEase(Ease.OutBack);
+                    .DOAnchorPos(card.BasePos + new Vector2(0f, 18f), 0.4f)
+                    .SetEase(Ease.OutBack, 1.4f)
+                    .SetId(card.Rect.GetInstanceID());
+                card.Rect
+                    .DOLocalRotate(Vector3.zero, 0.4f)
+                    .SetEase(Ease.OutBack, 1.4f)
+                    .SetId(card.Rect.GetInstanceID() + 10000);
                 continue;
             }
 
             var direction = i < hoveredIndex ? -1f : 1f;
             var distance = Mathf.Abs(i - hoveredIndex);
             var targetPos = card.BasePos + new Vector2(direction * mHoverPushOffset, 0f);
-            var delay = distance * 0.05f;
+            var delay = distance * 0.03f;
 
             card.Rect
-                .DOAnchorPos(targetPos, 0.34f)
+                .DOAnchorPos(targetPos, 0.4f)
                 .SetDelay(delay)
-                .SetEase(Ease.OutBack);
-            card.Visual
-                .DORotate(new Vector3(0f, 0f, card.BaseRot), 0.34f)
+                .SetEase(Ease.OutBack, 1.4f)
+                .SetId(card.Rect.GetInstanceID());
+            card.Rect
+                .DOLocalRotate(new Vector3(0f, 0f, card.BaseRot), 0.4f)
                 .SetDelay(delay)
-                .SetEase(Ease.OutBack);
+                .SetEase(Ease.OutBack, 1.4f)
+                .SetId(card.Rect.GetInstanceID() + 10000);
         }
     }
 
     internal void ResetCards()
     {
+        mCurrentHoveredIndex = -1;
+
         for (var i = 0; i < mCards.Count; i++)
         {
             var card = mCards[i];
-            card.Rect.DOKill();
-            card.Visual.DOKill();
             card.Rect
-                .DOAnchorPos(card.BasePos, 0.36f)
-                .SetEase(Ease.OutBack);
-            card.Visual
-                .DORotate(new Vector3(0f, 0f, card.BaseRot), 0.36f)
-                .SetEase(Ease.OutBack);
+                .DOAnchorPos(card.BasePos, 0.4f)
+                .SetEase(Ease.OutBack, 1.4f)
+                .SetId(card.Rect.GetInstanceID());
+            card.Rect
+                .DOLocalRotate(new Vector3(0f, 0f, card.BaseRot), 0.4f)
+                .SetEase(Ease.OutBack, 1.4f)
+                .SetId(card.Rect.GetInstanceID() + 10000);
         }
     }
 
     private struct BounceCardData
     {
         public RectTransform Rect;
-        public RectTransform Visual;
         public Vector2 BasePos;
         public float BaseRot;
     }

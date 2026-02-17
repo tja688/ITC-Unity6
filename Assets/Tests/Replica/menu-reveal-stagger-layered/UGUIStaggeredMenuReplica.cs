@@ -28,7 +28,6 @@ public class UGUIStaggeredMenuReplica : MonoBehaviour
     private RectTransform mSocialRoot;
     private Text mSocialTitle;
     private bool mOpen;
-    private bool mBusy;
 
     private Sequence mOpenSequence;
     private Sequence mCloseSequence;
@@ -81,6 +80,25 @@ public class UGUIStaggeredMenuReplica : MonoBehaviour
 
         CreateAmbientPlate("AmbientA", root, new Color(0.15f, 0.22f, 0.40f, 0.52f), new Vector2(-220f, 180f), 16f, 1100f, 460f);
         CreateAmbientPlate("AmbientB", root, new Color(0.08f, 0.35f, 0.56f, 0.42f), new Vector2(260f, -120f), -11f, 1280f, 520f);
+
+        // Dismiss overlay — always present in hierarchy, toggled via CanvasGroup
+        var dismissGo = new GameObject("Dismiss", typeof(RectTransform), typeof(Image), typeof(Button), typeof(CanvasGroup));
+        var dismissRect = dismissGo.GetComponent<RectTransform>();
+        dismissRect.SetParent(root, false);
+        Stretch(dismissRect);
+
+        var dismissImage = dismissGo.GetComponent<Image>();
+        dismissImage.color = new Color(0f, 0f, 0f, 0f);
+        dismissImage.raycastTarget = true;
+
+        mDismissButton = dismissGo.GetComponent<Button>();
+        mDismissButton.transition = Selectable.Transition.None;
+        mDismissButton.onClick.AddListener(CloseMenuIfOpen);
+
+        mDismissGroup = dismissGo.GetComponent<CanvasGroup>();
+        mDismissGroup.alpha = 1f;
+        mDismissGroup.blocksRaycasts = false;
+        mDismissGroup.interactable = false;
 
         // Top bar
         var topBar = UGUIReplicaUIFactory.CreateRect("TopBar", root);
@@ -292,35 +310,10 @@ public class UGUIStaggeredMenuReplica : MonoBehaviour
             linkRect.anchoredPosition = new Vector2(0f, -52f - (i * 34f));
             mSocialLinks.Add(linkRect);
         }
-
-        // Dismiss overlay — uses CanvasGroup so it doesn't block raycasts when closed
-        var dismissGo = new GameObject("Dismiss", typeof(RectTransform), typeof(Image), typeof(Button), typeof(CanvasGroup));
-        var dismissRect = dismissGo.GetComponent<RectTransform>();
-        dismissRect.SetParent(root, false);
-        Stretch(dismissRect);
-        dismissRect.SetSiblingIndex(mPanel.GetSiblingIndex());
-
-        var dismissImage = dismissGo.GetComponent<Image>();
-        dismissImage.color = new Color(0f, 0f, 0f, 0f);
-        dismissImage.raycastTarget = true;
-
-        mDismissButton = dismissGo.GetComponent<Button>();
-        mDismissButton.transition = Selectable.Transition.None;
-        mDismissButton.onClick.AddListener(CloseMenuIfOpen);
-
-        mDismissGroup = dismissGo.GetComponent<CanvasGroup>();
-        mDismissGroup.alpha = 1f;
-        mDismissGroup.blocksRaycasts = false;
-        mDismissGroup.interactable = false;
     }
 
     private void ToggleMenu()
     {
-        if (mBusy)
-        {
-            return;
-        }
-
         if (mOpen)
         {
             CloseMenu();
@@ -334,95 +327,91 @@ public class UGUIStaggeredMenuReplica : MonoBehaviour
     private void OpenMenu()
     {
         mOpen = true;
-        mBusy = true;
         KillTweens();
         mDismissGroup.blocksRaycasts = true;
         mDismissGroup.interactable = true;
 
-        // Set items to hidden pose: offset down + slight rotation (matching gsap yPercent:140, rotate:10)
+        // Set items to hidden pose
         SetItemHiddenPose();
 
         mOpenSequence = DOTween.Sequence().SetUpdate(true);
 
-        // Pre-layers slide in with stagger
+        // Pre-layers slide in with tight stagger (snappy)
         for (var i = 0; i < mPreLayers.Count; i++)
         {
             mOpenSequence.Join(
                 mPreLayers[i]
-                    .DOAnchorPosX(0f, 0.5f)
+                    .DOAnchorPosX(0f, 0.35f)
                     .SetEase(Ease.OutQuart)
-                    .SetDelay(i * 0.07f));
+                    .SetDelay(i * 0.04f));
         }
 
-        // Main panel slides in after layers
-        var panelDelay = Mathf.Max(0.08f, mPreLayers.Count * 0.07f);
+        // Main panel slides in right after layers
+        var panelDelay = Mathf.Max(0.05f, mPreLayers.Count * 0.04f);
         mOpenSequence.Join(
             mPanel
-                .DOAnchorPosX(0f, 0.65f)
+                .DOAnchorPosX(0f, 0.42f)
                 .SetEase(Ease.OutQuart)
                 .SetDelay(panelDelay));
 
-        // Item labels slide up + rotate back to 0 with stagger
-        var itemsStart = panelDelay + 0.65f * 0.15f;
+        // Item labels appear with stagger — snappier timing
+        var itemsStart = panelDelay + 0.06f;
         for (var i = 0; i < mItemLabels.Count; i++)
         {
-            var delay = itemsStart + (i * 0.1f);
+            var delay = itemsStart + (i * 0.06f);
 
-            // Animate label Y back to 0
             mOpenSequence.Join(
                 mItemLabels[i]
-                    .DOAnchorPosY(0f, 1.0f)
+                    .DOAnchorPosY(0f, 0.55f)
                     .SetEase(Ease.OutQuart)
                     .SetDelay(delay));
 
-            // Animate label rotation back to 0
             mOpenSequence.Join(
                 mItemLabels[i]
-                    .DOLocalRotate(Vector3.zero, 1.0f, RotateMode.Fast)
+                    .DOLocalRotate(Vector3.zero, 0.55f, RotateMode.Fast)
                     .SetEase(Ease.OutQuart)
                     .SetDelay(delay));
 
-            // Fade in number
             mOpenSequence.Join(
                 mItemNumbers[i]
-                    .DOFade(1f, 0.6f)
+                    .DOFade(1f, 0.3f)
                     .SetEase(Ease.OutQuad)
-                    .SetDelay(delay + 0.1f));
+                    .SetDelay(delay + 0.06f));
         }
 
         // Social title fade in
-        var socialsStart = panelDelay + 0.65f * 0.4f;
+        var socialsStart = panelDelay + 0.15f;
         mOpenSequence.Join(
             mSocialTitle
-                .DOFade(1f, 0.5f)
+                .DOFade(1f, 0.3f)
                 .SetEase(Ease.OutQuad)
                 .SetDelay(socialsStart));
 
         // Social links slide up + fade in
         for (var i = 0; i < mSocialLinks.Count; i++)
         {
-            var delay = socialsStart + 0.04f + (i * 0.08f);
+            var delay = socialsStart + 0.03f + (i * 0.05f);
             var targetY = -52f - (i * 34f);
             mOpenSequence.Join(
                 mSocialLinks[i]
-                    .DOAnchorPosY(targetY, 0.55f)
+                    .DOAnchorPosY(targetY, 0.35f)
                     .SetEase(Ease.OutCubic)
                     .SetDelay(delay));
             mOpenSequence.Join(
                 mSocialLinks[i].GetComponent<Text>()
-                    .DOFade(1f, 0.55f)
+                    .DOFade(1f, 0.35f)
                     .SetDelay(delay));
         }
 
-        // Icon rotates to X (225°)
+        // Icon rotates to X (225°) — snappy
         mIconTween = mToggleIcon
-            .DORotate(new Vector3(0f, 0f, 225f), 0.8f, RotateMode.Fast)
+            .DORotate(new Vector3(0f, 0f, 225f), 0.45f, RotateMode.Fast)
             .SetEase(Ease.OutQuart)
             .SetUpdate(true);
 
         // Text cycles from "Menu" to "Close"
         mTextTween = mToggleTextStack
-            .DOAnchorPosY(30f, 0.5f)
+            .DOAnchorPosY(30f, 0.3f)
             .SetEase(Ease.OutQuart)
             .SetUpdate(true);
 
@@ -431,49 +420,44 @@ public class UGUIStaggeredMenuReplica : MonoBehaviour
             () => mToggleTextTop.color,
             c => mToggleTextTop.color = c,
             sToggleOpen,
-            0.3f)
-            .SetDelay(0.18f)
+            0.2f)
+            .SetDelay(0.1f)
             .SetEase(Ease.OutQuad)
             .SetUpdate(true);
-
-        mOpenSequence.OnComplete(() => mBusy = false);
     }
 
     private void CloseMenu()
     {
         mOpen = false;
-        mBusy = true;
         KillTweens();
 
         mCloseSequence = DOTween.Sequence().SetUpdate(true);
         var offscreen = GetOffscreenDistance();
 
-        // Panel + layers slide out simultaneously
-        mCloseSequence.Join(mPanel.DOAnchorPosX(offscreen, 0.32f).SetEase(Ease.InCubic));
+        // Panel + layers slide out fast and snappy
+        mCloseSequence.Join(mPanel.DOAnchorPosX(offscreen, 0.22f).SetEase(Ease.InCubic));
         for (var i = 0; i < mPreLayers.Count; i++)
         {
-            mCloseSequence.Join(mPreLayers[i].DOAnchorPosX(offscreen, 0.32f).SetEase(Ease.InCubic));
+            mCloseSequence.Join(mPreLayers[i].DOAnchorPosX(offscreen, 0.22f).SetEase(Ease.InCubic));
         }
 
         mCloseSequence.OnComplete(() =>
         {
-            // Reset item poses to hidden after close finishes
             SetItemHiddenPose();
             mSocialTitle.color = new Color(sAccent.r, sAccent.g, sAccent.b, 0f);
             mDismissGroup.blocksRaycasts = false;
             mDismissGroup.interactable = false;
-            mBusy = false;
         });
 
-        // Icon rotates back to + (0°)
+        // Icon rotates back to + (0°) — snappy
         mIconTween = mToggleIcon
-            .DORotate(Vector3.zero, 0.35f, RotateMode.Fast)
+            .DORotate(Vector3.zero, 0.25f, RotateMode.Fast)
             .SetEase(Ease.InOutCubic)
             .SetUpdate(true);
 
         // Text cycles back to "Menu"
         mTextTween = mToggleTextStack
-            .DOAnchorPosY(0f, 0.35f)
+            .DOAnchorPosY(0f, 0.25f)
             .SetEase(Ease.InOutCubic)
             .SetUpdate(true);
 
@@ -482,14 +466,14 @@ public class UGUIStaggeredMenuReplica : MonoBehaviour
             () => mToggleTextTop.color,
             c => mToggleTextTop.color = c,
             sToggleClosed,
-            0.3f)
+            0.2f)
             .SetEase(Ease.OutQuad)
             .SetUpdate(true);
     }
 
     private void CloseMenuIfOpen()
     {
-        if (mOpen && !mBusy)
+        if (mOpen)
         {
             CloseMenu();
         }

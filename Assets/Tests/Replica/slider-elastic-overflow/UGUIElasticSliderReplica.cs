@@ -31,6 +31,8 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
     private float mValue;
     private float mOverflow;
     private float mHoverScale = 1f;
+    // Track height animates between thin (idle) and thicker (hover), matching React's height transform
+    private float mTrackHeight;
 
     private bool mIsHovering;
     private bool mIsDragging;
@@ -38,12 +40,22 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
     private OverflowRegion mRegion = OverflowRegion.Middle;
     private readonly Vector3[] mTrackCorners = new Vector3[4];
 
+    // Spring state for overflow bounce-back (replaces Lerp with spring physics)
+    private float mOverflowVelocity;
+
+    // Left/right icon smooth positions
+    private float mLeftIconTargetX;
+    private float mRightIconTargetX;
+
     private enum OverflowRegion
     {
         Left,
         Middle,
         Right
     }
+
+    private const float kTrackHeightIdle = 6f;
+    private const float kTrackHeightHover = 14f;
 
     private void Awake()
     {
@@ -55,6 +67,7 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
 
         BuildView();
         mValue = Mathf.Clamp(mDefaultValue, mStartingValue, mMaxValue);
+        mTrackHeight = kTrackHeightIdle;
         RefreshValueVisual();
     }
 
@@ -63,21 +76,66 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
         mIsDragging = false;
         mIsHovering = false;
         mOverflow = 0f;
+        mOverflowVelocity = 0f;
         mHoverScale = 1f;
+        mTrackHeight = kTrackHeightIdle;
         mRegion = OverflowRegion.Middle;
         mValue = Mathf.Clamp(mDefaultValue, mStartingValue, mMaxValue);
+        mLeftIconTargetX = 0f;
+        mRightIconTargetX = 0f;
         RefreshValueVisual();
     }
 
     private void Update()
     {
+        var dt = Time.unscaledDeltaTime;
+
+        // Spring-based overflow return (matching React's spring with bounce: 0.5)
         if (!mIsDragging)
         {
-            mOverflow = Mathf.Lerp(mOverflow, 0f, Time.unscaledDeltaTime * 7f);
+            var spring = 180f; // stiffness
+            var damping = 12f;
+            var force = -spring * mOverflow - damping * mOverflowVelocity;
+            mOverflowVelocity += force * dt;
+            mOverflow += mOverflowVelocity * dt;
+
+            if (Mathf.Abs(mOverflow) < 0.1f && Mathf.Abs(mOverflowVelocity) < 0.5f)
+            {
+                mOverflow = 0f;
+                mOverflowVelocity = 0f;
+            }
         }
 
+        // Smooth hover scale (frame-rate independent exponential)
         var targetHoverScale = (mIsHovering || mIsDragging) ? 1.2f : 1f;
-        mHoverScale = Mathf.Lerp(mHoverScale, targetHoverScale, Time.unscaledDeltaTime * 9f);
+        mHoverScale = SmoothDamp(mHoverScale, targetHoverScale, 10f, dt);
+
+        // Smooth track height
+        var targetHeight = (mIsHovering || mIsDragging) ? kTrackHeightHover : kTrackHeightIdle;
+        mTrackHeight = SmoothDamp(mTrackHeight, targetHeight, 10f, dt);
+
+        // Smooth icon positions
+        float leftTarget, rightTarget;
+        var overflowAbs = Mathf.Abs(mOverflow);
+        if (mRegion == OverflowRegion.Left)
+        {
+            leftTarget = -(overflowAbs / Mathf.Max(1f, mHoverScale));
+            rightTarget = 0f;
+        }
+        else if (mRegion == OverflowRegion.Right)
+        {
+            leftTarget = 0f;
+            rightTarget = overflowAbs / Mathf.Max(1f, mHoverScale);
+        }
+        else
+        {
+            leftTarget = 0f;
+            rightTarget = 0f;
+        }
+
+        mLeftIconTargetX = SmoothDamp(mLeftIconTargetX, leftTarget, 15f, dt);
+        mRightIconTargetX = SmoothDamp(mRightIconTargetX, rightTarget, 15f, dt);
+
         ApplyElasticVisual();
     }
 
@@ -104,6 +162,7 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
     {
         mIsDragging = true;
         mIsHovering = true;
+        mOverflowVelocity = 0f; // Reset spring velocity on new drag
         UpdateFromPointer(eventData);
     }
 
@@ -120,6 +179,7 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
     public void OnPointerUp(PointerEventData eventData)
     {
         mIsDragging = false;
+        // Spring will handle the bounce-back in Update()
     }
 
     private void BuildView()
@@ -162,6 +222,7 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
         frameShadow.effectColor = new Color(0f, 0f, 0f, 0.32f);
         frameShadow.effectDistance = new Vector2(0f, -8f);
 
+        // Slider row: icon – track – icon
         var row = UGUIReplicaUIFactory.CreateRect("SliderRow", frame);
         row.anchorMin = new Vector2(0.5f, 0.5f);
         row.anchorMax = new Vector2(0.5f, 0.5f);
@@ -173,32 +234,34 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
         mLeftIconRect.anchorMin = new Vector2(0f, 0.5f);
         mLeftIconRect.anchorMax = new Vector2(0f, 0.5f);
         mLeftIconRect.pivot = new Vector2(0.5f, 0.5f);
-        mLeftIconRect.sizeDelta = new Vector2(64f, 64f);
-        mLeftIconRect.anchoredPosition = new Vector2(38f, 0f);
+        mLeftIconRect.sizeDelta = new Vector2(48f, 48f);
+        mLeftIconRect.anchoredPosition = new Vector2(28f, 0f);
         var leftIconText = UGUIReplicaUIFactory.CreateText(
             "Glyph",
             mLeftIconRect,
-            "-",
-            54,
+            "−",
+            36,
             FontStyle.Bold,
             TextAnchor.MiddleCenter,
             new Color(0.76f, 0.82f, 0.92f, 0.92f));
         Stretch((RectTransform)leftIconText.transform);
 
+        // Track container sits between the icons
         var sliderContainer = UGUIReplicaUIFactory.CreateRect("SliderContainer", row);
         sliderContainer.anchorMin = new Vector2(0f, 0.5f);
         sliderContainer.anchorMax = new Vector2(1f, 0.5f);
         sliderContainer.pivot = new Vector2(0.5f, 0.5f);
-        sliderContainer.offsetMin = new Vector2(100f, -40f);
-        sliderContainer.offsetMax = new Vector2(-100f, 40f);
+        sliderContainer.offsetMin = new Vector2(72f, -40f);
+        sliderContainer.offsetMax = new Vector2(-72f, 40f);
 
         mTrackRect = UGUIReplicaUIFactory.CreateRect("TrackRoot", sliderContainer);
         mTrackRect.anchorMin = new Vector2(0f, 0.5f);
         mTrackRect.anchorMax = new Vector2(1f, 0.5f);
         mTrackRect.pivot = new Vector2(0.5f, 0.5f);
-        mTrackRect.sizeDelta = new Vector2(0f, 26f);
+        mTrackRect.sizeDelta = new Vector2(0f, kTrackHeightIdle);
         mTrackRect.anchoredPosition = Vector2.zero;
 
+        // TrackWrapper: this is what gets scaleX/scaleY for elastic effect
         mTrackWrapper = UGUIReplicaUIFactory.CreateRect("TrackWrapper", mTrackRect);
         Stretch(mTrackWrapper);
 
@@ -213,28 +276,29 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
         mFillRect.offsetMax = Vector2.zero;
         mFillImage = mFillRect.GetComponent<Image>();
 
+        // Knob – small circle on the track
         mKnobRect = UGUIReplicaUIFactory.CreatePanel("Knob", mTrackRect, Color.white);
         mKnobRect.anchorMin = new Vector2(0.5f, 0.5f);
         mKnobRect.anchorMax = new Vector2(0.5f, 0.5f);
         mKnobRect.pivot = new Vector2(0.5f, 0.5f);
-        mKnobRect.sizeDelta = new Vector2(26f, 26f);
+        mKnobRect.sizeDelta = new Vector2(20f, 20f);
         mKnobRect.anchoredPosition = Vector2.zero;
         mKnobImage = mKnobRect.GetComponent<Image>();
         var knobOutline = UGUIReplicaUIFactory.EnsureComponent<Outline>(mKnobRect.gameObject);
-        knobOutline.effectColor = new Color(0f, 0f, 0f, 0.35f);
-        knobOutline.effectDistance = new Vector2(1.2f, -1.2f);
+        knobOutline.effectColor = new Color(0f, 0f, 0f, 0.25f);
+        knobOutline.effectDistance = new Vector2(1f, -1f);
 
         mRightIconRect = UGUIReplicaUIFactory.CreateRect("RightIcon", row);
         mRightIconRect.anchorMin = new Vector2(1f, 0.5f);
         mRightIconRect.anchorMax = new Vector2(1f, 0.5f);
         mRightIconRect.pivot = new Vector2(0.5f, 0.5f);
-        mRightIconRect.sizeDelta = new Vector2(64f, 64f);
-        mRightIconRect.anchoredPosition = new Vector2(-38f, 0f);
+        mRightIconRect.sizeDelta = new Vector2(48f, 48f);
+        mRightIconRect.anchoredPosition = new Vector2(-28f, 0f);
         var rightIconText = UGUIReplicaUIFactory.CreateText(
             "Glyph",
             mRightIconRect,
             "+",
-            54,
+            36,
             FontStyle.Bold,
             TextAnchor.MiddleCenter,
             new Color(0.76f, 0.82f, 0.92f, 0.92f));
@@ -244,7 +308,7 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
             "Value",
             frame,
             "50",
-            30,
+            26,
             FontStyle.Bold,
             TextAnchor.MiddleCenter,
             new Color(0.84f, 0.90f, 1f, 0.92f));
@@ -307,6 +371,7 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
         }
 
         mOverflow = Decay(rawOverflow, mMaxOverflow);
+        mOverflowVelocity = 0f; // Reset velocity during active drag
         RefreshValueVisual();
     }
 
@@ -327,10 +392,15 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
         var overflowAbs = Mathf.Abs(mOverflow);
         var overflow01 = Mathf.Clamp01(overflowAbs / Mathf.Max(1f, mMaxOverflow));
 
-        var scaleX = (1f + (overflowAbs / width)) * mHoverScale;
-        var scaleY = Mathf.Lerp(1f, 0.80f, overflow01) * mHoverScale;
+        // Animate track height smoothly
+        mTrackRect.sizeDelta = new Vector2(0f, mTrackHeight);
+
+        // Scale X stretches with overflow, scale Y squishes slightly (React: scaleY [1, 0.8])
+        var scaleX = 1f + (overflowAbs / width);
+        var scaleY = Mathf.Lerp(1f, 0.82f, overflow01);
         mTrackWrapper.localScale = new Vector3(scaleX, scaleY, 1f);
 
+        // Transform origin follows pointer side (React: clientX < center ? 'right' : 'left')
         switch (mRegion)
         {
             case OverflowRegion.Left:
@@ -344,22 +414,19 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
                 break;
         }
 
-        var leftTarget = (mRegion == OverflowRegion.Left) ? -(overflowAbs / Mathf.Max(1f, mHoverScale)) : 0f;
-        var rightTarget = (mRegion == OverflowRegion.Right) ? (overflowAbs / Mathf.Max(1f, mHoverScale)) : 0f;
+        // Icon positions push outward based on overflow
+        mLeftIconRect.anchoredPosition = new Vector2(28f + mLeftIconTargetX, 0f);
+        mRightIconRect.anchoredPosition = new Vector2(-28f + mRightIconTargetX, 0f);
 
-        mLeftIconRect.anchoredPosition = Vector2.Lerp(
-            mLeftIconRect.anchoredPosition,
-            new Vector2(38f + leftTarget, 0f),
-            Time.unscaledDeltaTime * 15f);
-        mRightIconRect.anchoredPosition = Vector2.Lerp(
-            mRightIconRect.anchoredPosition,
-            new Vector2(-38f + rightTarget, 0f),
-            Time.unscaledDeltaTime * 15f);
-
+        // Subtle glow on overflow
         var glow = Mathf.Lerp(0.28f, 0.46f, overflow01);
         mTrackBackground.color = new Color(0.58f, 0.62f, 0.72f, glow);
         mFillImage.color = Color.Lerp(new Color(0.74f, 0.78f, 0.88f, 0.86f), Color.white, overflow01 * 0.5f);
         mKnobImage.color = Color.Lerp(new Color(0.93f, 0.95f, 1f, 1f), Color.white, overflow01);
+
+        // Knob scales with hover, matching track
+        var knobSize = Mathf.Lerp(14f, 20f, Mathf.InverseLerp(1f, 1.2f, mHoverScale));
+        mKnobRect.sizeDelta = new Vector2(knobSize, knobSize);
     }
 
     private void PlayRegionPulse(OverflowRegion region)
@@ -367,12 +434,12 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
         if (region == OverflowRegion.Left)
         {
             mLeftIconRect.DOKill();
-            mLeftIconRect.DOPunchScale(Vector3.one * 0.14f, 0.22f, 1, 0.4f);
+            mLeftIconRect.DOPunchScale(Vector3.one * 0.3f, 0.25f, 1, 0.5f);
         }
         else if (region == OverflowRegion.Right)
         {
             mRightIconRect.DOKill();
-            mRightIconRect.DOPunchScale(Vector3.one * 0.14f, 0.22f, 1, 0.4f);
+            mRightIconRect.DOPunchScale(Vector3.one * 0.3f, 0.25f, 1, 0.5f);
         }
     }
 
@@ -397,6 +464,14 @@ public class UGUIElasticSliderReplica : MonoBehaviour, IPointerEnterHandler, IPo
         var entry = value / max;
         var sigmoid = 2f * ((1f / (1f + Mathf.Exp(-entry))) - 0.5f);
         return sigmoid * max;
+    }
+
+    /// <summary>
+    /// Frame-rate independent exponential smoothing (replaces Time.deltaTime * factor lerp).
+    /// </summary>
+    private static float SmoothDamp(float current, float target, float speed, float dt)
+    {
+        return Mathf.Lerp(current, target, 1f - Mathf.Exp(-speed * dt));
     }
 
     private static void Stretch(RectTransform rect)
