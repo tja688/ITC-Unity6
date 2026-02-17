@@ -164,7 +164,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 164956894}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba2d27fd944a522428b24cbb7288b65d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UGUIReactBitsReplicaShowcase
-  mAutoSequence: 1
+  mAutoSequence: 0
   mAutoSequenceInterval: 8
 --- !u!1 &447071124
 GameObject:
