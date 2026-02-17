@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 164956895}
   - component: {fileID: 164956898}
   - component: {fileID: 164956897}
-  - component: {fileID: 164956896}
+  - component: {fileID: 164956899}
   m_Layer: 0
   m_Name: StackMotionReplica
   m_TagString: Untagged
@@ -157,31 +157,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &164956896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 164956894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b07df20b07a073444bc942a263e3ad1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UGUIStackMotionReplica
-  mStackSize: {x: 760, y: 520}
-  mCardSize: {x: 620, y: 390}
-  mDragSensitivity: 200
-  mMaxTilt: 22
-  mLayoutDuration: 0.32
-  mReturnDuration: 0.24
-  mRotationStep: 4
-  mScaleStep: 0.06
-  mSendToBackOnClick: 1
-  mAutoplay: 0
-  mAutoplayDelay: 3
-  mPauseOnHover: 1
-  mCardPresets: []
 --- !u!114 &164956897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,6 +195,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 164956894}
   m_CullTransparentMesh: 1
+--- !u!114 &164956899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164956894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba2d27fd944a522428b24cbb7288b65d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UGUIReactBitsReplicaShowcase
+  mAutoSequence: 1
+  mAutoSequenceInterval: 8
 --- !u!1 &447071124
 GameObject:
   m_ObjectHideFlags: 0
