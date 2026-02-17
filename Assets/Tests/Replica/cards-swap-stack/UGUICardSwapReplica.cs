@@ -120,11 +120,11 @@ public class UGUICardSwapReplica : MonoBehaviour, IPointerEnterHandler, IPointer
         shadow.effectDistance = new Vector2(0f, -9f);
 
         mDeck = UGUIReplicaUIFactory.CreateRect("Deck", surface);
-        mDeck.anchorMin = new Vector2(1f, 0f);
-        mDeck.anchorMax = new Vector2(1f, 0f);
-        mDeck.pivot = new Vector2(1f, 0f);
-        mDeck.sizeDelta = new Vector2(660f, 520f);
-        mDeck.anchoredPosition = new Vector2(-76f, 84f);
+        mDeck.anchorMin = new Vector2(0.5f, 0.5f);
+        mDeck.anchorMax = new Vector2(0.5f, 0.5f);
+        mDeck.pivot = new Vector2(0.5f, 0.5f);
+        mDeck.sizeDelta = new Vector2(840f, 580f);
+        mDeck.anchoredPosition = new Vector2(0f, 0f);
 
         mCards.Clear();
         for (var i = 0; i < sCardColors.Length; i++)
@@ -136,8 +136,8 @@ public class UGUICardSwapReplica : MonoBehaviour, IPointerEnterHandler, IPointer
     private CardData CreateCard(int index)
     {
         var cardRect = UGUIReplicaUIFactory.CreateRect($"Card_{index + 1}", mDeck);
-        cardRect.anchorMin = new Vector2(1f, 0f);
-        cardRect.anchorMax = new Vector2(1f, 0f);
+        cardRect.anchorMin = new Vector2(0.5f, 0.5f);
+        cardRect.anchorMax = new Vector2(0.5f, 0.5f);
         cardRect.pivot = new Vector2(0.5f, 0.5f);
         cardRect.sizeDelta = new Vector2(480f, 340f);
         cardRect.anchoredPosition = Vector2.zero;
@@ -214,7 +214,10 @@ public class UGUICardSwapReplica : MonoBehaviour, IPointerEnterHandler, IPointer
         for (var i = 0; i < mCards.Count; i++)
         {
             var card = mCards[i];
-            var slotPos = new Vector2(i * mCardDistance, -i * mVerticalDistance);
+            var centerBias = (mCards.Count - 1) * 0.5f;
+            var slotPos = new Vector2(
+                (i - centerBias) * mCardDistance,
+                (centerBias - i) * mVerticalDistance * 0.72f);
             var slotScale = Mathf.Clamp(1f - (i * 0.07f), 0.70f, 1f);
             var slotRot = i * 3.5f;
 

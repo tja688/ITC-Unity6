@@ -158,17 +158,25 @@ public class UGUIBubbleMenuReplica : MonoBehaviour
         mOverlayRect.anchorMax = Vector2.one;
         mOverlayRect.offsetMin = Vector2.zero;
         mOverlayRect.offsetMax = Vector2.zero;
+        var overlayImage = mOverlayRect.GetComponent<Image>();
+        overlayImage.raycastTarget = false;
 
         var overlayCanvasGroup = UGUIReplicaUIFactory.EnsureComponent<CanvasGroup>(mOverlayRect.gameObject);
         overlayCanvasGroup.alpha = 0f;
         overlayCanvasGroup.interactable = false;
         overlayCanvasGroup.blocksRaycasts = false;
 
+        var pillLayer = UGUIReplicaUIFactory.CreateRect("PillLayer", mOverlayRect);
+        StretchToParent(pillLayer);
+        pillLayer.SetAsLastSibling();
+
         mPills.Clear();
         for (var i = 0; i < sMenuLabels.Length; i++)
         {
-            mPills.Add(CreatePill(i, mOverlayRect));
+            mPills.Add(CreatePill(i, pillLayer));
         }
+
+        topBar.SetAsLastSibling();
     }
 
     private PillData CreatePill(int index, RectTransform parent)

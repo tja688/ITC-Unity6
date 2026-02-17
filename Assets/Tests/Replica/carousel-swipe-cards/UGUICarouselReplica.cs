@@ -15,9 +15,7 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
     [SerializeField] private bool mLoop = true;
 
     private RectTransform mRootRect;
-    private RectTransform mViewport;
-    private RectTransform mTrack;
-
+    private RectTransform mCardStage;
     private readonly List<CarouselItemData> mItems = new();
     private readonly List<Image> mIndicators = new();
 
@@ -26,11 +24,7 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
     private bool mDragging;
     private bool mHovered;
     private Vector2 mDragStartPointer;
-    private float mDragStartTrackX;
-
-    private const float ItemWidth = 390f;
-    private const float ItemHeight = 460f;
-    private const float Gap = 16f;
+    private float mDragStartStageX;
 
     private static readonly string[] sTitles =
     {
@@ -52,11 +46,20 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
 
     private static readonly Color[] sCardColors =
     {
-        new(0.12f, 0.17f, 0.32f, 1f),
-        new(0.11f, 0.24f, 0.34f, 1f),
-        new(0.22f, 0.16f, 0.33f, 1f),
-        new(0.18f, 0.20f, 0.36f, 1f),
-        new(0.28f, 0.17f, 0.22f, 1f)
+        new(0.20f, 0.29f, 0.56f, 1f),
+        new(0.10f, 0.47f, 0.53f, 1f),
+        new(0.52f, 0.31f, 0.72f, 1f),
+        new(0.70f, 0.43f, 0.28f, 1f),
+        new(0.74f, 0.26f, 0.40f, 1f)
+    };
+
+    private static readonly Color[] sAccentColors =
+    {
+        new(0.42f, 0.58f, 0.94f, 0.9f),
+        new(0.19f, 0.79f, 0.71f, 0.9f),
+        new(0.72f, 0.52f, 0.97f, 0.9f),
+        new(0.94f, 0.65f, 0.31f, 0.9f),
+        new(0.97f, 0.44f, 0.58f, 0.9f)
     };
 
     private void Awake()
@@ -102,11 +105,11 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
 
     private void OnDisable()
     {
-        mTrack?.DOKill();
+        mCardStage?.DOKill();
         foreach (var item in mItems)
         {
             item.Rect.DOKill();
-            item.Rect3D.DOKill();
+            item.CanvasGroup.DOKill();
         }
     }
 
@@ -124,9 +127,9 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
     {
         mDragging = true;
         mAutoplayTimer = 0f;
-        mTrack.DOKill();
+        mCardStage.DOKill();
         mDragStartPointer = eventData.position;
-        mDragStartTrackX = mTrack.anchoredPosition.x;
+        mDragStartStageX = mCardStage.anchoredPosition.x;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -137,8 +140,8 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
         }
 
         var delta = eventData.position - mDragStartPointer;
-        mTrack.anchoredPosition = new Vector2(mDragStartTrackX + delta.x, mTrack.anchoredPosition.y);
-        UpdateCardPerspective();
+        var targetX = Mathf.Clamp(mDragStartStageX + delta.x * 0.25f, -80f, 80f);
+        mCardStage.anchoredPosition = new Vector2(targetX, mCardStage.anchoredPosition.y);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -160,7 +163,7 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
         }
         else
         {
-            AnimateTrackToIndex(false);
+            AnimateCards(false);
         }
     }
 
@@ -204,21 +207,12 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
         frameOutline.effectColor = new Color(1f, 1f, 1f, 0.2f);
         frameOutline.effectDistance = new Vector2(1f, -1f);
 
-        mViewport = UGUIReplicaUIFactory.CreateRect("Viewport", frame);
-        mViewport.anchorMin = new Vector2(0.5f, 0.5f);
-        mViewport.anchorMax = new Vector2(0.5f, 0.5f);
-        mViewport.pivot = new Vector2(0.5f, 0.5f);
-        mViewport.sizeDelta = new Vector2(422f, 500f);
-        mViewport.anchoredPosition = new Vector2(0f, 24f);
-        UGUIReplicaUIFactory.EnsureComponent<Image>(mViewport.gameObject).color = new Color(1f, 1f, 1f, 0f);
-        UGUIReplicaUIFactory.EnsureComponent<Mask>(mViewport.gameObject).showMaskGraphic = false;
-
-        mTrack = UGUIReplicaUIFactory.CreateRect("Track", mViewport);
-        mTrack.anchorMin = new Vector2(0f, 0.5f);
-        mTrack.anchorMax = new Vector2(0f, 0.5f);
-        mTrack.pivot = new Vector2(0f, 0.5f);
-        mTrack.sizeDelta = new Vector2((sTitles.Length * (ItemWidth + Gap)) + 40f, ItemHeight);
-        mTrack.anchoredPosition = Vector2.zero;
+        mCardStage = UGUIReplicaUIFactory.CreateRect("CardStage", frame);
+        mCardStage.anchorMin = new Vector2(0.5f, 0.5f);
+        mCardStage.anchorMax = new Vector2(0.5f, 0.5f);
+        mCardStage.pivot = new Vector2(0.5f, 0.5f);
+        mCardStage.sizeDelta = new Vector2(980f, 470f);
+        mCardStage.anchoredPosition = new Vector2(0f, 22f);
 
         mItems.Clear();
         for (var i = 0; i < sTitles.Length; i++)
@@ -230,8 +224,8 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
         indicatorRoot.anchorMin = new Vector2(0.5f, 0f);
         indicatorRoot.anchorMax = new Vector2(0.5f, 0f);
         indicatorRoot.pivot = new Vector2(0.5f, 0f);
-        indicatorRoot.sizeDelta = new Vector2(320f, 36f);
-        indicatorRoot.anchoredPosition = new Vector2(0f, 36f);
+        indicatorRoot.sizeDelta = new Vector2(360f, 36f);
+        indicatorRoot.anchoredPosition = new Vector2(0f, 34f);
 
         var row = UGUIReplicaUIFactory.EnsureComponent<HorizontalLayoutGroup>(indicatorRoot.gameObject);
         row.childAlignment = TextAnchor.MiddleCenter;
@@ -239,7 +233,7 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
         row.childControlWidth = false;
         row.childForceExpandWidth = false;
         row.childForceExpandHeight = false;
-        row.spacing = 20f;
+        row.spacing = 18f;
 
         mIndicators.Clear();
         for (var i = 0; i < sTitles.Length; i++)
@@ -255,23 +249,35 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
 
     private CarouselItemData CreateItem(int index)
     {
-        var itemRect = UGUIReplicaUIFactory.CreatePanel($"Item_{index}", mTrack, sCardColors[index]);
-        itemRect.anchorMin = new Vector2(0f, 0.5f);
-        itemRect.anchorMax = new Vector2(0f, 0.5f);
+        var itemRect = UGUIReplicaUIFactory.CreatePanel($"Item_{index}", mCardStage, sCardColors[index]);
+        itemRect.anchorMin = new Vector2(0.5f, 0.5f);
+        itemRect.anchorMax = new Vector2(0.5f, 0.5f);
         itemRect.pivot = new Vector2(0.5f, 0.5f);
-        itemRect.sizeDelta = new Vector2(ItemWidth, ItemHeight);
-        itemRect.anchoredPosition = new Vector2((ItemWidth * 0.5f) + (index * (ItemWidth + Gap)), 0f);
+        itemRect.sizeDelta = new Vector2(430f, 470f);
+        itemRect.anchoredPosition = Vector2.zero;
+
+        var itemGroup = UGUIReplicaUIFactory.EnsureComponent<CanvasGroup>(itemRect.gameObject);
+        itemGroup.alpha = 1f;
+        itemGroup.blocksRaycasts = false;
+        itemGroup.interactable = false;
 
         var outline = UGUIReplicaUIFactory.EnsureComponent<Outline>(itemRect.gameObject);
-        outline.effectColor = new Color(1f, 1f, 1f, 0.18f);
-        outline.effectDistance = new Vector2(1.4f, -1.4f);
+        outline.effectColor = new Color(1f, 1f, 1f, 0.24f);
+        outline.effectDistance = new Vector2(1.5f, -1.5f);
+
+        var accent = UGUIReplicaUIFactory.CreatePanel("Accent", itemRect, sAccentColors[index]);
+        accent.anchorMin = new Vector2(0f, 1f);
+        accent.anchorMax = new Vector2(1f, 1f);
+        accent.pivot = new Vector2(0.5f, 1f);
+        accent.sizeDelta = new Vector2(0f, 66f);
+        accent.anchoredPosition = Vector2.zero;
 
         var iconCircle = UGUIReplicaUIFactory.CreatePanel("Icon", itemRect, Color.white);
         iconCircle.anchorMin = new Vector2(0f, 1f);
         iconCircle.anchorMax = new Vector2(0f, 1f);
         iconCircle.pivot = new Vector2(0f, 1f);
-        iconCircle.sizeDelta = new Vector2(52f, 52f);
-        iconCircle.anchoredPosition = new Vector2(24f, -24f);
+        iconCircle.sizeDelta = new Vector2(58f, 58f);
+        iconCircle.anchoredPosition = new Vector2(20f, -82f);
 
         var iconText = UGUIReplicaUIFactory.CreateText(
             "IconText",
@@ -287,35 +293,36 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
             "Title",
             itemRect,
             sTitles[index],
-            36,
+            40,
             FontStyle.Bold,
             TextAnchor.UpperLeft,
             Color.white);
         var titleRect = (RectTransform)title.transform;
-        titleRect.anchorMin = new Vector2(0f, 0f);
+        titleRect.anchorMin = new Vector2(0f, 1f);
         titleRect.anchorMax = new Vector2(1f, 1f);
-        titleRect.offsetMin = new Vector2(24f, 72f);
-        titleRect.offsetMax = new Vector2(-24f, -200f);
+        titleRect.pivot = new Vector2(0f, 1f);
+        titleRect.sizeDelta = new Vector2(-34f, 96f);
+        titleRect.anchoredPosition = new Vector2(96f, -92f);
 
         var desc = UGUIReplicaUIFactory.CreateText(
             "Description",
             itemRect,
             sDescriptions[index],
-            24,
+            28,
             FontStyle.Normal,
-            TextAnchor.LowerLeft,
+            TextAnchor.UpperLeft,
             new Color(1f, 1f, 1f, 0.92f));
         var descRect = (RectTransform)desc.transform;
         descRect.anchorMin = new Vector2(0f, 0f);
-        descRect.anchorMax = new Vector2(1f, 0f);
-        descRect.pivot = new Vector2(0.5f, 0f);
-        descRect.sizeDelta = new Vector2(-48f, 96f);
-        descRect.anchoredPosition = new Vector2(0f, 24f);
+        descRect.anchorMax = new Vector2(1f, 1f);
+        descRect.pivot = new Vector2(0f, 0f);
+        descRect.sizeDelta = new Vector2(-54f, -220f);
+        descRect.anchoredPosition = new Vector2(24f, 28f);
 
         return new CarouselItemData
         {
             Rect = itemRect,
-            Rect3D = itemRect
+            CanvasGroup = itemGroup
         };
     }
 
@@ -343,39 +350,56 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
         }
 
         mCurrentIndex = nextIndex;
-        AnimateTrackToIndex(immediate);
+        AnimateCards(immediate);
         UpdateIndicators();
         mAutoplayTimer = 0f;
     }
 
-    private void AnimateTrackToIndex(bool immediate)
+    private void AnimateCards(bool immediate)
     {
-        var targetX = -(mCurrentIndex * (ItemWidth + Gap));
-        mTrack.DOKill();
-        if (immediate)
-        {
-            mTrack.anchoredPosition = new Vector2(targetX, 0f);
-            UpdateCardPerspective();
-            return;
-        }
+        mCardStage.DOKill();
+        mCardStage
+            .DOAnchorPosX(0f, immediate ? 0f : 0.18f)
+            .SetEase(Ease.OutCubic);
 
-        mTrack
-            .DOAnchorPosX(targetX, 0.55f)
-            .SetEase(Ease.OutCubic)
-            .OnUpdate(UpdateCardPerspective);
-    }
-
-    private void UpdateCardPerspective()
-    {
-        var currentFloat = -mTrack.anchoredPosition.x / (ItemWidth + Gap);
-        for (var i = 0; i < mItems.Count; i++)
+        var count = mItems.Count;
+        for (var i = 0; i < count; i++)
         {
             var card = mItems[i];
-            var offset = i - currentFloat;
-            var rotY = Mathf.Clamp(-offset * 40f, -90f, 90f);
-            var zShift = Mathf.Abs(offset) * -36f;
-            card.Rect3D.localRotation = Quaternion.Euler(0f, rotY, 0f);
-            card.Rect.anchoredPosition = new Vector2((ItemWidth * 0.5f) + (i * (ItemWidth + Gap)), zShift * 0.1f);
+            var delta = WrapDelta(i - mCurrentIndex, count);
+            var abs = Mathf.Abs(delta);
+
+            var targetX = delta * 320f;
+            var targetY = -abs * 18f;
+            var targetScale = abs == 0 ? 1f : (abs == 1 ? 0.86f : 0.74f);
+            var targetRot = -delta * 9f;
+            var targetAlpha = abs == 0 ? 1f : (abs == 1 ? 0.58f : 0.18f);
+
+            card.Rect.SetSiblingIndex(abs == 0 ? count - 1 : (count - 1 - abs));
+            card.Rect.DOKill();
+            card.CanvasGroup.DOKill();
+
+            if (immediate)
+            {
+                card.Rect.anchoredPosition = new Vector2(targetX, targetY);
+                card.Rect.localScale = Vector3.one * targetScale;
+                card.Rect.localRotation = Quaternion.Euler(0f, 0f, targetRot);
+                card.CanvasGroup.alpha = targetAlpha;
+                continue;
+            }
+
+            card.Rect
+                .DOAnchorPos(new Vector2(targetX, targetY), 0.45f)
+                .SetEase(Ease.OutCubic);
+            card.Rect
+                .DOScale(targetScale, 0.45f)
+                .SetEase(Ease.OutCubic);
+            card.Rect
+                .DORotate(new Vector3(0f, 0f, targetRot), 0.45f)
+                .SetEase(Ease.OutCubic);
+            card.CanvasGroup
+                .DOFade(targetAlpha, 0.35f)
+                .SetEase(Ease.OutCubic);
         }
     }
 
@@ -391,6 +415,27 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
         }
     }
 
+    private static int WrapDelta(int delta, int count)
+    {
+        if (count <= 0)
+        {
+            return delta;
+        }
+
+        var half = count / 2;
+        while (delta > half)
+        {
+            delta -= count;
+        }
+
+        while (delta < -half)
+        {
+            delta += count;
+        }
+
+        return delta;
+    }
+
     private static void Stretch(RectTransform rect)
     {
         rect.anchorMin = Vector2.zero;
@@ -402,6 +447,6 @@ public class UGUICarouselReplica : MonoBehaviour, IBeginDragHandler, IDragHandle
     private struct CarouselItemData
     {
         public RectTransform Rect;
-        public RectTransform Rect3D;
+        public CanvasGroup CanvasGroup;
     }
 }
