@@ -33,7 +33,14 @@ public class UGUIReactBitsReplicaShowcase : MonoBehaviour
         "CardSwap",
         "Carousel",
         "Counter",
-        "DecayCard"
+        "DecayCard",
+        "StaggeredMenu",
+        "Stepper",
+        "TiltedCard",
+        "CircularText",
+        "CountUp",
+        "CurvedLoop",
+        "GlitchText"
     };
 
     private static readonly Type[] sEffectTypes =
@@ -48,13 +55,33 @@ public class UGUIReactBitsReplicaShowcase : MonoBehaviour
         typeof(UGUICardSwapReplica),
         typeof(UGUICarouselReplica),
         typeof(UGUICounterReplica),
-        typeof(UGUIDecayCardReplica)
+        typeof(UGUIDecayCardReplica),
+        typeof(UGUIStaggeredMenuReplica),
+        typeof(UGUIStepperReplica),
+        typeof(UGUITiltedCardReplica),
+        typeof(UGUICircularTextReplica),
+        typeof(UGUICountUpReplica),
+        typeof(UGUICurvedLoopReplica),
+        typeof(UGUIGlitchTextReplica)
     };
 
     private static readonly Color sTabActive = new(0.93f, 0.95f, 1f, 0.96f);
     private static readonly Color sTabIdle = new(0.24f, 0.30f, 0.44f, 0.92f);
     private static readonly Color sTabTextActive = new(0.08f, 0.13f, 0.22f, 1f);
     private static readonly Color sTabTextIdle = new(0.86f, 0.90f, 1f, 1f);
+    private static readonly KeyCode[] sDirectSelectKeys =
+    {
+        KeyCode.Alpha1,
+        KeyCode.Alpha2,
+        KeyCode.Alpha3,
+        KeyCode.Alpha4,
+        KeyCode.Alpha5,
+        KeyCode.Alpha6,
+        KeyCode.Alpha7,
+        KeyCode.Alpha8,
+        KeyCode.Alpha9,
+        KeyCode.Alpha0
+    };
 
     private void Awake()
     {
@@ -108,9 +135,10 @@ public class UGUIReactBitsReplicaShowcase : MonoBehaviour
         }
         else
         {
-            for (var i = 0; i < mEffectPanels.Count; i++)
+            var count = Mathf.Min(mEffectPanels.Count, sDirectSelectKeys.Length);
+            for (var i = 0; i < count; i++)
             {
-                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                if (Input.GetKeyDown(sDirectSelectKeys[i]))
                 {
                     SwitchTo(i, true);
                     break;
@@ -169,7 +197,7 @@ public class UGUIReactBitsReplicaShowcase : MonoBehaviour
         var helper = UGUIReplicaUIFactory.CreateText(
             "Helper",
             header,
-            "Press 1-9/0 or click tab to switch",
+            "Press Left/Right or click tab to switch",
             18,
             FontStyle.Bold,
             TextAnchor.UpperRight,
