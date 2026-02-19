@@ -7,8 +7,10 @@ namespace ITC.Contracting
     {
         private readonly Dictionary<int, DocumentReviewClientConfig> documentReviewClientConfigs = new();
         private DocumentReviewConfig documentReviewRuleConfig = new();
+        private RuneVerifyConfig runeVerifyRuleConfig = new();
 
         public DocumentReviewConfig DocumentReviewRuleConfig => documentReviewRuleConfig;
+        public RuneVerifyConfig RuneVerifyRuleConfig => runeVerifyRuleConfig;
 
         protected override void OnInit()
         {

@@ -78,6 +78,56 @@ namespace ITC.Contracting
         public bool WasFallback;
     }
 
+    public enum RuneVerifyResultType
+    {
+        Skipped = 0,
+        Success = 1,
+        Failed = 2
+    }
+
+    [Serializable]
+    public sealed class RuneVerifyConfig
+    {
+        [Range(0f, 1f)] public float TriggerProbability = 0.3f;
+        [Range(2, 8)] public int GridWidth = 4;
+        [Range(2, 8)] public int GridHeight = 5;
+        [Range(1, 10)] public int DistortedCount = 3;
+        [Range(1f, 15f)] public float TimeLimitSeconds = 5f;
+        [Range(0.05f, 1f)] public float FinalSecondPulseRate = 0.25f;
+        public bool MisclickPenaltyVisualOnly = true;
+        [Range(0f, 2f)] public float StampDebuffShakeAmp = 0.35f;
+        public int FixedRandomSeed = -1;
+        [Range(0f, 2f)] public float CountdownLeadSeconds = 0.45f;
+
+        public RuneVerifyConfig Clone()
+        {
+            return new RuneVerifyConfig
+            {
+                TriggerProbability = TriggerProbability,
+                GridWidth = GridWidth,
+                GridHeight = GridHeight,
+                DistortedCount = DistortedCount,
+                TimeLimitSeconds = TimeLimitSeconds,
+                FinalSecondPulseRate = FinalSecondPulseRate,
+                MisclickPenaltyVisualOnly = MisclickPenaltyVisualOnly,
+                StampDebuffShakeAmp = StampDebuffShakeAmp,
+                FixedRandomSeed = FixedRandomSeed,
+                CountdownLeadSeconds = CountdownLeadSeconds
+            };
+        }
+    }
+
+    public struct RuneVerifyResultPayload
+    {
+        public int ClientId;
+        public RuneVerifyResultType Result;
+        public int FoundCount;
+        public int DistortedCount;
+        public bool Triggered;
+        public bool WasTimeoutFallback;
+        public int RandomSeed;
+    }
+
     [Serializable]
     public sealed class DocumentReviewPanelData : UIPanelData
     {
@@ -89,6 +139,17 @@ namespace ITC.Contracting
         public string[] AllowedRejectReasons;
 
         [NonSerialized] public Action<DocumentReviewResultPayload> OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
+    [Serializable]
+    public sealed class RuneVerifyPanelData : UIPanelData
+    {
+        public int ClientId;
+        public RuneVerifyConfig RuntimeConfig;
+        public int RuntimeSeed = -1;
+
+        [NonSerialized] public Action<RuneVerifyResultPayload> OnCompleted;
         [NonSerialized] public Action<string, Transform, float> OnFxCue;
     }
 

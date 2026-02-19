@@ -24,6 +24,8 @@ tags: itc mainline base
 <<declare $Sys_CurrentPhase = "Prologue">>
 <<declare $Route_CurrentClient = 0>>
 <<declare $Route_DocReviewResult = "passed">>
+<<declare $Route_RuneVerifyResult = "skipped">>
+<<declare $Route_RuneVerifyDebuff = 0>>
 <<declare $Route_StampType = "">>
 <<declare $Route_QTEErrorCount = 0>>
 <<declare $Route_SoulCollectPercent = 0>>
@@ -519,9 +521,11 @@ title: C2_D155
     <<endif>>
 <<endif>>
 <<if $Route_CurrentClient == 1>>
+    <<itc_rune_verify 1>>
     <<jump ITC_Client1_StampInput>>
 <<else>>
     <<if $Route_CurrentClient == 2>>
+        <<itc_rune_verify 2>>
         <<jump ITC_Client2_StampInput>>
     <<else>>
         <<jump ITC_Act4_EndingEntry>>

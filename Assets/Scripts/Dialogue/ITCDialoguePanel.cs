@@ -190,6 +190,7 @@ namespace ITC.Dialogue
             dialogueRunner.AddCommandHandler<string>("itc_npc_avatar", SwitchNpcAvatarCommand);
             dialogueRunner.AddCommandHandler<string>("itc_pc_avatar", SwitchPcAvatarCommand);
             dialogueRunner.AddCommandHandler<string>("itc_doc_review", RunDocumentReviewCommand);
+            dialogueRunner.AddCommandHandler<string>("itc_rune_verify", RunRuneVerifyCommand);
             dialogueRunner.AddCommandHandler("itc_npc_main_hide", HideNpcMainPortraitCommand);
             dialogueRunner.AddCommandHandler("itc_npc_avatar_hide", HideNpcAvatarCommand);
             dialogueRunner.AddCommandHandler("itc_pc_avatar_hide", HidePcAvatarCommand);
@@ -208,6 +209,7 @@ namespace ITC.Dialogue
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar");
             dialogueRunner.RemoveCommandHandler("itc_pc_avatar");
             dialogueRunner.RemoveCommandHandler("itc_doc_review");
+            dialogueRunner.RemoveCommandHandler("itc_rune_verify");
             dialogueRunner.RemoveCommandHandler("itc_npc_main_hide");
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar_hide");
             dialogueRunner.RemoveCommandHandler("itc_pc_avatar_hide");
@@ -359,6 +361,120 @@ namespace ITC.Dialogue
             UIKit.ClosePanel<DocumentReviewPanel>();
         }
 
+
+        private IEnumerator RunRuneVerifyCommand(string clientToken)
+        {
+            if (dialogueRunner == null)
+            {
+                yield break;
+            }
+
+            var flowState = this.GetModel<ContractFlowStateModel>();
+            var configModel = this.GetModel<ContractClientConfigModel>();
+            var variableStorage = dialogueRunner.VariableStorage;
+            var clientId = ParseClientId(clientToken, variableStorage);
+            var config = configModel.RuneVerifyRuleConfig;
+            var randomSeed = ResolveRuneVerifySeed(config, clientId, variableStorage);
+            var triggered = ShouldTriggerRuneVerify(config, randomSeed);
+
+            this.SendCommand(new BeginRuneVerifyCommand(clientId, triggered, randomSeed));
+
+            if (!triggered)
+            {
+                MainMenuApp.Interface.SendCommand(new SubmitRuneVerifyResultCommand(new RuneVerifyResultPayload
+                {
+                    ClientId = clientId,
+                    Result = RuneVerifyResultType.Skipped,
+                    FoundCount = 0,
+                    DistortedCount = Mathf.Max(1, config.DistortedCount),
+                    Triggered = false,
+                    WasTimeoutFallback = false,
+                    RandomSeed = randomSeed
+                }));
+
+                WriteStringVariable(variableStorage, "$Route_RuneVerifyResult", flowState.RouteRuneVerifyResult.Value);
+                WriteFloatVariable(variableStorage, "$Route_RuneVerifyDebuff", flowState.RouteRuneVerifyDebuff.Value);
+                yield break;
+            }
+
+            var resultSubmitted = false;
+            var panelData = new RuneVerifyPanelData
+            {
+                ClientId = clientId,
+                RuntimeConfig = config,
+                RuntimeSeed = randomSeed,
+                OnFxCue = DispatchContractFxCue,
+                OnCompleted = payload =>
+                {
+                    if (resultSubmitted)
+                    {
+                        return;
+                    }
+
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitRuneVerifyResultCommand(payload));
+                }
+            };
+
+            var panelOpened = false;
+            UIKit.OpenPanelAsync<RuneVerifyPanel>(
+                    UILevel.PopUI,
+                    panelData,
+                    assetBundleName: "contracting_ui",
+                    prefabName: nameof(RuneVerifyPanel))
+                .ToAction()
+                .StartGlobal(() => panelOpened = true);
+
+            var openTimeout = 8f;
+            var elapsed = 0f;
+            while (!panelOpened && elapsed < openTimeout)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (!panelOpened)
+            {
+                LogKit.E("[ITCDialoguePanel] RuneVerifyPanel open timeout. Applying fallback result.");
+                if (!resultSubmitted)
+                {
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitRuneVerifyResultCommand(BuildRuneVerifyFallbackResult(
+                        clientId,
+                        Mathf.Max(1, config.DistortedCount),
+                        randomSeed)));
+                }
+            }
+            else
+            {
+                var gameplayTimeout = Mathf.Max(10f, config.TimeLimitSeconds + config.CountdownLeadSeconds + 8f);
+                elapsed = 0f;
+                while (flowState.RuneVerifyRunning.Value && elapsed < gameplayTimeout)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    yield return null;
+                }
+
+                if (flowState.RuneVerifyRunning.Value && !resultSubmitted)
+                {
+                    LogKit.E("[ITCDialoguePanel] RuneVerifyPanel resolve timeout. Applying fallback result.");
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitRuneVerifyResultCommand(BuildRuneVerifyFallbackResult(
+                        clientId,
+                        Mathf.Max(1, config.DistortedCount),
+                        randomSeed)));
+                }
+            }
+
+            var routeResult = string.IsNullOrWhiteSpace(flowState.RouteRuneVerifyResult.Value)
+                ? "failed"
+                : flowState.RouteRuneVerifyResult.Value;
+            WriteStringVariable(variableStorage, "$Route_RuneVerifyResult", routeResult);
+            WriteFloatVariable(variableStorage, "$Route_RuneVerifyDebuff", flowState.RouteRuneVerifyDebuff.Value);
+
+            UIKit.ClosePanel<RuneVerifyPanel>();
+        }
+
         private static int ParseClientId(string clientToken, VariableStorageBehaviour variableStorage)
         {
             if (int.TryParse(clientToken, out var parsedClientId) && parsedClientId > 0)
@@ -428,6 +544,60 @@ namespace ITC.Dialogue
                 ForceConfirmed = false,
                 WasFallback = true
             };
+        }
+
+
+        private static RuneVerifyResultPayload BuildRuneVerifyFallbackResult(int clientId, int distortedCount, int randomSeed)
+        {
+            return new RuneVerifyResultPayload
+            {
+                ClientId = Mathf.Max(1, clientId),
+                Result = RuneVerifyResultType.Failed,
+                FoundCount = 0,
+                DistortedCount = Mathf.Max(1, distortedCount),
+                Triggered = true,
+                WasTimeoutFallback = true,
+                RandomSeed = randomSeed
+            };
+        }
+
+        private static int ResolveRuneVerifySeed(
+            RuneVerifyConfig config,
+            int clientId,
+            VariableStorageBehaviour variableStorage)
+        {
+            if (config != null && config.FixedRandomSeed >= 0)
+            {
+                return config.FixedRandomSeed;
+            }
+
+            var day = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$DAY", 1f));
+            var currentClient = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Route_CurrentClient", clientId));
+            var mixA = day * 73856093;
+            var mixB = currentClient * 19349663;
+            return mixA ^ mixB ^ 83492791;
+        }
+
+        private static bool ShouldTriggerRuneVerify(RuneVerifyConfig config, int randomSeed)
+        {
+            if (config == null)
+            {
+                return false;
+            }
+
+            var probability = Mathf.Clamp01(config.TriggerProbability);
+            if (probability <= 0f)
+            {
+                return false;
+            }
+
+            if (probability >= 1f)
+            {
+                return true;
+            }
+
+            var random = new System.Random(randomSeed);
+            return random.NextDouble() < probability;
         }
 
         private IEnumerator SwapPortraitByKey(Image target, string key, DialogueVisualSlot slot)

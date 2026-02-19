@@ -92,5 +92,80 @@ namespace ITC.Contracting
             return "rejected_wrong";
         }
     }
+
+    public sealed class BeginRuneVerifyCommand : AbstractCommand
+    {
+        private readonly int clientId;
+        private readonly bool triggered;
+        private readonly int randomSeed;
+
+        public BeginRuneVerifyCommand(int clientId, bool triggered, int randomSeed)
+        {
+            this.clientId = Mathf.Max(1, clientId);
+            this.triggered = triggered;
+            this.randomSeed = randomSeed;
+        }
+
+        protected override void OnExecute()
+        {
+            var model = this.GetModel<ContractFlowStateModel>();
+            model.CurrentClientId.Value = clientId;
+            model.RuneVerifySeed.Value = randomSeed;
+            model.RuneVerifyFoundCount.Value = 0;
+            model.RuneVerifyDistortedCount.Value = 0;
+            model.RouteRuneVerifyDebuff.Value = 0;
+
+            if (triggered)
+            {
+                model.RouteRuneVerifyResult.Value = "failed";
+                model.RuneVerifyRunning.Value = true;
+                model.RuneVerifyCompleted.Value = false;
+                return;
+            }
+
+            model.RouteRuneVerifyResult.Value = "skipped";
+            model.RuneVerifyRunning.Value = false;
+            model.RuneVerifyCompleted.Value = true;
+        }
+    }
+
+    public sealed class SubmitRuneVerifyResultCommand : AbstractCommand
+    {
+        private readonly RuneVerifyResultPayload payload;
+
+        public SubmitRuneVerifyResultCommand(RuneVerifyResultPayload payload)
+        {
+            this.payload = payload;
+        }
+
+        protected override void OnExecute()
+        {
+            var flowState = this.GetModel<ContractFlowStateModel>();
+
+            if (payload.WasTimeoutFallback)
+            {
+                LogKit.W($"[RuneVerify] Timeout fallback result used for client {payload.ClientId}.");
+            }
+
+            var resultString = ResolveRouteResult(payload.Result);
+            flowState.RouteRuneVerifyResult.Value = resultString;
+            flowState.RouteRuneVerifyDebuff.Value = payload.Result == RuneVerifyResultType.Failed ? 1 : 0;
+            flowState.RuneVerifyFoundCount.Value = Mathf.Max(0, payload.FoundCount);
+            flowState.RuneVerifyDistortedCount.Value = Mathf.Max(0, payload.DistortedCount);
+            flowState.RuneVerifySeed.Value = payload.RandomSeed;
+            flowState.RuneVerifyRunning.Value = false;
+            flowState.RuneVerifyCompleted.Value = true;
+        }
+
+        private static string ResolveRouteResult(RuneVerifyResultType result)
+        {
+            return result switch
+            {
+                RuneVerifyResultType.Success => "success",
+                RuneVerifyResultType.Failed => "failed",
+                _ => "skipped"
+            };
+        }
+    }
 }
 
