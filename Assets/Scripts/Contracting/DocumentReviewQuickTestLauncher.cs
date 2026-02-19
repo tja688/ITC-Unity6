@@ -2,6 +2,9 @@ using System.Collections;
 using QFramework;
 using UnityEngine;
 using UnityEngine.EventSystems;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem.UI;
+#endif
 
 namespace ITC.Contracting
 {
@@ -153,13 +156,46 @@ namespace ITC.Contracting
 
         private static void EnsureEventSystemExists()
         {
-            if (Object.FindAnyObjectByType<EventSystem>() != null)
+            var eventSystem = Object.FindFirstObjectByType<EventSystem>(FindObjectsInactive.Include);
+            if (eventSystem == null)
             {
-                return;
+                var eventSystemObj = new GameObject("EventSystem", typeof(EventSystem));
+                Object.DontDestroyOnLoad(eventSystemObj);
+                eventSystem = eventSystemObj.GetComponent<EventSystem>();
             }
 
-            var eventSystemObj = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
-            Object.DontDestroyOnLoad(eventSystemObj);
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+            var inputSystemModule = eventSystem.GetComponent<InputSystemUIInputModule>();
+            if (inputSystemModule == null)
+            {
+                inputSystemModule = eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
+            }
+
+            var legacyModule = eventSystem.GetComponent<StandaloneInputModule>();
+            if (legacyModule != null)
+            {
+                legacyModule.enabled = false;
+            }
+#elif ENABLE_LEGACY_INPUT_MANAGER
+            var legacyModule = eventSystem.GetComponent<StandaloneInputModule>();
+            if (legacyModule == null)
+            {
+                legacyModule = eventSystem.gameObject.AddComponent<StandaloneInputModule>();
+            }
+
+#if ENABLE_INPUT_SYSTEM
+            var inputSystemModule = eventSystem.GetComponent<InputSystemUIInputModule>();
+            if (inputSystemModule != null)
+            {
+                inputSystemModule.enabled = false;
+            }
+#endif
+#else
+            if (eventSystem.GetComponent<StandaloneInputModule>() == null)
+            {
+                eventSystem.gameObject.AddComponent<StandaloneInputModule>();
+            }
+#endif
         }
 
         public IArchitecture GetArchitecture()
