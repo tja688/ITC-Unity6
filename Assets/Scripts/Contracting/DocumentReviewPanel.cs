@@ -34,12 +34,17 @@ namespace ITC.Contracting
         [SerializeField] private TMP_Text hintText;
         [SerializeField] private TMP_Text statusText;
         [SerializeField] private TMP_Text zoomButtonLabel;
+        [SerializeField] private TMP_Text guideToggleLabel;
 
         [Header("Decision Buttons")]
         [SerializeField] private Button passButton;
         [SerializeField] private Button rejectButton;
         [SerializeField] private Button zoomButton;
+        [SerializeField] private Button guideToggleButton;
         [SerializeField] private Button cancelRejectButton;
+
+        [Header("Guide")]
+        [SerializeField] private bool showGuideOnOpen = true;
 
         [Header("Hotspots")]
         [SerializeField] private List<Button> hotspotButtons = new();
@@ -60,6 +65,7 @@ namespace ITC.Contracting
         private readonly Dictionary<Button, UnityAction> rejectReasonClickListeners = new();
         private readonly Dictionary<Button, HotspotHoverExpander> hotspotHoverExpanders = new();
         private readonly HashSet<Button> inspectedHotspots = new();
+        private readonly List<DocumentReviewGuideTag> guideTags = new();
 
         private DocumentReviewPanelData panelData = new();
         private ReviewState state;
@@ -67,6 +73,7 @@ namespace ITC.Contracting
         private DocumentReviewDecision armedDecision;
         private float armedDecisionTime;
         private bool zoomed;
+        private bool guideVisible;
         private Coroutine resolveCoroutine;
 
         private void Awake()
@@ -138,6 +145,8 @@ namespace ITC.Contracting
             rejectButton ??= reviewRoot?.Find("Controls/RejectButton")?.GetComponent<Button>();
             zoomButton ??= reviewRoot?.Find("Controls/ZoomButton")?.GetComponent<Button>();
             zoomButtonLabel ??= reviewRoot?.Find("Controls/ZoomButton/Label")?.GetComponent<TMP_Text>();
+            guideToggleButton ??= reviewRoot?.Find("GuideToggleButton")?.GetComponent<Button>();
+            guideToggleLabel ??= reviewRoot?.Find("GuideToggleButton/Label")?.GetComponent<TMP_Text>();
 
             cancelRejectButton ??= rejectReasonRoot?.transform.Find("CancelButton")?.GetComponent<Button>();
             reasonImageMismatchButton ??= rejectReasonRoot?.transform.Find("Reason_ImageMismatch")?.GetComponent<Button>();
@@ -154,6 +163,8 @@ namespace ITC.Contracting
                 TryAddHotspotByName("Hotspot_Date");
                 TryAddHotspotByName("Hotspot_Content");
             }
+
+            RebuildGuideTags();
         }
 
         private void TryAddHotspotByName(string hotspotName)
@@ -162,6 +173,24 @@ namespace ITC.Contracting
             if (button != null)
             {
                 hotspotButtons.Add(button);
+            }
+        }
+
+        private void RebuildGuideTags()
+        {
+            guideTags.Clear();
+            if (reviewRoot == null)
+            {
+                return;
+            }
+
+            var found = reviewRoot.GetComponentsInChildren<DocumentReviewGuideTag>(true);
+            foreach (var tag in found)
+            {
+                if (tag != null)
+                {
+                    guideTags.Add(tag);
+                }
             }
         }
 
@@ -182,6 +211,11 @@ namespace ITC.Contracting
             if (zoomButton != null)
             {
                 zoomButton.onClick.AddListener(OnZoomClicked);
+            }
+
+            if (guideToggleButton != null)
+            {
+                guideToggleButton.onClick.AddListener(OnGuideToggleClicked);
             }
 
             if (documentBlankButton != null)
@@ -253,6 +287,11 @@ namespace ITC.Contracting
                 zoomButton.onClick.RemoveListener(OnZoomClicked);
             }
 
+            if (guideToggleButton != null)
+            {
+                guideToggleButton.onClick.RemoveListener(OnGuideToggleClicked);
+            }
+
             if (documentBlankButton != null)
             {
                 documentBlankButton.onClick.RemoveListener(OnBlankAreaClicked);
@@ -297,6 +336,7 @@ namespace ITC.Contracting
             RefreshTitleAndHint();
             RefreshHotspotVisuals();
             RefreshStatusText();
+            SetGuideVisible(showGuideOnOpen);
             state = ReviewState.Inspecting;
         }
 
@@ -306,8 +346,8 @@ namespace ITC.Contracting
             {
                 var clientName = panelData.ClientConfig != null
                     ? panelData.ClientConfig.ClientDisplayName
-                    : $"Client {panelData.ClientId}";
-                titleText.text = $"Document Review - {clientName}";
+                    : $"客户{panelData.ClientId}";
+                titleText.text = $"文书审核 - {clientName}";
             }
 
             if (hintText == null)
@@ -317,11 +357,11 @@ namespace ITC.Contracting
 
             if (panelData.TutorialMode && panelData.RuntimeConfig.TutorialForceAllHotspots)
             {
-                hintText.text = "Tutorial: inspect all hotspots before submitting.";
+                hintText.text = "教学模式：请先检查全部热点，再提交判定。";
             }
             else
             {
-                hintText.text = "Inspect the document, then choose PASS or REJECT.";
+                hintText.text = "请先检查文书，再选择“通过”或“退回”。";
             }
         }
 
@@ -335,7 +375,7 @@ namespace ITC.Contracting
             var current = inspectedHotspots.Count;
             var required = RequiredInspectCount();
             var total = Mathf.Max(1, hotspotButtons.Count);
-            statusText.text = $"Inspected {current}/{total} (recommended >= {required})";
+            statusText.text = $"已检查 {current}/{total}（建议至少 {required} 项）";
         }
 
         private int RequiredInspectCount()
@@ -431,7 +471,7 @@ namespace ITC.Contracting
             {
                 if (statusText != null)
                 {
-                    statusText.text = "Tutorial mode requires all hotspots to be inspected.";
+                    statusText.text = "教学模式要求：必须完成全部热点检查。";
                 }
 
                 EmitCue("vfx.contract.doc.wrong_shake", transform, 0.8f);
@@ -459,7 +499,7 @@ namespace ITC.Contracting
                 armedDecisionTime = now;
                 if (statusText != null)
                 {
-                    statusText.text = "Not enough inspection. Click again to confirm this decision.";
+                    statusText.text = "检查项不足。再次点击可确认本次判定。";
                 }
 
                 return false;
@@ -469,7 +509,7 @@ namespace ITC.Contracting
             {
                 if (statusText != null)
                 {
-                    statusText.text = "Please wait a moment, then click again to confirm.";
+                    statusText.text = "请稍候后再次点击确认。";
                 }
 
                 return false;
@@ -485,7 +525,7 @@ namespace ITC.Contracting
             SetRejectReasonRootVisible(true);
             if (statusText != null)
             {
-                statusText.text = "Select one reject reason.";
+                statusText.text = "请选择一个退回理由。";
             }
         }
 
@@ -548,7 +588,7 @@ namespace ITC.Contracting
 
             if (statusText != null)
             {
-                statusText.text = "Resolving result...";
+                statusText.text = "正在结算判定结果...";
             }
 
             var duration = Mathf.Max(0.05f, resolveFeedbackDuration);
@@ -593,7 +633,29 @@ namespace ITC.Contracting
             ApplyZoom();
             if (zoomButtonLabel != null)
             {
-                zoomButtonLabel.text = zoomed ? "Zoom x1.0" : "Zoom x1.5";
+                zoomButtonLabel.text = zoomed ? "缩放 x1.0" : "缩放 x1.5";
+            }
+        }
+
+        private void OnGuideToggleClicked()
+        {
+            SetGuideVisible(!guideVisible);
+        }
+
+        private void SetGuideVisible(bool visible)
+        {
+            guideVisible = visible;
+            foreach (var tag in guideTags)
+            {
+                if (tag != null)
+                {
+                    tag.gameObject.SetActive(visible);
+                }
+            }
+
+            if (guideToggleLabel != null)
+            {
+                guideToggleLabel.text = visible ? "说明：开" : "说明：关";
             }
         }
 
@@ -616,6 +678,7 @@ namespace ITC.Contracting
             SetButtonInteractable(passButton, interactable);
             SetButtonInteractable(rejectButton, interactable);
             SetButtonInteractable(zoomButton, interactable);
+            SetButtonInteractable(guideToggleButton, interactable);
             SetButtonInteractable(cancelRejectButton, interactable);
 
             foreach (var hotspot in hotspotButtons)

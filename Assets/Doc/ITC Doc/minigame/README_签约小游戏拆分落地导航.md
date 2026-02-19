@@ -7,6 +7,7 @@
 
 - `00_shared/00_签约小游戏共通落地规范.md`
 - `01_document_review/01_文书审核-落地设计.md`
+- `01_document_review/01_文书审核-代码文档与操作说明.md`
 - `02_rune_typing/02_符文控制板QTE-落地设计.md`
 - `03_rune_verify/03_符文核验找茬-落地设计.md`
 - `04_stamp/04_印章选择盖印-落地设计.md`
