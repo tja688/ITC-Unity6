@@ -8,14 +8,23 @@ namespace ITC.Contracting
     {
         private readonly Dictionary<int, DocumentReviewClientConfig> documentReviewClientConfigs = new();
         private readonly Dictionary<int, StampClientConfig> stampClientConfigs = new();
+        private readonly Dictionary<int, SoulCollectClientConfig> soulCollectClientConfigs = new();
+        private readonly Dictionary<int, BeanSellClientConfig> beanSellClientConfigs = new();
+        private readonly Dictionary<int, SettlementClientConfig> settlementClientConfigs = new();
         private readonly Dictionary<int, RuneTypingRoundConfig> runeTypingClientConfigs = new();
         private DocumentReviewConfig documentReviewRuleConfig = new();
         private StampConfig stampRuleConfig = new();
+        private SoulCollectConfig soulCollectRuleConfig = new();
+        private BeanSellConfig beanSellRuleConfig = new();
+        private ContractSettlementConfig settlementRuleConfig = new();
         private RuneTypingConfig runeTypingRuleConfig = new();
         private RuneVerifyConfig runeVerifyRuleConfig = new();
 
         public DocumentReviewConfig DocumentReviewRuleConfig => documentReviewRuleConfig;
         public StampConfig StampRuleConfig => stampRuleConfig;
+        public SoulCollectConfig SoulCollectRuleConfig => soulCollectRuleConfig;
+        public BeanSellConfig BeanSellRuleConfig => beanSellRuleConfig;
+        public ContractSettlementConfig SettlementRuleConfig => settlementRuleConfig;
         public RuneTypingConfig RuneTypingRuleConfig => runeTypingRuleConfig;
         public RuneVerifyConfig RuneVerifyRuleConfig => runeVerifyRuleConfig;
 
@@ -23,10 +32,39 @@ namespace ITC.Contracting
         {
             documentReviewRuleConfig = new DocumentReviewConfig();
             stampRuleConfig = new StampConfig();
+            soulCollectRuleConfig = new SoulCollectConfig();
+            beanSellRuleConfig = new BeanSellConfig
+            {
+                EnabledFromDay = 2,
+                DailyResetOnDayChange = true,
+                SuccessThreshold = 3,
+                PitchTypeWeights = new BeanSellPitchWeights
+                {
+                    StrongPush = 0,
+                    Empathy = 0,
+                    Benefit = 0
+                },
+                FailSatisfactionPenalty = 1,
+                ResolveStaySeconds = 0.75f,
+                ShowPreferenceHint = true
+            };
+            settlementRuleConfig = new ContractSettlementConfig
+            {
+                SatisfactionTipThreshold = 3,
+                SatisfactionClampMin = 0,
+                SatisfactionClampMax = 5,
+                PoorTipRange = new SettlementTipRange { Min = 0, Max = 1 },
+                WorkerTipRange = new SettlementTipRange { Min = 1, Max = 3 },
+                BourgeoisTipRange = new SettlementTipRange { Min = 3, Max = 5 },
+                FeedbackDuration = 1.4f
+            };
             runeTypingRuleConfig = new RuneTypingConfig();
             runeVerifyRuleConfig = new RuneVerifyConfig();
             documentReviewClientConfigs.Clear();
             stampClientConfigs.Clear();
+            soulCollectClientConfigs.Clear();
+            beanSellClientConfigs.Clear();
+            settlementClientConfigs.Clear();
             runeTypingClientConfigs.Clear();
 
             documentReviewClientConfigs[1] = new DocumentReviewClientConfig
@@ -63,6 +101,78 @@ namespace ITC.Contracting
                 ClientId = 2,
                 ClientDisplayName = "Thomas",
                 CorrectStampType = StampType.Skill
+            };
+
+            soulCollectClientConfigs[1] = new SoulCollectClientConfig
+            {
+                ClientId = 1,
+                ClientDisplayName = "Emmett",
+                MinPercent = 40,
+                MaxPercent = 50,
+                DefaultTargetPercent = 45,
+                SoulColor = new Color(0.47f, 0.84f, 1f, 1f),
+                RevealFxKey = "vfx.contract.soul.transfer",
+                VoiceReactionKey = "voice.contract.soul.emmett"
+            };
+
+            soulCollectClientConfigs[2] = new SoulCollectClientConfig
+            {
+                ClientId = 2,
+                ClientDisplayName = "Thomas",
+                MinPercent = 60,
+                MaxPercent = 60,
+                DefaultTargetPercent = 60,
+                SoulColor = new Color(0.76f, 0.88f, 1f, 1f),
+                RevealFxKey = "vfx.contract.soul.transfer",
+                VoiceReactionKey = "voice.contract.soul.thomas"
+            };
+
+            beanSellClientConfigs[1] = new BeanSellClientConfig
+            {
+                ClientId = 1,
+                ClientDisplayName = "Emmett",
+                BuyWillingness = 3,
+                PreferredPitch = BeanPitchType.Benefit,
+                SituationalModifier = 1
+            };
+
+            beanSellClientConfigs[2] = new BeanSellClientConfig
+            {
+                ClientId = 2,
+                ClientDisplayName = "Thomas",
+                BuyWillingness = 2,
+                PreferredPitch = BeanPitchType.Empathy,
+                SituationalModifier = 0
+            };
+
+            beanSellClientConfigs[3] = new BeanSellClientConfig
+            {
+                ClientId = 3,
+                ClientDisplayName = "Bartholomew",
+                BuyWillingness = 1,
+                PreferredPitch = BeanPitchType.StrongPush,
+                SituationalModifier = -1
+            };
+
+            settlementClientConfigs[1] = new SettlementClientConfig
+            {
+                ClientId = 1,
+                ClientDisplayName = "Emmett",
+                SocialClass = ContractSocialClass.Worker
+            };
+
+            settlementClientConfigs[2] = new SettlementClientConfig
+            {
+                ClientId = 2,
+                ClientDisplayName = "Thomas",
+                SocialClass = ContractSocialClass.Worker
+            };
+
+            settlementClientConfigs[3] = new SettlementClientConfig
+            {
+                ClientId = 3,
+                ClientDisplayName = "Bartholomew",
+                SocialClass = ContractSocialClass.Bourgeois
             };
 
             runeTypingClientConfigs[1] = new RuneTypingRoundConfig
@@ -127,6 +237,62 @@ namespace ITC.Contracting
                 VerifyDebuffShakeCount = stampRuleConfig.VerifyDebuffShakeCount,
                 TimingFailPenalty = stampRuleConfig.TimingFailPenalty
             };
+        }
+
+        public SoulCollectClientConfig GetSoulCollectClientConfig(int clientId)
+        {
+            if (soulCollectClientConfigs.TryGetValue(clientId, out var config))
+            {
+                return config;
+            }
+
+            return soulCollectClientConfigs[1];
+        }
+
+        public SoulCollectConfig BuildSoulCollectRuntimeConfig(int clientId, int targetPercentOverride = -1)
+        {
+            var clientConfig = GetSoulCollectClientConfig(clientId);
+            var config = soulCollectRuleConfig?.Clone() ?? new SoulCollectConfig();
+
+            config.MinPercent = Mathf.Clamp(clientConfig.MinPercent, 0, 100);
+            config.MaxPercent = Mathf.Clamp(clientConfig.MaxPercent, config.MinPercent, 100);
+
+            var target = targetPercentOverride >= 0
+                ? targetPercentOverride
+                : clientConfig.DefaultTargetPercent;
+            config.TargetPercent = Mathf.Clamp(target, config.MinPercent, config.MaxPercent);
+
+            return config;
+        }
+
+        public BeanSellClientConfig GetBeanSellClientConfig(int clientId)
+        {
+            if (beanSellClientConfigs.TryGetValue(clientId, out var config))
+            {
+                return config;
+            }
+
+            return beanSellClientConfigs[1];
+        }
+
+        public BeanSellConfig BuildBeanSellRuntimeConfig()
+        {
+            return beanSellRuleConfig?.Clone() ?? new BeanSellConfig();
+        }
+
+        public SettlementClientConfig GetSettlementClientConfig(int clientId)
+        {
+            if (settlementClientConfigs.TryGetValue(clientId, out var config))
+            {
+                return config;
+            }
+
+            return settlementClientConfigs[1];
+        }
+
+        public ContractSettlementConfig BuildSettlementRuntimeConfig()
+        {
+            return settlementRuleConfig?.Clone() ?? new ContractSettlementConfig();
         }
 
         public RuneTypingRoundConfig BuildRuneTypingRoundConfig(int clientId, int gridSize)

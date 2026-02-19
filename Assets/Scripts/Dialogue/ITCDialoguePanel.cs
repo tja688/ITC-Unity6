@@ -192,6 +192,9 @@ namespace ITC.Dialogue
             dialogueRunner.AddCommandHandler<string>("itc_doc_review", RunDocumentReviewCommand);
             dialogueRunner.AddCommandHandler<string, string>("itc_rune_typing", RunRuneTypingCommand);
             dialogueRunner.AddCommandHandler<string>("itc_stamp_select", RunStampSelectCommand);
+            dialogueRunner.AddCommandHandler<string, string>("itc_soul_collect", RunSoulCollectCommand);
+            dialogueRunner.AddCommandHandler<string>("itc_bean_sell", RunBeanSellCommand);
+            dialogueRunner.AddCommandHandler<string>("itc_settlement", RunSettlementCommand);
             dialogueRunner.AddCommandHandler<string>("itc_rune_verify", RunRuneVerifyCommand);
             dialogueRunner.AddCommandHandler("itc_npc_main_hide", HideNpcMainPortraitCommand);
             dialogueRunner.AddCommandHandler("itc_npc_avatar_hide", HideNpcAvatarCommand);
@@ -213,6 +216,9 @@ namespace ITC.Dialogue
             dialogueRunner.RemoveCommandHandler("itc_doc_review");
             dialogueRunner.RemoveCommandHandler("itc_rune_typing");
             dialogueRunner.RemoveCommandHandler("itc_stamp_select");
+            dialogueRunner.RemoveCommandHandler("itc_soul_collect");
+            dialogueRunner.RemoveCommandHandler("itc_bean_sell");
+            dialogueRunner.RemoveCommandHandler("itc_settlement");
             dialogueRunner.RemoveCommandHandler("itc_rune_verify");
             dialogueRunner.RemoveCommandHandler("itc_npc_main_hide");
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar_hide");
@@ -554,6 +560,322 @@ namespace ITC.Dialogue
             UIKit.ClosePanel<StampPanel>();
         }
 
+        private IEnumerator RunSoulCollectCommand(string clientToken, string targetPercentToken)
+        {
+            if (dialogueRunner == null)
+            {
+                yield break;
+            }
+
+            var flowState = this.GetModel<ContractFlowStateModel>();
+            var configModel = this.GetModel<ContractClientConfigModel>();
+            var variableStorage = dialogueRunner.VariableStorage;
+
+            var clientId = ParseClientId(clientToken, variableStorage);
+            var clientConfig = configModel.GetSoulCollectClientConfig(clientId);
+            var fallbackTarget = clientConfig != null ? clientConfig.DefaultTargetPercent : 50;
+            var targetPercent = ParseTargetPercent(targetPercentToken, fallbackTarget);
+            var currentSatisfaction = ReadFloatVariable(variableStorage, "$satisfaction", 3f);
+            var currentSignMistake = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Sign_mistake", 0f));
+
+            var runtimeConfig = configModel.BuildSoulCollectRuntimeConfig(clientId, targetPercent);
+            this.SendCommand(new BeginSoulCollectCommand(
+                clientId,
+                currentSatisfaction,
+                currentSignMistake,
+                runtimeConfig.TargetPercent,
+                runtimeConfig.MinPercent,
+                runtimeConfig.MaxPercent));
+
+            var resultSubmitted = false;
+            var panelData = new SoulCollectPanelData
+            {
+                ClientId = clientId,
+                TutorialMode = false,
+                RuntimeConfig = runtimeConfig,
+                ClientConfig = clientConfig,
+                OnFxCue = DispatchContractFxCue,
+                OnCompleted = payload =>
+                {
+                    if (resultSubmitted)
+                    {
+                        return;
+                    }
+
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitSoulCollectResultCommand(payload));
+                }
+            };
+
+            var panelOpened = false;
+            UIKit.OpenPanelAsync<SoulCollectPanel>(
+                    UILevel.PopUI,
+                    panelData,
+                    assetBundleName: "contracting_ui",
+                    prefabName: nameof(SoulCollectPanel))
+                .ToAction()
+                .StartGlobal(() => panelOpened = true);
+
+            var openTimeout = 8f;
+            var elapsed = 0f;
+            while (!panelOpened && elapsed < openTimeout)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (!panelOpened)
+            {
+                LogKit.E("[ITCDialoguePanel] SoulCollectPanel open timeout. Applying fallback result.");
+                if (!resultSubmitted)
+                {
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitSoulCollectResultCommand(
+                        BuildSoulCollectFallbackResult(clientId, runtimeConfig)));
+                }
+            }
+            else
+            {
+                var gameplayTimeout = 180f;
+                elapsed = 0f;
+                while (flowState.SoulCollectRunning.Value && elapsed < gameplayTimeout)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    yield return null;
+                }
+
+                if (flowState.SoulCollectRunning.Value && !resultSubmitted)
+                {
+                    LogKit.E("[ITCDialoguePanel] SoulCollectPanel resolve timeout. Applying fallback result.");
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitSoulCollectResultCommand(
+                        BuildSoulCollectFallbackResult(clientId, runtimeConfig)));
+                }
+            }
+
+            WriteFloatVariable(variableStorage, "$Route_SoulCollectPercent", flowState.RouteSoulCollectPercent.Value);
+            WriteFloatVariable(variableStorage, "$Route_SoulMin", flowState.RouteSoulMin.Value);
+            WriteFloatVariable(variableStorage, "$Route_SoulMax", flowState.RouteSoulMax.Value);
+            WriteFloatVariable(variableStorage, "$Sign_mistake", flowState.SignMistake.Value);
+            WriteFloatVariable(variableStorage, "$satisfaction", flowState.Satisfaction.Value);
+
+            UIKit.ClosePanel<SoulCollectPanel>();
+        }
+
+        private IEnumerator RunBeanSellCommand(string clientToken)
+        {
+            if (dialogueRunner == null)
+            {
+                yield break;
+            }
+
+            var flowState = this.GetModel<ContractFlowStateModel>();
+            var configModel = this.GetModel<ContractClientConfigModel>();
+            var variableStorage = dialogueRunner.VariableStorage;
+
+            var clientId = ParseClientId(clientToken, variableStorage);
+            var day = Mathf.Max(1, Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$DAY", 1f)));
+            var currentSatisfaction = ReadFloatVariable(variableStorage, "$satisfaction", 3f);
+            var currentSignMistake = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Sign_mistake", 0f));
+            var currentSoldCount = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Route_BeanSoldCount", 0f));
+
+            this.SendCommand(new BeginBeanSellCommand(
+                clientId,
+                day,
+                currentSatisfaction,
+                currentSignMistake,
+                currentSoldCount));
+
+            var runtimeConfig = configModel.BuildBeanSellRuntimeConfig();
+            var clientConfig = configModel.GetBeanSellClientConfig(clientId);
+            var resultSubmitted = false;
+
+            if (day < runtimeConfig.EnabledFromDay)
+            {
+                resultSubmitted = true;
+                MainMenuApp.Interface.SendCommand(new SubmitBeanSellResultCommand(
+                    BuildBeanSellSkippedResult(clientId, day)));
+            }
+            else
+            {
+                var panelData = new BeanSellPanelData
+                {
+                    ClientId = clientId,
+                    Day = day,
+                    RuntimeConfig = runtimeConfig,
+                    ClientConfig = clientConfig,
+                    OnFxCue = DispatchContractFxCue,
+                    OnCompleted = payload =>
+                    {
+                        if (resultSubmitted)
+                        {
+                            return;
+                        }
+
+                        resultSubmitted = true;
+                        MainMenuApp.Interface.SendCommand(new SubmitBeanSellResultCommand(payload));
+                    }
+                };
+
+                var panelOpened = false;
+                UIKit.OpenPanelAsync<BeanSellPanel>(
+                        UILevel.PopUI,
+                        panelData,
+                        assetBundleName: "contracting_ui",
+                        prefabName: nameof(BeanSellPanel))
+                    .ToAction()
+                    .StartGlobal(() => panelOpened = true);
+
+                var openTimeout = 8f;
+                var elapsed = 0f;
+                while (!panelOpened && elapsed < openTimeout)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    yield return null;
+                }
+
+                if (!panelOpened)
+                {
+                    LogKit.E("[ITCDialoguePanel] BeanSellPanel open timeout. Applying fallback result.");
+                    if (!resultSubmitted)
+                    {
+                        resultSubmitted = true;
+                        MainMenuApp.Interface.SendCommand(new SubmitBeanSellResultCommand(
+                            BuildBeanSellFallbackResult(clientId, day)));
+                    }
+                }
+                else
+                {
+                    var gameplayTimeout = 90f;
+                    elapsed = 0f;
+                    while (flowState.BeanSellRunning.Value && elapsed < gameplayTimeout)
+                    {
+                        elapsed += Time.unscaledDeltaTime;
+                        yield return null;
+                    }
+
+                    if (flowState.BeanSellRunning.Value && !resultSubmitted)
+                    {
+                        LogKit.E("[ITCDialoguePanel] BeanSellPanel resolve timeout. Applying fallback result.");
+                        resultSubmitted = true;
+                        MainMenuApp.Interface.SendCommand(new SubmitBeanSellResultCommand(
+                            BuildBeanSellFallbackResult(clientId, day)));
+                    }
+                }
+
+                UIKit.ClosePanel<BeanSellPanel>();
+            }
+
+            WriteStringVariable(variableStorage, "$Route_BeanSellResult", flowState.RouteBeanSellResult.Value);
+            WriteFloatVariable(variableStorage, "$Route_BeanSoldCount", flowState.RouteBeanSoldCount.Value);
+            WriteFloatVariable(variableStorage, "$satisfaction", flowState.Satisfaction.Value);
+            WriteFloatVariable(variableStorage, "$Sign_mistake", flowState.SignMistake.Value);
+        }
+
+        private IEnumerator RunSettlementCommand(string clientToken)
+        {
+            if (dialogueRunner == null)
+            {
+                yield break;
+            }
+
+            var flowState = this.GetModel<ContractFlowStateModel>();
+            var configModel = this.GetModel<ContractClientConfigModel>();
+            var variableStorage = dialogueRunner.VariableStorage;
+
+            var clientId = ParseClientId(clientToken, variableStorage);
+            var day = Mathf.Max(1, Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$DAY", 1f)));
+            var currentSatisfaction = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$satisfaction", 3f));
+            var currentSignMistake = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Sign_mistake", 0f));
+            var currentMoney = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$money", 0f));
+            var currentNumberOfSignMistake = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Nmber_of_sign_mistake", 0f));
+            var currentGlobalSignMistake = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Global_sign_mistake", 0f));
+
+            this.SendCommand(new BeginSettlementCommand(
+                clientId,
+                day,
+                currentSatisfaction,
+                currentSignMistake,
+                currentMoney,
+                currentNumberOfSignMistake,
+                currentGlobalSignMistake));
+            this.SendCommand(new FinalizeClientContractCommand(day));
+
+            var settlementClientConfig = configModel.GetSettlementClientConfig(clientId);
+            var settlementRuleConfig = configModel.BuildSettlementRuntimeConfig();
+            var panelData = new SettlementPanelData
+            {
+                ClientId = clientId,
+                Day = day,
+                ClientDisplayName = settlementClientConfig != null
+                    ? settlementClientConfig.ClientDisplayName
+                    : $"客户{Mathf.Max(1, clientId)}",
+                DocReviewResult = flowState.RouteDocReviewResult.Value,
+                QteErrorCount = flowState.RouteQteErrorCount.Value,
+                StampType = flowState.RouteStampType.Value,
+                StampTimingResult = flowState.RouteStampTimingResult.Value,
+                SoulPercent = flowState.RouteSoulCollectPercent.Value,
+                BeanSellResult = flowState.RouteBeanSellResult.Value,
+                FinalSatisfaction = Mathf.RoundToInt(flowState.Satisfaction.Value),
+                TipAmount = flowState.RouteSettlementTip.Value,
+                TotalMoney = flowState.Money.Value,
+                Tier = ParseSettlementTier(flowState.RouteSettlementTier.Value),
+                FeedbackDuration = settlementRuleConfig.FeedbackDuration,
+                OnFxCue = DispatchContractFxCue
+            };
+
+            var panelOpened = false;
+            var panelFinished = false;
+            panelData.OnCompleted = () => panelFinished = true;
+
+            UIKit.OpenPanelAsync<SettlementPanel>(
+                    UILevel.PopUI,
+                    panelData,
+                    assetBundleName: "contracting_ui",
+                    prefabName: nameof(SettlementPanel))
+                .ToAction()
+                .StartGlobal(() => panelOpened = true);
+
+            var openTimeout = 8f;
+            var elapsed = 0f;
+            while (!panelOpened && elapsed < openTimeout)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (panelOpened)
+            {
+                var feedbackTimeout = 30f;
+                elapsed = 0f;
+                while (!panelFinished && elapsed < feedbackTimeout)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    yield return null;
+                }
+
+                if (!panelFinished)
+                {
+                    LogKit.W("[ITCDialoguePanel] SettlementPanel feedback timeout, continue route.");
+                }
+
+                UIKit.ClosePanel<SettlementPanel>();
+            }
+            else
+            {
+                LogKit.W("[ITCDialoguePanel] SettlementPanel open timeout, settlement data already finalized.");
+            }
+
+            WriteFloatVariable(variableStorage, "$satisfaction", flowState.Satisfaction.Value);
+            WriteFloatVariable(variableStorage, "$Sign_mistake", flowState.SignMistake.Value);
+            WriteFloatVariable(variableStorage, "$money", flowState.Money.Value);
+            WriteFloatVariable(variableStorage, "$Nmber_of_sign_mistake", flowState.NumberOfSignMistake.Value);
+            WriteFloatVariable(variableStorage, "$Global_sign_mistake", flowState.GlobalSignMistake.Value);
+            WriteFloatVariable(variableStorage, "$Route_SettlementTip", flowState.RouteSettlementTip.Value);
+            WriteStringVariable(variableStorage, "$Route_SettlementTier", flowState.RouteSettlementTier.Value);
+            WriteFloatVariable(variableStorage, "$Route_SettlementFinalSatisfaction", flowState.RouteSettlementFinalSatisfaction.Value);
+        }
+
         private IEnumerator RunRuneVerifyCommand(string clientToken)
         {
             if (dialogueRunner == null)
@@ -688,6 +1010,31 @@ namespace ITC.Dialogue
             return Mathf.Clamp(fallbackGridSize, 4, 5);
         }
 
+        private static int ParseTargetPercent(string targetPercentToken, int fallbackTargetPercent)
+        {
+            if (int.TryParse(targetPercentToken, out var parsedTarget))
+            {
+                return Mathf.Clamp(parsedTarget, 0, 100);
+            }
+
+            return Mathf.Clamp(fallbackTargetPercent, 0, 100);
+        }
+
+        private static SettlementTier ParseSettlementTier(string tier)
+        {
+            if (string.Equals(tier, "good", StringComparison.OrdinalIgnoreCase))
+            {
+                return SettlementTier.Good;
+            }
+
+            if (string.Equals(tier, "bad", StringComparison.OrdinalIgnoreCase))
+            {
+                return SettlementTier.Bad;
+            }
+
+            return SettlementTier.Neutral;
+        }
+
         private static float ReadFloatVariable(
             VariableStorageBehaviour variableStorage,
             string variableName,
@@ -789,6 +1136,56 @@ namespace ITC.Dialogue
                 HitNormalizedTime = 0.78f,
                 TypeCorrect = true,
                 HasVerifyDebuff = hasVerifyDebuff,
+                WasFallback = true
+            };
+        }
+
+        private static SoulCollectResultPayload BuildSoulCollectFallbackResult(int clientId, SoulCollectConfig runtimeConfig)
+        {
+            var config = runtimeConfig ?? new SoulCollectConfig();
+            var minPercent = Mathf.Clamp(config.MinPercent, 0, 100);
+            var maxPercent = Mathf.Clamp(config.MaxPercent, minPercent, 100);
+            var targetPercent = Mathf.Clamp(config.TargetPercent, minPercent, maxPercent);
+
+            return new SoulCollectResultPayload
+            {
+                ClientId = Mathf.Max(1, clientId),
+                TargetPercent = targetPercent,
+                MinPercent = minPercent,
+                MaxPercent = maxPercent,
+                ActualPercent = targetPercent,
+                ActualRawFloat = targetPercent,
+                ResolveType = SoulCollectResolveType.Normal,
+                WasFallback = true
+            };
+        }
+
+        private static BeanSellResultPayload BuildBeanSellSkippedResult(int clientId, int day)
+        {
+            return new BeanSellResultPayload
+            {
+                ClientId = Mathf.Max(1, clientId),
+                Day = Mathf.Max(1, day),
+                PitchType = BeanPitchType.Benefit,
+                FinalScore = 0,
+                SuccessThreshold = 0,
+                IsSuccess = false,
+                IsSkipped = true,
+                WasFallback = false
+            };
+        }
+
+        private static BeanSellResultPayload BuildBeanSellFallbackResult(int clientId, int day)
+        {
+            return new BeanSellResultPayload
+            {
+                ClientId = Mathf.Max(1, clientId),
+                Day = Mathf.Max(1, day),
+                PitchType = BeanPitchType.Benefit,
+                FinalScore = 0,
+                SuccessThreshold = 0,
+                IsSuccess = false,
+                IsSkipped = true,
                 WasFallback = true
             };
         }

@@ -32,6 +32,11 @@ tags: itc mainline base
 <<declare $Route_SoulCollectPercent = 0>>
 <<declare $Route_SoulMin = 0>>
 <<declare $Route_SoulMax = 0>>
+<<declare $Route_BeanSellResult = "skipped">>
+<<declare $Route_BeanSoldCount = 0>>
+<<declare $Route_SettlementTip = 0>>
+<<declare $Route_SettlementTier = "neutral">>
+<<declare $Route_SettlementFinalSatisfaction = 3>>
 <<declare $HiddenEndingTrigger = false>>
 <<jump ITC_Act1_Scene11_Awake>>
 ===
@@ -298,21 +303,8 @@ title: ITC_Client1_SoulInput
 <<itc_npc_main emmett_default>>
 <<itc_npc_avatar emmett_default>>
 Narrator: |typewriter|请选择灵魂收取比例。<waitfor=0.12>
--> 收取 45%
-    <<set $Route_SoulCollectPercent = 45>>
-    <<set $Route_SoulMin = 40>>
-    <<set $Route_SoulMax = 50>>
-    <<jump C3_D176>>
--> 收取 30%
-    <<set $Route_SoulCollectPercent = 30>>
-    <<set $Route_SoulMin = 40>>
-    <<set $Route_SoulMax = 50>>
-    <<jump C3_D176>>
--> 收取 60%
-    <<set $Route_SoulCollectPercent = 60>>
-    <<set $Route_SoulMin = 40>>
-    <<set $Route_SoulMax = 50>>
-    <<jump C3_D176>>
+<<itc_soul_collect 1 45>>
+<<jump C3_D176>>
 ===
 
 title: ITC_Client1_PostContract
@@ -387,21 +379,8 @@ title: ITC_Client2_SoulInput
 <<itc_npc_main thomas_default>>
 <<itc_npc_avatar thomas_default>>
 Narrator: |typewriter|请选择灵魂收取比例。<waitfor=0.12>
--> 收取 60%
-    <<set $Route_SoulCollectPercent = 60>>
-    <<set $Route_SoulMin = 60>>
-    <<set $Route_SoulMax = 60>>
-    <<jump C3_D176>>
--> 收取 45%
-    <<set $Route_SoulCollectPercent = 45>>
-    <<set $Route_SoulMin = 60>>
-    <<set $Route_SoulMax = 60>>
-    <<jump C3_D176>>
--> 收取 75%
-    <<set $Route_SoulCollectPercent = 75>>
-    <<set $Route_SoulMin = 60>>
-    <<set $Route_SoulMax = 60>>
-    <<jump C3_D176>>
+<<itc_soul_collect 2 60>>
+<<jump C3_D176>>
 ===
 
 title: ITC_Client2_PostContract
@@ -508,20 +487,22 @@ title: C3_D176
 ---
 <<itc_bg window13>>
 <<if $Route_SoulCollectPercent < $Route_SoulMin>>
-    <<set $Sign_mistake = 1>>
     Narrator: |typewriter|<shake a=0.55>灵魂收取过少，<waitfor=0.12>签约判定失败。</shake>
 <<else>>
     <<if $Route_SoulCollectPercent > $Route_SoulMax>>
-        <<set $satisfaction = $satisfaction - 1>>
         Narrator: |typewriter|灵魂收取过多，<waitfor=0.12>客户满意度下降。
     <<else>>
         Narrator: |typewriter|<wave s=0.7>灵魂收取比例正确</wave>。
     <<endif>>
 <<endif>>
 <<if $Route_CurrentClient == 1>>
+    <<itc_bean_sell 1>>
+    <<itc_settlement 1>>
     <<jump ITC_Client1_PostContract>>
 <<else>>
     <<if $Route_CurrentClient == 2>>
+        <<itc_bean_sell 2>>
+        <<itc_settlement 2>>
         <<jump ITC_Client2_PostContract>>
     <<else>>
         <<jump ITC_Act4_EndingEntry>>
@@ -532,10 +513,6 @@ title: C3_D176
 title: C3_D252
 ---
 <<itc_bg henet_office>>
-<<if $Sign_mistake == 1>>
-    <<set $Nmber_of_sign_mistake = $Nmber_of_sign_mistake + 1>>
-    <<set $Global_sign_mistake = $Global_sign_mistake + 1>>
-<<endif>>
 <<if $Route_CurrentClient == 1>>
     <<if $Sign_mistake == 1>>
         Henet: |fade|<incr>蠢货</incr>。<waitfor=0.18>你刚刚那次签约失误我已经看到了。<waitfor=0.24>再来两次，你就滚出 ITC。
