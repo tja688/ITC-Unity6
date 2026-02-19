@@ -654,8 +654,8 @@ else:
 | 类/模块 | QF 层 | 职责 |
 |---|---|---|
 | `ContractingApp`（新增或扩展 [MainMenuApp](file:///c:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/Assets/Scripts/MainMenu/MainMenuApp.cs#3-10)） | Architecture | 签约域的根架构 |
-| `ContractingStateModel` | Model | 管理所有签约状态（当前客户、满意度、错误计数、金钱等） |
-| `ClientDataModel` | Model | 客户数据库管理 |
+| `ContractFlowStateModel` | Model | 管理所有签约状态（当前客户、满意度、错误计数、金钱等） |
+| `ContractClientConfigModel` | Model | 客户数据库管理 |
 | `StartDocReviewCommand` | Command | 暂停 Yarn，打开文书审核面板 |
 | `StartRuneTypingCommand` | Command | 暂停 Yarn，打开符文 QTE 面板 |
 | `StartRuneVerifyCommand` | Command | 判断是否触发，暂停 Yarn，打开核验面板 |
@@ -673,8 +673,8 @@ else:
 ```mermaid
 flowchart LR
   subgraph Model
-    CSM[ContractingStateModel]
-    CDM[ClientDataModel]
+    CSM[ContractFlowStateModel]
+    CDM[ContractClientConfigModel]
   end
 
   subgraph Command

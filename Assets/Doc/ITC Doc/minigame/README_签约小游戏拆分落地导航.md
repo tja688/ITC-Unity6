@@ -16,6 +16,7 @@
 - `06_bean_sell/06_豆罐头推销-落地设计.md`
 - `07_settlement/07_满意度结算离场-落地设计.md`
 - `99_whitebox_language/99_白模测试设计语言-v1.md`
+- `MINIGAME_GUIDE_CONSOLIDATED.md` (最终统合操作手册)
 
 ## 使用顺序（给生产AI）
 

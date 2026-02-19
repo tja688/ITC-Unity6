@@ -9,24 +9,24 @@
 
 ### 1.1 业务层（QFramework）
 
-- `Assets/Scripts/Contracting/ContractingTypes.cs`  
+- `Assets/Scripts/Contracting/Common/ContractingTypes.cs`  
   - 新增 `RuneTypingConfig / RuneTypingRoundConfig / RuneTypingPanelData / RuneTypingResultPayload`
-- `Assets/Scripts/Contracting/ContractFlowStateModel.cs`  
+- `Assets/Scripts/Contracting/Common/ContractFlowStateModel.cs`  
   - 新增 `RouteQteErrorCount / RuneTypingGridSize / RuneTypingRunning / RuneTypingCompleted`
-- `Assets/Scripts/Contracting/ContractClientConfigModel.cs`  
+- `Assets/Scripts/Contracting/Common/ContractClientConfigModel.cs`  
   - 新增 `RuneTypingRuleConfig` 与 `BuildRuneTypingRoundConfig`
-- `Assets/Scripts/Contracting/ContractCommands.cs`  
+- `Assets/Scripts/Contracting/Common/ContractCommands.cs`  
   - `BeginRuneTypingCommand`：开局写入基线状态  
   - `SubmitRuneTypingResultCommand`：统一收口写回 `RouteQteErrorCount`
 
 ### 1.2 UI 层（Panel）
 
-- `Assets/Scripts/Contracting/RuneTypingPanel.cs`  
+- `Assets/Scripts/Contracting/RuneTyping/RuneTypingPanel.cs`  
   - 状态机：`Countdown -> Playing -> FeedbackCorrect/FeedbackError -> ComboResolve -> Completed`
   - 输入：`WASD + Enter/Space`，并保留屏幕方向按钮/确认按钮兜底
   - 判定：错误确认才计入 `errorCount`；边界外输入仅反馈不计错
   - 内嵌中文说明系统，支持一键开关
-- `Assets/Scripts/Contracting/RuneTypingGuideTag.cs`  
+- `Assets/Scripts/Contracting/RuneTyping/RuneTypingGuideTag.cs`  
   - 说明标注对象的统一标记组件
 
 ### 1.3 流程桥接层（Yarn）
@@ -52,7 +52,7 @@
 - 运行菜单：`ITC/Contracting/一键运行 02符文控制板全流程测试`
 - 停止菜单：`ITC/Contracting/一键停止 02符文控制板全流程测试`
 - 编辑器工具：`Assets/Editor/Contracting/RuneTypingQuickTestTools.cs`
-- 运行时组件：`Assets/Scripts/Contracting/RuneTypingQuickTestLauncher.cs`
+- 运行时组件：`Assets/Scripts/Contracting/RuneTyping/RuneTypingQuickTestLauncher.cs`
 
 ---
 
