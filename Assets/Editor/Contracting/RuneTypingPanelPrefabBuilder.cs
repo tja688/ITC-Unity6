@@ -108,7 +108,7 @@ namespace ITC.EditorTools.Contracting
 
             // Add a prominent current-target highlight text above the grid
             var currentTargetHighlight = CreateText("CurrentTargetHighlight", gameRoot.transform,
-                "当前目标: ▲  (1/4)", 52, TextAlignmentOptions.Center, FontStyles.Bold);
+                "当前目标: 上  (1/4)", 52, TextAlignmentOptions.Center, FontStyles.Bold);
             currentTargetHighlight.color = new Color(1f, 0.92f, 0.2f, 1f);
             SetRect(
                 currentTargetHighlight.rectTransform,
@@ -129,10 +129,10 @@ namespace ITC.EditorTools.Contracting
                     var index = row * maxGridSize + col;
                     var glyph = (index % 4) switch
                     {
-                        0 => "▲",
-                        1 => "▼",
-                        2 => "◀",
-                        _ => "▶"
+                        0 => "上",
+                        1 => "下",
+                        2 => "左",
+                        _ => "右"
                     };
                     var cellButton = CreateButton(
                         $"Cell_{index:00}",

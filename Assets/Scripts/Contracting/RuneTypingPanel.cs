@@ -509,7 +509,7 @@ namespace ITC.Contracting
 
             if (hintText != null)
             {
-                hintText.text = "WASD/方向键移动光标，空格或回车确认当前符文。";
+                hintText.text = "WASD/方向键移动到“上/下/左/右”符文，空格或回车确认。";
             }
         }
 
@@ -719,6 +719,11 @@ namespace ITC.Contracting
             }
 
             errorCount++;
+            if (statusText != null)
+            {
+                statusText.text = $"符文错误：需要“{DirectionToGlyph(expectedRune)}”，你选了“{DirectionToGlyph(selectedRune)}”。";
+            }
+
             EmitCue("sfx.contract.rune.error", transform, 1f);
             EmitCue("vfx.contract.rune.error_blink", transform, 1f);
             if (feedbackRoutine != null)
@@ -1097,10 +1102,10 @@ namespace ITC.Contracting
         {
             return direction switch
             {
-                RuneInputDirection.Up => "▲",
-                RuneInputDirection.Down => "▼",
-                RuneInputDirection.Left => "◀",
-                RuneInputDirection.Right => "▶",
+                RuneInputDirection.Up => "上",
+                RuneInputDirection.Down => "下",
+                RuneInputDirection.Left => "左",
+                RuneInputDirection.Right => "右",
                 _ => "?"
             };
         }
