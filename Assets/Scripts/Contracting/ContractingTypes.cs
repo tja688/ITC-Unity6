@@ -218,14 +218,14 @@ namespace ITC.Contracting
         public int TargetSequenceLength = 5;
         public List<RuneInputDirection> TargetSequence = new();
         public List<RuneInputDirection> RuneGridLayout = new();
-        public int InputBufferMs = 80;
+        public int InputBufferMs = 50;
         public float CursorMoveDuration = 0.08f;
         public float CorrectFlashDuration = 0.12f;
         public float ErrorFlashDuration = 0.1f;
         public float CompleteResolveDuration = 0.7f;
         public float MaxDisplayHintSeconds = 4f;
         public bool ShowOnScreenButtonsInWebGL = true;
-        public int MinConfirmIntervalMs = 90;
+        public int MinConfirmIntervalMs = 60;
     }
 
     [Serializable]

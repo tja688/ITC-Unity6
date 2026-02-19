@@ -106,30 +106,48 @@ namespace ITC.EditorTools.Contracting
                 new Vector2(-220f, -20f),
                 new Vector2(760f, 760f));
 
+            // Add a prominent current-target highlight text above the grid
+            var currentTargetHighlight = CreateText("CurrentTargetHighlight", gameRoot.transform,
+                "当前目标: ▲  (1/4)", 52, TextAlignmentOptions.Center, FontStyles.Bold);
+            currentTargetHighlight.color = new Color(1f, 0.92f, 0.2f, 1f);
+            SetRect(
+                currentTargetHighlight.rectTransform,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-220f, 400f),
+                new Vector2(760f, 72f));
+
+            // GridLayoutGroup will arrange cells at runtime; place them at origin here
             const int maxGridSize = 5;
             const float cellSize = 116f;
-            const float spacing = 12f;
-            var step = cellSize + spacing;
-            var origin = new Vector2(-(step * 2f), step * 2f);
 
             for (var row = 0; row < maxGridSize; row++)
             {
                 for (var col = 0; col < maxGridSize; col++)
                 {
                     var index = row * maxGridSize + col;
+                    var glyph = (index % 4) switch
+                    {
+                        0 => "▲",
+                        1 => "▼",
+                        2 => "◀",
+                        _ => "▶"
+                    };
                     var cellButton = CreateButton(
                         $"Cell_{index:00}",
                         gridRoot.transform,
-                        "上",
+                        glyph,
                         42,
                         new Color(0.18f, 0.20f, 0.23f, 1f),
                         out _);
+                    // Set a default size; GridLayoutGroup will override position at runtime
                     SetRect(
                         cellButton.GetComponent<RectTransform>(),
                         new Vector2(0.5f, 0.5f),
                         new Vector2(0.5f, 0.5f),
                         new Vector2(0.5f, 0.5f),
-                        origin + new Vector2(col * step, -row * step),
+                        Vector2.zero,
                         new Vector2(cellSize, cellSize));
                 }
             }
@@ -144,7 +162,7 @@ namespace ITC.EditorTools.Contracting
                 new Vector2(0.5f, 0.5f),
                 new Vector2(0.5f, 0.5f),
                 new Vector2(0.5f, 0.5f),
-                origin,
+                Vector2.zero,
                 new Vector2(cellSize + 12f, cellSize + 12f));
 
             var onScreenButtons = new GameObject("OnScreenButtons", typeof(RectTransform));

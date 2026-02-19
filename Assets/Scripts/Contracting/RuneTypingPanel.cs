@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+
 namespace ITC.Contracting
 {
     public sealed class RuneTypingPanel : UIPanel, IController
@@ -36,6 +37,7 @@ namespace ITC.Contracting
         [SerializeField] private TMP_Text errorCountText;
         [SerializeField] private TMP_Text countdownText;
         [SerializeField] private TMP_Text guideToggleLabel;
+        [SerializeField] private TMP_Text currentTargetHighlight;
 
         [Header("Buttons")]
         [SerializeField] private Button guideToggleButton;
@@ -245,6 +247,11 @@ namespace ITC.Contracting
             if (guideToggleLabel == null && gameRoot != null)
             {
                 guideToggleLabel = gameRoot.Find("GuideToggleButton/Label")?.GetComponent<TMP_Text>();
+            }
+
+            if (currentTargetHighlight == null && gameRoot != null)
+            {
+                currentTargetHighlight = gameRoot.Find("CurrentTargetHighlight")?.GetComponent<TMP_Text>();
             }
 
             if (onScreenButtonsRoot != null)
@@ -472,12 +479,14 @@ namespace ITC.Contracting
 
             SetInteractable(true);
             RefreshHeaderTexts();
+            ApplyGridLayout();
             ConfigureTargetSequenceView();
             ConfigureGridCells();
             PositionCursorImmediately();
             RefreshGridVisuals();
             RefreshStatusText();
             RefreshErrorText();
+            RefreshCurrentTargetHighlight();
 
             var showOnScreenButtons = RuntimeConfig.ShowOnScreenButtonsInWebGL ||
                                       Application.platform == RuntimePlatform.WebGLPlayer;
@@ -506,6 +515,23 @@ namespace ITC.Contracting
 
         private void ConfigureTargetSequenceView()
         {
+            // Also add a HorizontalLayoutGroup to target sequence root for consistent spacing
+            if (targetSequenceRoot != null)
+            {
+                var hlg = targetSequenceRoot.GetComponent<HorizontalLayoutGroup>();
+                if (hlg == null)
+                {
+                    hlg = targetSequenceRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
+                }
+                hlg.childAlignment = TextAnchor.MiddleCenter;
+                hlg.spacing = 16f;
+                hlg.childControlWidth = true;
+                hlg.childControlHeight = true;
+                hlg.childForceExpandWidth = true;
+                hlg.childForceExpandHeight = true;
+                hlg.padding = new RectOffset(24, 24, 8, 8);
+            }
+
             for (var i = 0; i < targetRuneTexts.Count; i++)
             {
                 var text = targetRuneTexts[i];
@@ -519,6 +545,9 @@ namespace ITC.Contracting
                     text.gameObject.SetActive(true);
                     text.text = DirectionToGlyph(runtimeTargetSequence[i]);
                     text.color = targetPendingColor;
+                    text.fontSize = 44;
+                    text.fontStyle = FontStyles.Bold;
+                    text.alignment = TextAlignmentOptions.Center;
                 }
                 else
                 {
@@ -685,6 +714,7 @@ namespace ITC.Contracting
                 }
 
                 feedbackRoutine = StartCoroutine(CorrectFeedbackRoutine(cursorCellIndex));
+                RefreshCurrentTargetHighlight();
                 return;
             }
 
@@ -894,6 +924,12 @@ namespace ITC.Contracting
                 return;
             }
 
+            // Force layout rebuild so GridLayoutGroup has updated child positions
+            if (gridRoot != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(gridRoot);
+            }
+
             cursorFrame.anchoredPosition = cellRect.anchoredPosition;
             cursorFrame.sizeDelta = cellRect.sizeDelta + new Vector2(12f, 12f);
         }
@@ -1061,12 +1097,85 @@ namespace ITC.Contracting
         {
             return direction switch
             {
-                RuneInputDirection.Up => "上",
-                RuneInputDirection.Down => "下",
-                RuneInputDirection.Left => "左",
-                RuneInputDirection.Right => "右",
+                RuneInputDirection.Up => "▲",
+                RuneInputDirection.Down => "▼",
+                RuneInputDirection.Left => "◀",
+                RuneInputDirection.Right => "▶",
                 _ => "?"
             };
+        }
+
+        /// <summary>
+        /// Applies a GridLayoutGroup to gridRoot so cells are uniformly arranged and
+        /// dynamically adapt to 4x4 / 5x5 without manual absolute positioning.
+        /// </summary>
+        private void ApplyGridLayout()
+        {
+            if (gridRoot == null)
+            {
+                return;
+            }
+
+            var glg = gridRoot.GetComponent<GridLayoutGroup>();
+            if (glg == null)
+            {
+                glg = gridRoot.gameObject.AddComponent<GridLayoutGroup>();
+            }
+
+            // Determine cell size from available space
+            var gridRect = gridRoot.rect;
+            var availableWidth = gridRect.width > 0f ? gridRect.width : 760f;
+            var availableHeight = gridRect.height > 0f ? gridRect.height : 760f;
+            var spacing = 12f;
+            var totalSpacingW = spacing * (gridSize - 1);
+            var totalSpacingH = spacing * (gridSize - 1);
+            var cellW = (availableWidth - totalSpacingW - 32f) / gridSize;  // 32 padding
+            var cellH = (availableHeight - totalSpacingH - 32f) / gridSize;
+            var cellSize = Mathf.Min(cellW, cellH);
+            cellSize = Mathf.Max(cellSize, 60f); // minimum cell size
+
+            glg.cellSize = new Vector2(cellSize, cellSize);
+            glg.spacing = new Vector2(spacing, spacing);
+            glg.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            glg.constraintCount = gridSize;
+            glg.childAlignment = TextAnchor.MiddleCenter;
+            glg.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            glg.startAxis = GridLayoutGroup.Axis.Horizontal;
+            glg.padding = new RectOffset(16, 16, 16, 16);
+
+            // Ensure CursorFrame is excluded from GridLayoutGroup
+            if (cursorFrame != null)
+            {
+                var cursorLayout = cursorFrame.GetComponent<LayoutElement>();
+                if (cursorLayout == null)
+                {
+                    cursorLayout = cursorFrame.gameObject.AddComponent<LayoutElement>();
+                }
+                cursorLayout.ignoreLayout = true;
+            }
+        }
+
+        /// <summary>
+        /// Shows a prominent highlight for the current target rune the player needs to find.
+        /// This makes it impossible to "miss" what to look for.
+        /// </summary>
+        private void RefreshCurrentTargetHighlight()
+        {
+            if (currentTargetHighlight == null)
+            {
+                return;
+            }
+
+            if (targetSequenceIndex >= runtimeTargetSequence.Count)
+            {
+                currentTargetHighlight.text = "✔ 序列完成";
+                currentTargetHighlight.color = targetDoneColor;
+                return;
+            }
+
+            var glyph = DirectionToGlyph(runtimeTargetSequence[targetSequenceIndex]);
+            currentTargetHighlight.text = $"当前目标: {glyph}  ({targetSequenceIndex + 1}/{runtimeTargetSequence.Count})";
+            currentTargetHighlight.color = new Color(1f, 0.92f, 0.2f, 1f);
         }
 
         public IArchitecture GetArchitecture()

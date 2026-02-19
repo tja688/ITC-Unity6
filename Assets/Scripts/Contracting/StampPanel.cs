@@ -478,20 +478,17 @@ namespace ITC.Contracting
 
             if (state == StampState.PrepareStamp)
             {
-                if (selectedType != panelData.RuntimeConfig.CorrectStampType)
-                {
-                    StartResolve(selectedType, StampTimingResult.Failed, 0f, false, lightFail: false);
-                    return;
-                }
-
+                // Always enter the charge loop regardless of type correctness.
+                // Type correctness is evaluated after the timing phase completes.
                 StartChargeLoop();
                 return;
             }
 
             if (state == StampState.ChargeLoop || state == StampState.HitWindow)
             {
+                var typeCorrect = selectedType == panelData.RuntimeConfig.CorrectStampType;
                 var timingResult = EvaluateTiming(currentChargeNormalized, out var lightFail);
-                StartResolve(selectedType, timingResult, currentChargeNormalized, true, lightFail);
+                StartResolve(selectedType, timingResult, currentChargeNormalized, typeCorrect, lightFail);
             }
         }
 
@@ -544,19 +541,34 @@ namespace ITC.Contracting
             RestoreChargeRootPosition();
 
             var anchor = stampTargetAnchor != null ? stampTargetAnchor : transform;
+
+            // Always show timing feedback first
+            if (timingResult != StampTimingResult.Failed)
+            {
+                yield return new WaitForSecondsRealtime(Mathf.Max(0f, hitSnapSeconds));
+            }
+
+            // Determine composite result message
             if (!typeCorrect)
             {
-                SetStatus("印章类型错误，本轮记为签约失误。");
+                // Wrong type — show type error regardless of timing
+                switch (timingResult)
+                {
+                    case StampTimingResult.Perfect:
+                        SetStatus("时机完美，但印章类型错误！本轮记为签约失误。");
+                        break;
+                    case StampTimingResult.Normal:
+                        SetStatus("时机一般，且印章类型错误。本轮记为签约失误。");
+                        break;
+                    default:
+                        SetStatus("时机与印章类型均有误。本轮记为签约失误。");
+                        break;
+                }
                 EmitCue("sfx.contract.stamp.hit_fail", anchor, 1f);
                 EmitCue("vfx.contract.stamp.paper_burn", anchor, 0.9f);
             }
             else
             {
-                if (timingResult != StampTimingResult.Failed)
-                {
-                    yield return new WaitForSecondsRealtime(Mathf.Max(0f, hitSnapSeconds));
-                }
-
                 switch (timingResult)
                 {
                     case StampTimingResult.Perfect:
@@ -577,8 +589,10 @@ namespace ITC.Contracting
                 }
             }
 
+            // Use extended feedback time for wrong-type so player clearly sees the result
+            var baseDuration = Mathf.Max(0.05f, resolveFeedbackSeconds);
+            var duration = typeCorrect ? baseDuration : Mathf.Max(baseDuration, 1.2f);
             var elapsed = 0f;
-            var duration = Mathf.Max(0.05f, resolveFeedbackSeconds);
             while (elapsed < duration)
             {
                 elapsed += Time.unscaledDeltaTime;
