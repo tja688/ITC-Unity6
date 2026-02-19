@@ -190,6 +190,8 @@ namespace ITC.Dialogue
             dialogueRunner.AddCommandHandler<string>("itc_npc_avatar", SwitchNpcAvatarCommand);
             dialogueRunner.AddCommandHandler<string>("itc_pc_avatar", SwitchPcAvatarCommand);
             dialogueRunner.AddCommandHandler<string>("itc_doc_review", RunDocumentReviewCommand);
+            dialogueRunner.AddCommandHandler<string, string>("itc_rune_typing", RunRuneTypingCommand);
+            dialogueRunner.AddCommandHandler<string>("itc_stamp_select", RunStampSelectCommand);
             dialogueRunner.AddCommandHandler<string>("itc_rune_verify", RunRuneVerifyCommand);
             dialogueRunner.AddCommandHandler("itc_npc_main_hide", HideNpcMainPortraitCommand);
             dialogueRunner.AddCommandHandler("itc_npc_avatar_hide", HideNpcAvatarCommand);
@@ -209,6 +211,8 @@ namespace ITC.Dialogue
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar");
             dialogueRunner.RemoveCommandHandler("itc_pc_avatar");
             dialogueRunner.RemoveCommandHandler("itc_doc_review");
+            dialogueRunner.RemoveCommandHandler("itc_rune_typing");
+            dialogueRunner.RemoveCommandHandler("itc_stamp_select");
             dialogueRunner.RemoveCommandHandler("itc_rune_verify");
             dialogueRunner.RemoveCommandHandler("itc_npc_main_hide");
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar_hide");
@@ -361,6 +365,194 @@ namespace ITC.Dialogue
             UIKit.ClosePanel<DocumentReviewPanel>();
         }
 
+        private IEnumerator RunRuneTypingCommand(string clientToken, string gridSizeToken)
+        {
+            if (dialogueRunner == null)
+            {
+                yield break;
+            }
+
+            var flowState = this.GetModel<ContractFlowStateModel>();
+            var configModel = this.GetModel<ContractClientConfigModel>();
+            var variableStorage = dialogueRunner.VariableStorage;
+
+            var clientId = ParseClientId(clientToken, variableStorage);
+            var gridSize = ParseRuneTypingGridSize(gridSizeToken, 4);
+            var currentSatisfaction = ReadFloatVariable(variableStorage, "$satisfaction", 3f);
+            var currentSignMistake = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Sign_mistake", 0f));
+
+            this.SendCommand(new BeginRuneTypingCommand(clientId, currentSatisfaction, currentSignMistake, gridSize));
+
+            var roundConfig = configModel.BuildRuneTypingRoundConfig(clientId, gridSize);
+            var resultSubmitted = false;
+            var panelData = new RuneTypingPanelData
+            {
+                ClientId = clientId,
+                GridSize = gridSize,
+                RuntimeConfig = configModel.RuneTypingRuleConfig,
+                RoundConfig = roundConfig,
+                OnFxCue = DispatchContractFxCue,
+                OnCompleted = payload =>
+                {
+                    if (resultSubmitted)
+                    {
+                        return;
+                    }
+
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitRuneTypingResultCommand(payload));
+                }
+            };
+
+            var panelOpened = false;
+            UIKit.OpenPanelAsync<RuneTypingPanel>(
+                    UILevel.PopUI,
+                    panelData,
+                    assetBundleName: "contracting_ui",
+                    prefabName: nameof(RuneTypingPanel))
+                .ToAction()
+                .StartGlobal(() => panelOpened = true);
+
+            var openTimeout = 8f;
+            var elapsed = 0f;
+            while (!panelOpened && elapsed < openTimeout)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (!panelOpened)
+            {
+                LogKit.E("[ITCDialoguePanel] RuneTypingPanel open timeout. Applying fallback result.");
+                if (!resultSubmitted)
+                {
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitRuneTypingResultCommand(
+                        BuildRuneTypingFallbackResult(clientId, gridSize)));
+                }
+            }
+            else
+            {
+                var gameplayTimeout = 180f;
+                elapsed = 0f;
+                while (flowState.RuneTypingRunning.Value && elapsed < gameplayTimeout)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    yield return null;
+                }
+
+                if (flowState.RuneTypingRunning.Value && !resultSubmitted)
+                {
+                    LogKit.E("[ITCDialoguePanel] RuneTypingPanel resolve timeout. Applying fallback result.");
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitRuneTypingResultCommand(
+                        BuildRuneTypingFallbackResult(clientId, gridSize)));
+                }
+            }
+
+            WriteFloatVariable(variableStorage, "$Route_QTEErrorCount", flowState.RouteQteErrorCount.Value);
+            UIKit.ClosePanel<RuneTypingPanel>();
+        }
+
+        private IEnumerator RunStampSelectCommand(string clientToken)
+        {
+            if (dialogueRunner == null)
+            {
+                yield break;
+            }
+
+            var flowState = this.GetModel<ContractFlowStateModel>();
+            var configModel = this.GetModel<ContractClientConfigModel>();
+            var variableStorage = dialogueRunner.VariableStorage;
+
+            var clientId = ParseClientId(clientToken, variableStorage);
+            var currentSatisfaction = ReadFloatVariable(variableStorage, "$satisfaction", 3f);
+            var currentSignMistake = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Sign_mistake", 0f));
+            var hasVerifyDebuff = ReadFloatVariable(variableStorage, "$Route_RuneVerifyDebuff", 0f) > 0.5f
+                                  || string.Equals(
+                                      ReadStringVariable(variableStorage, "$Route_RuneVerifyResult", "skipped"),
+                                      "failed",
+                                      StringComparison.OrdinalIgnoreCase);
+
+            this.SendCommand(new BeginStampSelectionCommand(clientId, currentSatisfaction, currentSignMistake));
+
+            var runtimeConfig = configModel.GetStampRuntimeConfig(clientId);
+            var clientConfig = configModel.GetStampClientConfig(clientId);
+            var resultSubmitted = false;
+
+            var panelData = new StampPanelData
+            {
+                ClientId = clientId,
+                TutorialMode = false,
+                HasVerifyDebuff = hasVerifyDebuff,
+                RuntimeConfig = runtimeConfig,
+                ClientConfig = clientConfig,
+                OnFxCue = DispatchContractFxCue,
+                OnCompleted = payload =>
+                {
+                    if (resultSubmitted)
+                    {
+                        return;
+                    }
+
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitStampSelectionResultCommand(payload));
+                }
+            };
+
+            var panelOpened = false;
+            UIKit.OpenPanelAsync<StampPanel>(
+                    UILevel.PopUI,
+                    panelData,
+                    assetBundleName: "contracting_ui",
+                    prefabName: nameof(StampPanel))
+                .ToAction()
+                .StartGlobal(() => panelOpened = true);
+
+            var openTimeout = 8f;
+            var elapsed = 0f;
+            while (!panelOpened && elapsed < openTimeout)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (!panelOpened)
+            {
+                LogKit.E("[ITCDialoguePanel] StampPanel open timeout. Applying fallback result.");
+                if (!resultSubmitted)
+                {
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitStampSelectionResultCommand(
+                        BuildStampFallbackResult(clientId, runtimeConfig.CorrectStampType, hasVerifyDebuff)));
+                }
+            }
+            else
+            {
+                var gameplayTimeout = 120f;
+                elapsed = 0f;
+                while (flowState.StampRunning.Value && elapsed < gameplayTimeout)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    yield return null;
+                }
+
+                if (flowState.StampRunning.Value && !resultSubmitted)
+                {
+                    LogKit.E("[ITCDialoguePanel] StampPanel resolve timeout. Applying fallback result.");
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitStampSelectionResultCommand(
+                        BuildStampFallbackResult(clientId, runtimeConfig.CorrectStampType, hasVerifyDebuff)));
+                }
+            }
+
+            WriteStringVariable(variableStorage, "$Route_StampType", flowState.RouteStampType.Value);
+            WriteStringVariable(variableStorage, "$Route_StampTimingResult", flowState.RouteStampTimingResult.Value);
+            WriteFloatVariable(variableStorage, "$Sign_mistake", flowState.SignMistake.Value);
+            WriteFloatVariable(variableStorage, "$satisfaction", flowState.Satisfaction.Value);
+
+            UIKit.ClosePanel<StampPanel>();
+        }
 
         private IEnumerator RunRuneVerifyCommand(string clientToken)
         {
@@ -486,6 +678,16 @@ namespace ITC.Dialogue
             return Mathf.Max(1, fallbackClientId);
         }
 
+        private static int ParseRuneTypingGridSize(string gridSizeToken, int fallbackGridSize)
+        {
+            if (int.TryParse(gridSizeToken, out var parsedGridSize))
+            {
+                return Mathf.Clamp(parsedGridSize, 4, 5);
+            }
+
+            return Mathf.Clamp(fallbackGridSize, 4, 5);
+        }
+
         private static float ReadFloatVariable(
             VariableStorageBehaviour variableStorage,
             string variableName,
@@ -497,6 +699,21 @@ namespace ITC.Dialogue
             }
 
             return variableStorage.TryGetValue<float>(variableName, out var value)
+                ? value
+                : defaultValue;
+        }
+
+        private static string ReadStringVariable(
+            VariableStorageBehaviour variableStorage,
+            string variableName,
+            string defaultValue)
+        {
+            if (variableStorage == null || string.IsNullOrWhiteSpace(variableName))
+            {
+                return defaultValue;
+            }
+
+            return variableStorage.TryGetValue<string>(variableName, out var value)
                 ? value
                 : defaultValue;
         }
@@ -546,6 +763,35 @@ namespace ITC.Dialogue
             };
         }
 
+        private static RuneTypingResultPayload BuildRuneTypingFallbackResult(int clientId, int gridSize)
+        {
+            return new RuneTypingResultPayload
+            {
+                ClientId = Mathf.Max(1, clientId),
+                GridSize = Mathf.Clamp(gridSize, 4, 5),
+                ErrorCount = 0,
+                SequenceLength = 0,
+                UsedOnScreenButtons = false,
+                WasFallback = true
+            };
+        }
+
+        private static StampResultPayload BuildStampFallbackResult(
+            int clientId,
+            StampType correctStampType,
+            bool hasVerifyDebuff)
+        {
+            return new StampResultPayload
+            {
+                ClientId = Mathf.Max(1, clientId),
+                SelectedStampType = correctStampType,
+                TimingResult = StampTimingResult.Normal,
+                HitNormalizedTime = 0.78f,
+                TypeCorrect = true,
+                HasVerifyDebuff = hasVerifyDebuff,
+                WasFallback = true
+            };
+        }
 
         private static RuneVerifyResultPayload BuildRuneVerifyFallbackResult(int clientId, int distortedCount, int randomSeed)
         {

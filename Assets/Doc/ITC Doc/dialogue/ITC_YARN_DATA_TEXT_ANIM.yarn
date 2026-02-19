@@ -27,6 +27,7 @@ tags: itc mainline base
 <<declare $Route_RuneVerifyResult = "skipped">>
 <<declare $Route_RuneVerifyDebuff = 0>>
 <<declare $Route_StampType = "">>
+<<declare $Route_StampTimingResult = "normal">>
 <<declare $Route_QTEErrorCount = 0>>
 <<declare $Route_SoulCollectPercent = 0>>
 <<declare $Route_SoulMin = 0>>
@@ -277,18 +278,8 @@ title: ITC_Client1_TypewriterInput
 <<itc_npc_main emmett_default>>
 <<itc_npc_avatar emmett_default>>
 Narrator: |typewriter|打字机环节，<waitfor=0.12>4 个方向键 QTE。
--> 完美输入，无失误
-    <<set $Route_QTEErrorCount = 0>>
-    <<jump C2_D155>>
--> 出现一次失误
-    <<set $Route_QTEErrorCount = 1>>
-    <<jump C2_D155>>
--> 出现两次失误
-    <<set $Route_QTEErrorCount = 2>>
-    <<jump C2_D155>>
--> 出现三次及以上失误
-    <<set $Route_QTEErrorCount = 3>>
-    <<jump C2_D155>>
+<<itc_rune_typing 1 4>>
+<<jump C2_D155>>
 ===
 
 title: ITC_Client1_StampInput
@@ -296,19 +287,9 @@ title: ITC_Client1_StampInput
 <<itc_bg window13>>
 <<itc_npc_main emmett_default>>
 <<itc_npc_avatar emmett_default>>
-Narrator: |typewriter|请选择印章类型。<waitfor=0.12>
--> 金钱
-    <<set $Route_StampType = "金钱">>
-    <<jump C2_D146>>
--> 名利
-    <<set $Route_StampType = "名利">>
-    <<jump C2_D146>>
--> 特技
-    <<set $Route_StampType = "特技">>
-    <<jump C2_D146>>
--> 事件
-    <<set $Route_StampType = "事件">>
-    <<jump C2_D146>>
+Narrator: |typewriter|进入印章盖印流程。<waitfor=0.12>
+<<itc_stamp_select 1>>
+<<jump C2_D146>>
 ===
 
 title: ITC_Client1_SoulInput
@@ -386,18 +367,8 @@ title: ITC_Client2_TypewriterInput
 <<itc_npc_main thomas_default>>
 <<itc_npc_avatar thomas_default>>
 Narrator: |typewriter|打字机环节，<waitfor=0.12>4 个方向键 QTE。
--> 完美输入，无失误
-    <<set $Route_QTEErrorCount = 0>>
-    <<jump C2_D155>>
--> 出现一次失误
-    <<set $Route_QTEErrorCount = 1>>
-    <<jump C2_D155>>
--> 出现两次失误
-    <<set $Route_QTEErrorCount = 2>>
-    <<jump C2_D155>>
--> 出现三次及以上失误
-    <<set $Route_QTEErrorCount = 3>>
-    <<jump C2_D155>>
+<<itc_rune_typing 2 4>>
+<<jump C2_D155>>
 ===
 
 title: ITC_Client2_StampInput
@@ -405,19 +376,9 @@ title: ITC_Client2_StampInput
 <<itc_bg window13>>
 <<itc_npc_main thomas_default>>
 <<itc_npc_avatar thomas_default>>
-Narrator: |typewriter|请选择印章类型。<waitfor=0.12>
--> 金钱
-    <<set $Route_StampType = "金钱">>
-    <<jump C2_D146>>
--> 名利
-    <<set $Route_StampType = "名利">>
-    <<jump C2_D146>>
--> 特技
-    <<set $Route_StampType = "特技">>
-    <<jump C2_D146>>
--> 事件
-    <<set $Route_StampType = "事件">>
-    <<jump C2_D146>>
+Narrator: |typewriter|进入印章盖印流程。<waitfor=0.12>
+<<itc_stamp_select 2>>
+<<jump C2_D146>>
 ===
 
 title: ITC_Client2_SoulInput
@@ -484,21 +445,31 @@ title: C2_D146
 <<itc_bg window13>>
 <<if $Route_CurrentClient == 1>>
     <<if $Route_StampType != "事件">>
-        <<set $Sign_mistake = 1>>
-        <<set $satisfaction = $satisfaction - 1>>
         Narrator: |typewriter|<shake a=0.45>印章选择错误</shake>。<waitfor=0.12>本客户应选择事件类印章。
     <<else>>
         Narrator: |typewriter|<wave s=0.7>印章选择正确</wave>。
+    <<endif>>
+    <<if $Route_StampTimingResult == "perfect">>
+        Narrator: |typewriter|<wave s=0.7>盖印时机完美</wave>，<waitfor=0.12>满意度提升。
+    <<elseif $Route_StampTimingResult == "normal">>
+        Narrator: |typewriter|盖印时机普通，<waitfor=0.12>流程继续。
+    <<else>>
+        Narrator: |typewriter|<shake a=0.45>盖印时机失败</shake>，<waitfor=0.12>满意度下降。
     <<endif>>
     <<jump ITC_Client1_SoulInput>>
 <<else>>
     <<if $Route_CurrentClient == 2>>
         <<if $Route_StampType != "特技">>
-            <<set $Sign_mistake = 1>>
-            <<set $satisfaction = $satisfaction - 1>>
             Narrator: |typewriter|<shake a=0.45>印章选择错误</shake>。<waitfor=0.12>本客户应选择特技类印章。
         <<else>>
             Narrator: |typewriter|<wave s=0.7>印章选择正确</wave>。
+        <<endif>>
+        <<if $Route_StampTimingResult == "perfect">>
+            Narrator: |typewriter|<wave s=0.7>盖印时机完美</wave>，<waitfor=0.12>满意度提升。
+        <<elseif $Route_StampTimingResult == "normal">>
+            Narrator: |typewriter|盖印时机普通，<waitfor=0.12>流程继续。
+        <<else>>
+            Narrator: |typewriter|<shake a=0.45>盖印时机失败</shake>，<waitfor=0.12>满意度下降。
         <<endif>>
         <<jump ITC_Client2_SoulInput>>
     <<else>>

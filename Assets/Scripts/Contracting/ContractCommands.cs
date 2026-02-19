@@ -93,6 +93,170 @@ namespace ITC.Contracting
         }
     }
 
+    public sealed class BeginStampSelectionCommand : AbstractCommand
+    {
+        private readonly int clientId;
+        private readonly float currentSatisfaction;
+        private readonly int currentSignMistake;
+
+        public BeginStampSelectionCommand(int clientId, float currentSatisfaction, int currentSignMistake)
+        {
+            this.clientId = Mathf.Max(1, clientId);
+            this.currentSatisfaction = Mathf.Max(0f, currentSatisfaction);
+            this.currentSignMistake = Mathf.Max(0, currentSignMistake);
+        }
+
+        protected override void OnExecute()
+        {
+            var model = this.GetModel<ContractFlowStateModel>();
+            model.CurrentClientId.Value = clientId;
+            model.BaselineSatisfaction.Value = currentSatisfaction;
+            model.BaselineSignMistake.Value = currentSignMistake;
+            model.Satisfaction.Value = currentSatisfaction;
+            model.SignMistake.Value = currentSignMistake;
+            model.RouteStampType.Value = "事件";
+            model.RouteStampTimingResult.Value = "normal";
+            model.LastStampHitNormalized.Value = 0f;
+            model.StampCompleted.Value = false;
+            model.StampRunning.Value = true;
+        }
+    }
+
+    public sealed class SubmitStampSelectionResultCommand : AbstractCommand
+    {
+        private readonly StampResultPayload payload;
+
+        public SubmitStampSelectionResultCommand(StampResultPayload payload)
+        {
+            this.payload = payload;
+        }
+
+        protected override void OnExecute()
+        {
+            var flowState = this.GetModel<ContractFlowStateModel>();
+            var configModel = this.GetModel<ContractClientConfigModel>();
+            var clientConfig = configModel.GetStampClientConfig(payload.ClientId);
+            var ruleConfig = configModel.StampRuleConfig;
+
+            var selectedType = payload.SelectedStampType;
+            var timingResult = payload.TimingResult;
+            var typeCorrect = selectedType == clientConfig.CorrectStampType;
+
+            var satisfaction = flowState.BaselineSatisfaction.Value;
+            var signMistake = flowState.BaselineSignMistake.Value;
+
+            if (!typeCorrect)
+            {
+                signMistake = 1;
+                timingResult = StampTimingResult.Failed;
+            }
+            else
+            {
+                switch (timingResult)
+                {
+                    case StampTimingResult.Perfect:
+                        satisfaction += 1f;
+                        break;
+                    case StampTimingResult.Failed:
+                    {
+                        var penalty = Mathf.Max(0, ruleConfig.TimingFailPenalty);
+                        satisfaction = Mathf.Max(0f, satisfaction - penalty);
+                        break;
+                    }
+                }
+            }
+
+            if (payload.WasFallback)
+            {
+                LogKit.W($"[Stamp] Fallback result used for client {payload.ClientId}.");
+            }
+
+            flowState.RouteStampType.Value = ToYarnStampType(selectedType);
+            flowState.RouteStampTimingResult.Value = ToYarnTimingResult(timingResult);
+            flowState.LastStampHitNormalized.Value = Mathf.Clamp01(payload.HitNormalizedTime);
+            flowState.Satisfaction.Value = satisfaction;
+            flowState.SignMistake.Value = signMistake;
+            flowState.StampRunning.Value = false;
+            flowState.StampCompleted.Value = true;
+        }
+
+        private static string ToYarnStampType(StampType stampType)
+        {
+            return stampType switch
+            {
+                StampType.Money => "金钱",
+                StampType.Fame => "名利",
+                StampType.Skill => "特技",
+                StampType.Event => "事件",
+                _ => "事件"
+            };
+        }
+
+        private static string ToYarnTimingResult(StampTimingResult timingResult)
+        {
+            return timingResult switch
+            {
+                StampTimingResult.Perfect => "perfect",
+                StampTimingResult.Normal => "normal",
+                _ => "failed"
+            };
+        }
+    }
+
+    public sealed class BeginRuneTypingCommand : AbstractCommand
+    {
+        private readonly int clientId;
+        private readonly float currentSatisfaction;
+        private readonly int currentSignMistake;
+        private readonly int gridSize;
+
+        public BeginRuneTypingCommand(int clientId, float currentSatisfaction, int currentSignMistake, int gridSize)
+        {
+            this.clientId = Mathf.Max(1, clientId);
+            this.currentSatisfaction = Mathf.Max(0f, currentSatisfaction);
+            this.currentSignMistake = Mathf.Max(0, currentSignMistake);
+            this.gridSize = Mathf.Clamp(gridSize, 4, 5);
+        }
+
+        protected override void OnExecute()
+        {
+            var model = this.GetModel<ContractFlowStateModel>();
+            model.CurrentClientId.Value = clientId;
+            model.BaselineSatisfaction.Value = currentSatisfaction;
+            model.BaselineSignMistake.Value = currentSignMistake;
+            model.Satisfaction.Value = currentSatisfaction;
+            model.SignMistake.Value = currentSignMistake;
+            model.RouteQteErrorCount.Value = 0;
+            model.RuneTypingGridSize.Value = gridSize;
+            model.RuneTypingCompleted.Value = false;
+            model.RuneTypingRunning.Value = true;
+        }
+    }
+
+    public sealed class SubmitRuneTypingResultCommand : AbstractCommand
+    {
+        private readonly RuneTypingResultPayload payload;
+
+        public SubmitRuneTypingResultCommand(RuneTypingResultPayload payload)
+        {
+            this.payload = payload;
+        }
+
+        protected override void OnExecute()
+        {
+            var flowState = this.GetModel<ContractFlowStateModel>();
+            flowState.RouteQteErrorCount.Value = Mathf.Max(0, payload.ErrorCount);
+            flowState.RuneTypingGridSize.Value = Mathf.Clamp(payload.GridSize, 4, 5);
+            flowState.RuneTypingRunning.Value = false;
+            flowState.RuneTypingCompleted.Value = true;
+
+            if (payload.WasFallback)
+            {
+                LogKit.W($"[RuneTyping] Fallback result used for client {payload.ClientId}.");
+            }
+        }
+    }
+
     public sealed class BeginRuneVerifyCommand : AbstractCommand
     {
         private readonly int clientId;
@@ -168,4 +332,3 @@ namespace ITC.Contracting
         }
     }
 }
-

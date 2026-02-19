@@ -142,6 +142,123 @@ namespace ITC.Contracting
         [NonSerialized] public Action<string, Transform, float> OnFxCue;
     }
 
+    public enum StampType
+    {
+        Money = 0,
+        Fame = 1,
+        Skill = 2,
+        Event = 3
+    }
+
+    public enum StampTimingResult
+    {
+        Perfect = 0,
+        Normal = 1,
+        Failed = 2
+    }
+
+    [Serializable]
+    public sealed class StampConfig
+    {
+        public StampType CorrectStampType = StampType.Event;
+        public float ChargeDuration = 1.6f;
+        public float PerfectWindowStart = 0.72f;
+        public float PerfectWindowEnd = 0.84f;
+        public float NormalWindowPadding = 0.12f;
+        public float VerifyDebuffShakeAmp = 12f;
+        public int VerifyDebuffShakeCount = 3;
+        public int TimingFailPenalty = 1;
+    }
+
+    [Serializable]
+    public sealed class StampClientConfig
+    {
+        public int ClientId;
+        public string ClientDisplayName = string.Empty;
+        public StampType CorrectStampType = StampType.Event;
+    }
+
+    public struct StampResultPayload
+    {
+        public int ClientId;
+        public StampType SelectedStampType;
+        public StampTimingResult TimingResult;
+        public float HitNormalizedTime;
+        public bool TypeCorrect;
+        public bool HasVerifyDebuff;
+        public bool WasFallback;
+    }
+
+    [Serializable]
+    public sealed class StampPanelData : UIPanelData
+    {
+        public int ClientId;
+        public bool TutorialMode;
+        public bool HasVerifyDebuff;
+        public StampConfig RuntimeConfig;
+        public StampClientConfig ClientConfig;
+
+        [NonSerialized] public Action<StampResultPayload> OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
+    public enum RuneInputDirection
+    {
+        Up = 0,
+        Down = 1,
+        Left = 2,
+        Right = 3
+    }
+
+    [Serializable]
+    public sealed class RuneTypingConfig
+    {
+        public int GridWidth = 4;
+        public int GridHeight = 4;
+        public int TargetSequenceLength = 5;
+        public List<RuneInputDirection> TargetSequence = new();
+        public List<RuneInputDirection> RuneGridLayout = new();
+        public int InputBufferMs = 80;
+        public float CursorMoveDuration = 0.08f;
+        public float CorrectFlashDuration = 0.12f;
+        public float ErrorFlashDuration = 0.1f;
+        public float CompleteResolveDuration = 0.7f;
+        public float MaxDisplayHintSeconds = 4f;
+        public bool ShowOnScreenButtonsInWebGL = true;
+        public int MinConfirmIntervalMs = 90;
+    }
+
+    [Serializable]
+    public sealed class RuneTypingRoundConfig
+    {
+        public int ClientId = 1;
+        public int GridSize = 4;
+        public List<RuneInputDirection> TargetSequence = new();
+        public List<RuneInputDirection> RuneGridLayout = new();
+    }
+
+    public struct RuneTypingResultPayload
+    {
+        public int ClientId;
+        public int GridSize;
+        public int ErrorCount;
+        public int SequenceLength;
+        public bool UsedOnScreenButtons;
+        public bool WasFallback;
+    }
+
+    [Serializable]
+    public sealed class RuneTypingPanelData : UIPanelData
+    {
+        public int ClientId = 1;
+        public int GridSize = 4;
+        public RuneTypingConfig RuntimeConfig;
+        public RuneTypingRoundConfig RoundConfig;
+
+        [NonSerialized] public Action<RuneTypingResultPayload> OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
     [Serializable]
     public sealed class RuneVerifyPanelData : UIPanelData
     {
@@ -167,4 +284,3 @@ namespace ITC.Contracting
         }
     }
 }
-
