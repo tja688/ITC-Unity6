@@ -125,36 +125,135 @@ namespace ITC.Contracting
             }
         }
 
-        private void CacheReferences()
+private void CacheReferences()
         {
-            panelRoot ??= transform as RectTransform;
+            if (panelRoot == null)
+            {
+                panelRoot = transform as RectTransform;
+            }
 
             var canvasRoot = transform.Find("Canvas");
-            reviewRoot ??= canvasRoot?.Find("ReviewRoot") as RectTransform;
-            documentRoot ??= reviewRoot?.Find("DocumentArea") as RectTransform;
-            documentZoomTarget ??= documentRoot;
-            documentBlankButton ??= documentRoot?.GetComponent<Button>();
 
-            rejectReasonRoot ??= reviewRoot?.Find("RejectReasons")?.gameObject;
+            if (reviewRoot == null)
+            {
+                reviewRoot = canvasRoot != null ? canvasRoot.Find("ReviewRoot") as RectTransform : null;
+            }
 
-            titleText ??= reviewRoot?.Find("HeaderText")?.GetComponent<TMP_Text>();
-            hintText ??= reviewRoot?.Find("HintText")?.GetComponent<TMP_Text>();
-            statusText ??= reviewRoot?.Find("StatusText")?.GetComponent<TMP_Text>();
+            if (documentRoot == null)
+            {
+                documentRoot = reviewRoot != null ? reviewRoot.Find("DocumentArea") as RectTransform : null;
+            }
 
-            passButton ??= reviewRoot?.Find("Controls/PassButton")?.GetComponent<Button>();
-            rejectButton ??= reviewRoot?.Find("Controls/RejectButton")?.GetComponent<Button>();
-            zoomButton ??= reviewRoot?.Find("Controls/ZoomButton")?.GetComponent<Button>();
-            zoomButtonLabel ??= reviewRoot?.Find("Controls/ZoomButton/Label")?.GetComponent<TMP_Text>();
-            guideToggleButton ??= reviewRoot?.Find("GuideToggleButton")?.GetComponent<Button>();
-            guideToggleLabel ??= reviewRoot?.Find("GuideToggleButton/Label")?.GetComponent<TMP_Text>();
+            if (documentZoomTarget == null)
+            {
+                documentZoomTarget = documentRoot;
+            }
 
-            cancelRejectButton ??= rejectReasonRoot?.transform.Find("CancelButton")?.GetComponent<Button>();
-            reasonImageMismatchButton ??= rejectReasonRoot?.transform.Find("Reason_ImageMismatch")?.GetComponent<Button>();
-            reasonDateMismatchButton ??= rejectReasonRoot?.transform.Find("Reason_DateMismatch")?.GetComponent<Button>();
-            reasonApplicationMismatchButton ??=
-                rejectReasonRoot?.transform.Find("Reason_ApplicationMismatch")?.GetComponent<Button>();
-            reasonPaperForgeryButton ??= rejectReasonRoot?.transform.Find("Reason_PaperForgery")?.GetComponent<Button>();
-            reasonPaperDamageButton ??= rejectReasonRoot?.transform.Find("Reason_PaperDamage")?.GetComponent<Button>();
+            if (documentBlankButton == null && documentRoot != null)
+            {
+                documentBlankButton = documentRoot.GetComponent<Button>();
+            }
+
+            if (rejectReasonRoot == null && reviewRoot != null)
+            {
+                var rejectTransform = reviewRoot.Find("RejectReasons");
+                rejectReasonRoot = rejectTransform != null ? rejectTransform.gameObject : null;
+            }
+
+            if (titleText == null && reviewRoot != null)
+            {
+                var t = reviewRoot.Find("HeaderText");
+                titleText = t != null ? t.GetComponent<TMP_Text>() : null;
+            }
+
+            if (hintText == null && reviewRoot != null)
+            {
+                var t = reviewRoot.Find("HintText");
+                hintText = t != null ? t.GetComponent<TMP_Text>() : null;
+            }
+
+            if (statusText == null && reviewRoot != null)
+            {
+                var t = reviewRoot.Find("StatusText");
+                statusText = t != null ? t.GetComponent<TMP_Text>() : null;
+            }
+
+            if (passButton == null && reviewRoot != null)
+            {
+                var t = reviewRoot.Find("Controls/PassButton");
+                passButton = t != null ? t.GetComponent<Button>() : null;
+            }
+
+            if (rejectButton == null && reviewRoot != null)
+            {
+                var t = reviewRoot.Find("Controls/RejectButton");
+                rejectButton = t != null ? t.GetComponent<Button>() : null;
+            }
+
+            if (zoomButton == null && reviewRoot != null)
+            {
+                var t = reviewRoot.Find("Controls/ZoomButton");
+                zoomButton = t != null ? t.GetComponent<Button>() : null;
+            }
+
+            if (zoomButtonLabel == null && reviewRoot != null)
+            {
+                var t = reviewRoot.Find("Controls/ZoomButton/Label");
+                zoomButtonLabel = t != null ? t.GetComponent<TMP_Text>() : null;
+            }
+
+            if (guideToggleButton == null && reviewRoot != null)
+            {
+                var t = reviewRoot.Find("GuideToggleButton");
+                guideToggleButton = t != null ? t.GetComponent<Button>() : null;
+            }
+
+            if (guideToggleLabel == null && reviewRoot != null)
+            {
+                var t = reviewRoot.Find("GuideToggleButton/Label");
+                guideToggleLabel = t != null ? t.GetComponent<TMP_Text>() : null;
+            }
+
+            if (rejectReasonRoot != null)
+            {
+                var rrTransform = rejectReasonRoot.transform;
+
+                if (cancelRejectButton == null)
+                {
+                    var t = rrTransform.Find("CancelButton");
+                    cancelRejectButton = t != null ? t.GetComponent<Button>() : null;
+                }
+
+                if (reasonImageMismatchButton == null)
+                {
+                    var t = rrTransform.Find("Reason_ImageMismatch");
+                    reasonImageMismatchButton = t != null ? t.GetComponent<Button>() : null;
+                }
+
+                if (reasonDateMismatchButton == null)
+                {
+                    var t = rrTransform.Find("Reason_DateMismatch");
+                    reasonDateMismatchButton = t != null ? t.GetComponent<Button>() : null;
+                }
+
+                if (reasonApplicationMismatchButton == null)
+                {
+                    var t = rrTransform.Find("Reason_ApplicationMismatch");
+                    reasonApplicationMismatchButton = t != null ? t.GetComponent<Button>() : null;
+                }
+
+                if (reasonPaperForgeryButton == null)
+                {
+                    var t = rrTransform.Find("Reason_PaperForgery");
+                    reasonPaperForgeryButton = t != null ? t.GetComponent<Button>() : null;
+                }
+
+                if (reasonPaperDamageButton == null)
+                {
+                    var t = rrTransform.Find("Reason_PaperDamage");
+                    reasonPaperDamageButton = t != null ? t.GetComponent<Button>() : null;
+                }
+            }
 
             if (hotspotButtons.Count == 0 && documentRoot != null)
             {

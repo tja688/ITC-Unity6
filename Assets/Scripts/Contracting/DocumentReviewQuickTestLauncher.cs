@@ -154,9 +154,29 @@ namespace ITC.Contracting
             opening = false;
         }
 
-        private static void EnsureEventSystemExists()
+private static void EnsureEventSystemExists()
         {
-            var eventSystem = Object.FindFirstObjectByType<EventSystem>(FindObjectsInactive.Include);
+            // Deduplicate: keep the first active EventSystem, disable extras.
+            var allEventSystems = Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            EventSystem eventSystem = null;
+            foreach (var es in allEventSystems)
+            {
+                if (eventSystem == null)
+                {
+                    eventSystem = es;
+                    if (!eventSystem.gameObject.activeInHierarchy)
+                    {
+                        eventSystem.gameObject.SetActive(true);
+                    }
+                }
+                else
+                {
+                    // Disable duplicate event systems to prevent "2 event systems" warning.
+                    es.gameObject.SetActive(false);
+                }
+            }
+
             if (eventSystem == null)
             {
                 var eventSystemObj = new GameObject("EventSystem", typeof(EventSystem));
