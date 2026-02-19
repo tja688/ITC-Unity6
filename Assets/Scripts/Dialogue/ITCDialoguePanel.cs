@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ITC.Contracting;
 using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -188,6 +189,7 @@ namespace ITC.Dialogue
             dialogueRunner.AddCommandHandler<string>("itc_npc_main", SwitchNpcMainPortraitCommand);
             dialogueRunner.AddCommandHandler<string>("itc_npc_avatar", SwitchNpcAvatarCommand);
             dialogueRunner.AddCommandHandler<string>("itc_pc_avatar", SwitchPcAvatarCommand);
+            dialogueRunner.AddCommandHandler<string>("itc_doc_review", RunDocumentReviewCommand);
             dialogueRunner.AddCommandHandler("itc_npc_main_hide", HideNpcMainPortraitCommand);
             dialogueRunner.AddCommandHandler("itc_npc_avatar_hide", HideNpcAvatarCommand);
             dialogueRunner.AddCommandHandler("itc_pc_avatar_hide", HidePcAvatarCommand);
@@ -205,6 +207,7 @@ namespace ITC.Dialogue
             dialogueRunner.RemoveCommandHandler("itc_npc_main");
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar");
             dialogueRunner.RemoveCommandHandler("itc_pc_avatar");
+            dialogueRunner.RemoveCommandHandler("itc_doc_review");
             dialogueRunner.RemoveCommandHandler("itc_npc_main_hide");
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar_hide");
             dialogueRunner.RemoveCommandHandler("itc_pc_avatar_hide");
@@ -257,6 +260,174 @@ namespace ITC.Dialogue
         private void HidePcAvatarCommand()
         {
             HideImage(pcPortraitImage);
+        }
+
+        private IEnumerator RunDocumentReviewCommand(string clientToken)
+        {
+            if (dialogueRunner == null)
+            {
+                yield break;
+            }
+
+            var flowState = this.GetModel<ContractFlowStateModel>();
+            var configModel = this.GetModel<ContractClientConfigModel>();
+            var variableStorage = dialogueRunner.VariableStorage;
+
+            var clientId = ParseClientId(clientToken, variableStorage);
+            var currentSatisfaction = ReadFloatVariable(variableStorage, "$satisfaction", 3f);
+            var currentSignMistake = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Sign_mistake", 0f));
+
+            this.SendCommand(new BeginDocumentReviewCommand(clientId, currentSatisfaction, currentSignMistake));
+
+            var clientConfig = configModel.GetDocumentReviewClientConfig(clientId);
+            var resultSubmitted = false;
+
+            var panelData = new DocumentReviewPanelData
+            {
+                ClientId = clientId,
+                TutorialMode = false,
+                ExpectedAction = clientConfig.CorrectDecision,
+                RuntimeConfig = configModel.DocumentReviewRuleConfig,
+                ClientConfig = clientConfig,
+                AllowedRejectReasons = clientConfig.AllowedRejectReasons,
+                OnFxCue = DispatchContractFxCue,
+                OnCompleted = payload =>
+                {
+                    if (resultSubmitted)
+                    {
+                        return;
+                    }
+
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitDocumentReviewResultCommand(payload));
+                }
+            };
+
+            var panelOpened = false;
+
+            UIKit.OpenPanelAsync<DocumentReviewPanel>(
+                    UILevel.PopUI,
+                    panelData,
+                    assetBundleName: "contracting_ui",
+                    prefabName: nameof(DocumentReviewPanel))
+                .ToAction()
+                .StartGlobal(() => panelOpened = true);
+
+            var openTimeout = 8f;
+            var elapsed = 0f;
+            while (!panelOpened && elapsed < openTimeout)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (!panelOpened)
+            {
+                LogKit.E("[ITCDialoguePanel] DocumentReviewPanel open timeout. Applying fallback result.");
+                if (!resultSubmitted)
+                {
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitDocumentReviewResultCommand(BuildFallbackResult(clientId)));
+                }
+            }
+            else
+            {
+                var gameplayTimeout = 180f;
+                elapsed = 0f;
+                while (flowState.DocumentReviewRunning.Value && elapsed < gameplayTimeout)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                    yield return null;
+                }
+
+                if (flowState.DocumentReviewRunning.Value && !resultSubmitted)
+                {
+                    LogKit.E("[ITCDialoguePanel] DocumentReviewPanel resolve timeout. Applying fallback result.");
+                    resultSubmitted = true;
+                    MainMenuApp.Interface.SendCommand(new SubmitDocumentReviewResultCommand(BuildFallbackResult(clientId)));
+                }
+            }
+
+            var routeResult = string.IsNullOrWhiteSpace(flowState.RouteDocReviewResult.Value)
+                ? "passed"
+                : flowState.RouteDocReviewResult.Value;
+
+            WriteStringVariable(variableStorage, "$Route_DocReviewResult", routeResult);
+            WriteFloatVariable(variableStorage, "$Sign_mistake", flowState.SignMistake.Value);
+            WriteFloatVariable(variableStorage, "$satisfaction", flowState.Satisfaction.Value);
+
+            UIKit.ClosePanel<DocumentReviewPanel>();
+        }
+
+        private static int ParseClientId(string clientToken, VariableStorageBehaviour variableStorage)
+        {
+            if (int.TryParse(clientToken, out var parsedClientId) && parsedClientId > 0)
+            {
+                return parsedClientId;
+            }
+
+            var fallbackClientId = Mathf.RoundToInt(ReadFloatVariable(variableStorage, "$Route_CurrentClient", 1f));
+            return Mathf.Max(1, fallbackClientId);
+        }
+
+        private static float ReadFloatVariable(
+            VariableStorageBehaviour variableStorage,
+            string variableName,
+            float defaultValue)
+        {
+            if (variableStorage == null || string.IsNullOrWhiteSpace(variableName))
+            {
+                return defaultValue;
+            }
+
+            return variableStorage.TryGetValue<float>(variableName, out var value)
+                ? value
+                : defaultValue;
+        }
+
+        private static void WriteFloatVariable(
+            VariableStorageBehaviour variableStorage,
+            string variableName,
+            float value)
+        {
+            if (variableStorage == null || string.IsNullOrWhiteSpace(variableName))
+            {
+                return;
+            }
+
+            variableStorage.SetValue(variableName, value);
+        }
+
+        private static void WriteStringVariable(
+            VariableStorageBehaviour variableStorage,
+            string variableName,
+            string value)
+        {
+            if (variableStorage == null || string.IsNullOrWhiteSpace(variableName))
+            {
+                return;
+            }
+
+            variableStorage.SetValue(variableName, value ?? string.Empty);
+        }
+
+        private static void DispatchContractFxCue(string cueId, Transform anchor, float intensity)
+        {
+            // Reserved for future AudioKit/VFX router wiring.
+        }
+
+        private static DocumentReviewResultPayload BuildFallbackResult(int clientId)
+        {
+            return new DocumentReviewResultPayload
+            {
+                ClientId = Mathf.Max(1, clientId),
+                FinalAction = DocumentReviewDecision.Pass,
+                RejectReason = DocumentReviewRejectReason.None,
+                InspectedHotspotCount = 0,
+                TutorialMode = false,
+                ForceConfirmed = false,
+                WasFallback = true
+            };
         }
 
         private IEnumerator SwapPortraitByKey(Image target, string key, DialogueVisualSlot slot)

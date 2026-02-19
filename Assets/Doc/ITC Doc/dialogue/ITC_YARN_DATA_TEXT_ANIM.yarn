@@ -23,6 +23,7 @@ tags: itc mainline base
 <<declare $Sys_IsGameFinished = false>>
 <<declare $Sys_CurrentPhase = "Prologue">>
 <<declare $Route_CurrentClient = 0>>
+<<declare $Route_DocReviewResult = "passed">>
 <<declare $Route_StampType = "">>
 <<declare $Route_QTEErrorCount = 0>>
 <<declare $Route_SoulCollectPercent = 0>>
@@ -257,36 +258,15 @@ title: ITC_Client1_FileCheck
 <<itc_npc_main emmett_default>>
 <<itc_npc_avatar emmett_default>>
 Narrator: |typewriter|是否退回文件。<waitfor=0.18>
--> 退回文件并给出理由
-    Narrator: |typewriter|请选择退回理由。<waitfor=0.12>
-    -> 图像不符
-        <<set $Sign_mistake = 1>>
-        <<set $satisfaction = $satisfaction - 1>>
-        Narrator: |typewriter|<shake a=0.45>判定错误</shake>。<waitfor=0.12>该文件本应继续流程。
-        <<jump ITC_Client1_TypewriterInput>>
-    -> 日期不符
-        <<set $Sign_mistake = 1>>
-        <<set $satisfaction = $satisfaction - 1>>
-        Narrator: |typewriter|<shake a=0.45>判定错误</shake>。<waitfor=0.12>该文件本应继续流程。
-        <<jump ITC_Client1_TypewriterInput>>
-    -> 申请不符
-        <<set $Sign_mistake = 1>>
-        <<set $satisfaction = $satisfaction - 1>>
-        Narrator: |typewriter|<shake a=0.45>判定错误</shake>。<waitfor=0.12>该文件本应继续流程。
-        <<jump ITC_Client1_TypewriterInput>>
-    -> 纸张造假
-        <<set $Sign_mistake = 1>>
-        <<set $satisfaction = $satisfaction - 1>>
-        Narrator: |typewriter|<shake a=0.45>判定错误</shake>。<waitfor=0.12>该文件本应继续流程。
-        <<jump ITC_Client1_TypewriterInput>>
-    -> 纸张破损
-        <<set $Sign_mistake = 1>>
-        <<set $satisfaction = $satisfaction - 1>>
-        Narrator: |typewriter|<shake a=0.45>判定错误</shake>。<waitfor=0.12>该文件本应继续流程。
-        <<jump ITC_Client1_TypewriterInput>>
--> 不退回文件，继续流程
+<<itc_doc_review 1>>
+<<if $Route_DocReviewResult == "passed">>
     Narrator: |typewriter|<wave s=0.7>判定正确</wave>，<waitfor=0.12>进入后续流程。
-    <<jump ITC_Client1_TypewriterInput>>
+<<elseif $Route_DocReviewResult == "rejected_correct">>
+    Narrator: |typewriter|<wave s=0.7>判定正确</wave>，<waitfor=0.12>文件退回处理完成。
+<<else>>
+    Narrator: |typewriter|<shake a=0.45>判定错误</shake>。<waitfor=0.12>该文件本应继续流程。
+<<endif>>
+<<jump ITC_Client1_TypewriterInput>>
 ===
 
 title: ITC_Client1_TypewriterInput
@@ -387,14 +367,15 @@ title: ITC_Client2_FileCheck
 <<itc_npc_main thomas_default>>
 <<itc_npc_avatar thomas_default>>
 Narrator: |typewriter|是否退回文件。<waitfor=0.18>
--> 退回文件
-    <<set $Sign_mistake = 1>>
-    <<set $satisfaction = $satisfaction - 1>>
-    Narrator: |typewriter|<shake a=0.45>判定错误</shake>。<waitfor=0.12>该文件应继续流程。
-    <<jump ITC_Client2_TypewriterInput>>
--> 不退回文件，继续流程
+<<itc_doc_review 2>>
+<<if $Route_DocReviewResult == "passed">>
     Narrator: |typewriter|<wave s=0.7>判定正确</wave>，<waitfor=0.12>进入后续流程。
-    <<jump ITC_Client2_TypewriterInput>>
+<<elseif $Route_DocReviewResult == "rejected_correct">>
+    Narrator: |typewriter|<wave s=0.7>判定正确</wave>，<waitfor=0.12>文件退回处理完成。
+<<else>>
+    Narrator: |typewriter|<shake a=0.45>判定错误</shake>。<waitfor=0.12>该文件应继续流程。
+<<endif>>
+<<jump ITC_Client2_TypewriterInput>>
 ===
 
 title: ITC_Client2_TypewriterInput
