@@ -27,7 +27,6 @@ namespace ITC.Contracting
         [SerializeField] private RectTransform gameRoot;
         [SerializeField] private RectTransform targetSequenceRoot;
         [SerializeField] private RectTransform gridRoot;
-        [SerializeField] private RectTransform cursorFrame;
         [SerializeField] private GameObject onScreenButtonsRoot;
 
         [Header("Text")]
@@ -81,7 +80,6 @@ namespace ITC.Contracting
 
         private Coroutine countdownRoutine;
         private Coroutine feedbackRoutine;
-        private Coroutine cursorMoveRoutine;
         private Coroutine completeRoutine;
 
         private RuneTypingConfig RuntimeConfig => panelData.RuntimeConfig ??= new RuneTypingConfig();
@@ -202,11 +200,6 @@ namespace ITC.Contracting
             if (gridRoot == null && gameRoot != null)
             {
                 gridRoot = gameRoot.Find("GridRoot") as RectTransform;
-            }
-
-            if (cursorFrame == null && gridRoot != null)
-            {
-                cursorFrame = gridRoot.Find("CursorFrame") as RectTransform;
             }
 
             if (onScreenButtonsRoot == null && gameRoot != null)
@@ -482,7 +475,6 @@ namespace ITC.Contracting
             ApplyGridLayout();
             ConfigureTargetSequenceView();
             ConfigureGridCells();
-            PositionCursorImmediately();
             RefreshGridVisuals();
             RefreshStatusText();
             RefreshErrorText();
@@ -635,7 +627,6 @@ namespace ITC.Contracting
             }
 
             cursorCellIndex = index;
-            AnimateCursorToSelection();
             RefreshGridVisuals();
             nextInputAllowedAt = Time.unscaledTime + RuntimeConfig.InputBufferMs * 0.001f;
             nextConfirmAllowedAt = Time.unscaledTime + RuntimeConfig.MinConfirmIntervalMs * 0.001f;
@@ -668,7 +659,6 @@ namespace ITC.Contracting
             cursorCellIndex = nextRow * gridSize + nextCol;
             nextInputAllowedAt = Time.unscaledTime + RuntimeConfig.InputBufferMs * 0.001f;
             EmitCue("sfx.contract.rune.move", transform, 0.8f);
-            AnimateCursorToSelection();
             RefreshGridVisuals();
         }
 
@@ -907,84 +897,7 @@ namespace ITC.Contracting
             }
         }
 
-        private void AnimateCursorToSelection()
-        {
-            if (cursorFrame == null)
-            {
-                return;
-            }
 
-            if (cursorMoveRoutine != null)
-            {
-                StopCoroutine(cursorMoveRoutine);
-            }
-
-            cursorMoveRoutine = StartCoroutine(CursorMoveRoutine());
-        }
-
-        private void PositionCursorImmediately()
-        {
-            if (cursorFrame == null || !TryGetCellRect(cursorCellIndex, out var cellRect))
-            {
-                return;
-            }
-
-            // Force layout rebuild so GridLayoutGroup has updated child positions
-            if (gridRoot != null)
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(gridRoot);
-            }
-
-            cursorFrame.anchoredPosition = cellRect.anchoredPosition;
-            cursorFrame.sizeDelta = cellRect.sizeDelta + new Vector2(12f, 12f);
-        }
-
-        private IEnumerator CursorMoveRoutine()
-        {
-            if (!TryGetCellRect(cursorCellIndex, out var cellRect))
-            {
-                cursorMoveRoutine = null;
-                yield break;
-            }
-
-            var fromPos = cursorFrame.anchoredPosition;
-            var toPos = cellRect.anchoredPosition;
-            var toSize = cellRect.sizeDelta + new Vector2(12f, 12f);
-            var duration = Mathf.Max(0.02f, RuntimeConfig.CursorMoveDuration);
-            var elapsed = 0f;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                var t = Mathf.Clamp01(elapsed / duration);
-                var eased = 1f - Mathf.Pow(1f - t, 2f);
-                cursorFrame.anchoredPosition = Vector2.Lerp(fromPos, toPos, eased);
-                cursorFrame.sizeDelta = toSize;
-                yield return null;
-            }
-
-            cursorFrame.anchoredPosition = toPos;
-            cursorFrame.sizeDelta = toSize;
-            cursorMoveRoutine = null;
-        }
-
-        private bool TryGetCellRect(int cellIndex, out RectTransform rectTransform)
-        {
-            rectTransform = null;
-            if (cellIndex < 0 || cellIndex >= gridCellButtons.Count)
-            {
-                return false;
-            }
-
-            var button = gridCellButtons[cellIndex];
-            if (button == null)
-            {
-                return false;
-            }
-
-            rectTransform = button.transform as RectTransform;
-            return rectTransform != null;
-        }
 
         private void OnGuideToggleClicked()
         {
@@ -1046,12 +959,6 @@ namespace ITC.Contracting
             {
                 StopCoroutine(feedbackRoutine);
                 feedbackRoutine = null;
-            }
-
-            if (cursorMoveRoutine != null)
-            {
-                StopCoroutine(cursorMoveRoutine);
-                cursorMoveRoutine = null;
             }
 
             if (completeRoutine != null)
@@ -1129,15 +1036,12 @@ namespace ITC.Contracting
 
             // Determine cell size from available space
             var gridRect = gridRoot.rect;
-            var availableWidth = gridRect.width > 0f ? gridRect.width : 760f;
-            var availableHeight = gridRect.height > 0f ? gridRect.height : 760f;
-            var spacing = 12f;
-            var totalSpacingW = spacing * (gridSize - 1);
-            var totalSpacingH = spacing * (gridSize - 1);
-            var cellW = (availableWidth - totalSpacingW - 32f) / gridSize;  // 32 padding
-            var cellH = (availableHeight - totalSpacingH - 32f) / gridSize;
-            var cellSize = Mathf.Min(cellW, cellH);
-            cellSize = Mathf.Max(cellSize, 60f); // minimum cell size
+            var availableWidth = gridRect.width > 0f ? gridRect.width : 560f;
+            var availableHeight = gridRect.height > 0f ? gridRect.height : 560f;
+            var spacing = 10f;
+            var cellW = (availableWidth - spacing * (gridSize - 1) - 24f) / gridSize;
+            var cellH = (availableHeight - spacing * (gridSize - 1) - 24f) / gridSize;
+            var cellSize = Mathf.Max(Mathf.Min(cellW, cellH), 56f);
 
             glg.cellSize = new Vector2(cellSize, cellSize);
             glg.spacing = new Vector2(spacing, spacing);
@@ -1146,18 +1050,7 @@ namespace ITC.Contracting
             glg.childAlignment = TextAnchor.MiddleCenter;
             glg.startCorner = GridLayoutGroup.Corner.UpperLeft;
             glg.startAxis = GridLayoutGroup.Axis.Horizontal;
-            glg.padding = new RectOffset(16, 16, 16, 16);
-
-            // Ensure CursorFrame is excluded from GridLayoutGroup
-            if (cursorFrame != null)
-            {
-                var cursorLayout = cursorFrame.GetComponent<LayoutElement>();
-                if (cursorLayout == null)
-                {
-                    cursorLayout = cursorFrame.gameObject.AddComponent<LayoutElement>();
-                }
-                cursorLayout.ignoreLayout = true;
-            }
+            glg.padding = new RectOffset(12, 12, 12, 12);
         }
 
         /// <summary>
