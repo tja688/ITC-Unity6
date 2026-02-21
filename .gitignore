@@ -93,3 +93,11 @@ crashlytics-build.properties
 .DS_Store
 Thumbs.db
 ehthumbs.db
+
+# AI Agent Folder Junctions
+.claude/skills/
+.claude/workflows/
+.codex/skills/
+.codex/workflows/
+.gemini/skills/
+.gemini/workflows/
