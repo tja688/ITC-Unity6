@@ -1,6 +1,6 @@
 ---
 name: daoyangao-generator
-description: Generate game dialogue director sheets (导演稿/配音导演稿/文字导演稿) from raw lines using beat segmentation, action verbs (actioning), subtext, and a five-dimensional prosody vector (pause, rate, gear, ending closure, emphasis). Use when converting scripts/dialogue into executable directing notes (Markdown) or optional engine-ready JSON/typewriter timing, while keeping original dialogue text unchanged.
+description: Generate game dialogue director sheets (导演稿/配音导演稿/文字导演稿) from raw lines using beat segmentation, action verbs (actioning), subtext, and a five-dimensional prosody vector (pause, rate, gear, ending closure, emphasis). Use when converting scripts/dialogue into executable directing notes (Markdown) while keeping original dialogue text unchanged.
 ---
 
 # Daoyangao Generator（导演稿生成）
@@ -155,29 +155,6 @@ description: Generate game dialogue director sheets (导演稿/配音导演稿/�
 - 严格保持原句逐字不变
 - 只插：`?停顿?`、`〔速/档位〕`、`【重点词】`、（括注）与行末收束箭头
 
-## 可选输出A：给“文字导演/打字机效果”的节奏轨
-
-仅在用户明确需要时输出（放在每句台词后，作为附录即可）：
-
-- 将同一套“节拍 + 五维”映射为 typewriter/kinetic 参数
-- 将停顿 `?微/?短/?中/?长/?静` 映射为逐字显示的延迟/整句停住/清空文本框等行为
-- 将 `〔速↑/↓〕` 映射为每秒显示字符数（CPS）倍率；将 `【强调】` 映射为短词的轻量强调动效
-- 遵守无障碍：允许调速/跳过；提供 Reduce Motion 兜底；避免让长段落整体抖动
-
-## 可选输出B：引擎可读JSON（严格模式）
-
-仅在用户明确需要“机器可读/可落地”时输出：
-
-- 输出纯 JSON（不加 Markdown、不加解释、不加注释）
-- 使用白名单字段与白名单标签（避免生成引擎不支持的效果）
-
-建议字段：
-
-- `line_id`、`speaker`、`addressee`
-- `original_text`
-- `beats[]`: `id`、`action`、`subtext`、`prosody`（pause/rate/gear/closure/emphasis）、`annotated_text`
-- 可选 `typewriter`（cps/holds/effects）
-
 ## 质量自检（交付前必做）
 
 - 原句逐字保留：没有改字、没有同义替换
@@ -189,10 +166,9 @@ description: Generate game dialogue director sheets (导演稿/配音导演稿/�
 
 ## 参考资料（按需加载，不要全量粘贴）
 
-需要更细的声学/标点停顿/SSML/动态文字映射时，按需查这些文件并用 `rg` 定位段落：
+需要更细的声学/标点停顿/SSML映射时，按需查这些文件并用 `rg` 定位段落：
 
 - `references/director-spec.md`：产出结构、极简符号、工作流、例子库
 - `references/prosody-annotation-pipeline.md`：停顿/语速/档位/收束/强调的更细规则与可选SSML映射
-- `references/dialogue-delivery-research.md`：节拍/动作化/沉默分类、JSON Schema、引擎管线思路
-- `references/kinetic-text-typewriter.md`：动态文字如何映射韵律、可读性与无障碍约束
+- `references/dialogue-delivery-research.md`：节拍/动作化/沉默分类，以及配音落地的底层逻辑
 - `references/vo-text-performance-elements.md`：标点停顿层级、中英差异、文本标注到录制反馈流程

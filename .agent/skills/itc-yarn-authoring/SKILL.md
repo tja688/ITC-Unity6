@@ -11,7 +11,7 @@ Write .yarn dialogue that follows the project's Yarn Spinner + Text Animator rul
 
 ## Workflow
 
-1. Read the authoritative spec at `C:\Users\jinji\Documents\GitHub\ITC-Unity6\ITC-Unity6\.agent\skills\itc-yarn-authoring\references\TA_YarnSpinner_Integration_Documentation.md`.
+1. Read the authoritative spec at `\references\TA_YarnSpinner_Integration_Documentation.md`.
 2. Decide markup mode:
    - Default (project standard): use Text Animator tags in `<>`, disallow `[]`.
    - Converter mode (rare): use Yarn `[]` tags only, disallow `<>` (see YarnMarkupConverter in the spec).
