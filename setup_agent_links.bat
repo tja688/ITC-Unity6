@@ -64,6 +64,51 @@ if exist "AGENTS.md" (
 )
 echo ---------------------------------------------------------
 
+REM 6. Update .gitignore
+echo.
+echo Checking .gitignore...
+echo ---------------------------------------------------------
+if exist ".gitignore" (
+    findstr /C:".claude/skills/" ".gitignore" >nul
+    if errorlevel 1 (
+        echo Adding AI Agent ignore rules to .gitignore...
+        echo.>>".gitignore"
+        echo # AI Agent Folder Junctions>>".gitignore"
+        echo .claude/skills/>>".gitignore"
+        echo .claude/workflows/>>".gitignore"
+        echo .codex/skills/>>".gitignore"
+        echo .codex/workflows/>>".gitignore"
+        echo .gemini/skills/>>".gitignore"
+        echo .gemini/workflows/>>".gitignore"
+        echo.>>".gitignore"
+        echo # AI Agent Specific Markdown hardlinks>>".gitignore"
+        echo .agent/AGENTS.md>>".gitignore"
+        echo .claude/CLAUDE.md>>".gitignore"
+        echo .codex/AGENTS.md>>".gitignore"
+        echo .gemini/GEMINI.md>>".gitignore"
+        echo Done.
+    ) else (
+        echo .gitignore already contains the ignore rules.
+    )
+) else (
+    echo [INFO] .gitignore not found. Creating one with ignore rules...
+    echo # AI Agent Folder Junctions>".gitignore"
+    echo .claude/skills/>>".gitignore"
+    echo .claude/workflows/>>".gitignore"
+    echo .codex/skills/>>".gitignore"
+    echo .codex/workflows/>>".gitignore"
+    echo .gemini/skills/>>".gitignore"
+    echo .gemini/workflows/>>".gitignore"
+    echo.>>".gitignore"
+    echo # AI Agent Specific Markdown hardlinks>>".gitignore"
+    echo .agent/AGENTS.md>>".gitignore"
+    echo .claude/CLAUDE.md>>".gitignore"
+    echo .codex/AGENTS.md>>".gitignore"
+    echo .gemini/GEMINI.md>>".gitignore"
+    echo Done.
+)
+echo ---------------------------------------------------------
+
 echo.
 echo Success! Agent folders and markdown files are now linked!
 echo You can now safely close this window.
