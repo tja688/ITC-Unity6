@@ -215,7 +215,7 @@ Veer: |fade|物理是种幻觉。<waitfor=0.12>就像<wave s=0.7>理智</wave>�
 OldTom: |fade|够了，<waitfor=0.12>Veer。<waitfor=0.12>别吓坏新员工。
 Narrator: |fade|Barks 独自留在 13 号窗口，<waitfor=0.18>准备迎接第一位客户。
 <<set $Sys_CurrentPhase = "Contracting">>
-<<jump ITC_Act3_Entry>>
+<<itc_load_scene SignScene>>
 ===
 
 title: ITC_Act3_Entry
@@ -557,7 +557,7 @@ Narrator: |typewriter|结局判定中。<waitfor=0.18>累计签约失误 {$Nmber
         <<if $HiddenEndingTrigger>>
             <<jump ITC_Ending_Hidden>>
         <<else>>
-            <<jump ITC_Act5_AfterWork>>
+            <<itc_load_scene OffworkScene>>
         <<endif>>
     <<endif>>
 <<endif>>
@@ -610,7 +610,7 @@ Narrator: |fade|下班时间。<waitfor=0.12>Barks 离开窗口，<waitfor=0.12>
     <<set $DAY = $DAY + 1>>
     <<set $Sys_CurrentDay = $DAY>>
     <<set $Sys_CurrentPhase = "Contracting">>
-    <<jump ITC_Act3_Entry>>
+    <<itc_load_scene SignScene>>
 -> 结束当前脚本
     <<jump ITC_End_Demo>>
 ===

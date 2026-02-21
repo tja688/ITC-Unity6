@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ITC.Contracting;
 using QFramework;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Yarn.Unity;
 
@@ -199,6 +200,7 @@ namespace ITC.Dialogue
             dialogueRunner.AddCommandHandler("itc_npc_main_hide", HideNpcMainPortraitCommand);
             dialogueRunner.AddCommandHandler("itc_npc_avatar_hide", HideNpcAvatarCommand);
             dialogueRunner.AddCommandHandler("itc_pc_avatar_hide", HidePcAvatarCommand);
+            dialogueRunner.AddCommandHandler<string>("itc_load_scene", RunLoadSceneCommand);
             commandsRegistered = true;
         }
 
@@ -223,6 +225,7 @@ namespace ITC.Dialogue
             dialogueRunner.RemoveCommandHandler("itc_npc_main_hide");
             dialogueRunner.RemoveCommandHandler("itc_npc_avatar_hide");
             dialogueRunner.RemoveCommandHandler("itc_pc_avatar_hide");
+            dialogueRunner.RemoveCommandHandler("itc_load_scene");
             commandsRegistered = false;
         }
 
@@ -272,6 +275,23 @@ namespace ITC.Dialogue
         private void HidePcAvatarCommand()
         {
             HideImage(pcPortraitImage);
+        }
+
+        private IEnumerator RunLoadSceneCommand(string sceneName)
+        {
+            if (string.IsNullOrWhiteSpace(sceneName))
+            {
+                yield break;
+            }
+
+            var asyncOp = SceneManager.LoadSceneAsync(sceneName);
+            if (asyncOp != null)
+            {
+                while (!asyncOp.isDone)
+                {
+                    yield return null;
+                }
+            }
         }
 
         private IEnumerator RunDocumentReviewCommand(string clientToken)
