@@ -43,8 +43,28 @@ mklink /J ".codex\workflows" ".agent\workflows"
 mklink /J ".gemini\skills" ".agent\skills"
 mklink /J ".gemini\workflows" ".agent\workflows"
 echo ---------------------------------------------------------
+echo ---------------------------------------------------------
+
+REM 5. Link Root AGENTS.md to respective files
+echo.
+echo Creating Hard Links for Agent Markdown files...
+echo ---------------------------------------------------------
+if exist "AGENTS.md" (
+    del /Q ".agent\AGENTS.md" 2>nul
+    del /Q ".claude\CLAUDE.md" 2>nul
+    del /Q ".codex\AGENTS.md" 2>nul
+    del /Q ".gemini\GEMINI.md" 2>nul
+
+    mklink /H ".agent\AGENTS.md" "AGENTS.md"
+    mklink /H ".claude\CLAUDE.md" "AGENTS.md"
+    mklink /H ".codex\AGENTS.md" "AGENTS.md"
+    mklink /H ".gemini\GEMINI.md" "AGENTS.md"
+) else (
+    echo [WARNING] AGENTS.md not found in the root directory.
+)
+echo ---------------------------------------------------------
 
 echo.
-echo Success! Agent folders are now linked to .agent
+echo Success! Agent folders and markdown files are now linked!
 echo You can now safely close this window.
 pause

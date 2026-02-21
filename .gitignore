@@ -101,3 +101,9 @@ ehthumbs.db
 .codex/workflows/
 .gemini/skills/
 .gemini/workflows/
+
+# AI Agent Specific Markdown hardlinks
+.agent/AGENTS.md
+.claude/CLAUDE.md
+.codex/AGENTS.md
+.gemini/GEMINI.md
