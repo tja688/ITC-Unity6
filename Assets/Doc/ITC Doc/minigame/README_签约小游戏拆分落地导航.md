@@ -6,15 +6,13 @@
 ## 目录结构
 
 - `00_shared/00_签约小游戏共通落地规范.md`
-- `01_document_review/01_文书审核-落地设计.md`
-- `01_document_review/01_文书审核-代码文档与操作说明.md`
-- `02_rune_typing/02_符文控制板QTE-落地设计.md`
-- `02_rune_typing/02_符文控制板QTE-代码文档与操作说明.md`
-- `03_rune_verify/03_符文核验找茬-落地设计.md`
-- `04_stamp/04_印章选择盖印-落地设计.md`
-- `05_soul_collect/05_灵魂收取分割-落地设计.md`
-- `06_bean_sell/06_豆罐头推销-落地设计.md`
-- `07_settlement/07_满意度结算离场-落地设计.md`
+- `01_document_review/01_文书审核-设计与落地.md`
+- `02_rune_typing/02_符文控制板QTE-设计与落地.md`
+- `03_rune_verify/03_符文核验找茬-设计与落地.md`
+- `04_stamp/04_印章选择盖印-设计与落地.md`
+- `05_soul_collect/05_灵魂收取分割-设计与落地.md`
+- `06_bean_sell/06_豆罐头推销-设计与落地.md`
+- `07_settlement/07_满意度结算离场-设计与落地.md`
 - `99_whitebox_language/99_白模测试设计语言-v1.md`
 - `MINIGAME_GUIDE_CONSOLIDATED.md` (最终统合操作手册)
 
