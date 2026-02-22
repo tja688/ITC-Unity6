@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
-UnityVersion: 6000.3.0f1
-CRC: 2839881932
+UnityVersion: 6000.3.9f1
+CRC: 941094989
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b474ba756a3a42bd45a1c43c4a56fd8b
+    Hash: 7ac9611194ad70742e93bebd5ef9c288
   TypeTreeHash:
     serializedVersion: 2
     Hash: ae0539b6e20784f644b54dbf3d158e73
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: ab524660d8cad35223e8d7cf130f1ccd
+    Hash: dc093135ca55c055268a2c5ec1b41898
 HashAppended: 1
 ClassTypes:
 - Class: 1
@@ -113,6 +113,6 @@ SerializeReferenceClassIdentifiers:
 Assets:
 - Assets/Prefabs/UI/ITC DialogueSystem.prefab
 Dependencies:
-- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_bg_f007d9034c5ad6c6be5e4c3f6f20d118
-- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_portrait_b9e332a767e840163aa93c86038d5d9b
-- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_script_c495fb06e68dd1c0afa029b363466534
+- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_bg_ba903c14a9dbaecc75a2b947c8d7f6f9
+- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_portrait_3693064dd9ef3f76e083be3024113df0
+- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_script_692c6a1bcf201f90048e54a06723e668

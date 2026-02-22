@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
-UnityVersion: 6000.3.0f1
-CRC: 912913159
+UnityVersion: 6000.3.9f1
+CRC: 1484090359
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b9e332a767e840163aa93c86038d5d9b
+    Hash: 3693064dd9ef3f76e083be3024113df0
   TypeTreeHash:
     serializedVersion: 2
     Hash: bc9f87c7e64ff656997db0f2b2a91703
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: cd833eafe0d12b335dffaab0b1581fc7
+    Hash: 5cbf9c9cb99abb17eb92e6a92ee762d1
 HashAppended: 1
 ClassTypes:
 - Class: 28
@@ -22,6 +22,6 @@ Assets:
 - "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u5934\u50CF\u6846\u7D20\u67502.png"
 - "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u5934\u50CF\u6846\u7D20\u67503.png"
 - "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u4EBA\u7269\u5934\u50CF.png"
-- "Assets/Arts/Texture2d\u56FE\u7247/image missing.png"
-- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u5C4F\u5E55\u4E2D\u5FC3\u7ACB\u7ED8.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u5360\u4F4D\u4EBA\u7269\u7ACB\u7ED8/\u901A\u7528\u6807\u51C6\u7ACB\u7ED8.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/System/image missing.png"
 Dependencies: []

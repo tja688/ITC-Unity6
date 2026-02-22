@@ -1,30 +1,33 @@
 ManifestFileVersion: 0
-UnityVersion: 6000.3.0f1
-CRC: 2690744643
+UnityVersion: 6000.3.9f1
+CRC: 2401696548
 HashAppended: 1
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: unifiedraytracing_d27b28208edd139acc43a323b2d84bb8
+      Name: unifiedraytracing_d27d3421000d9a4879eeef7304b9dab7
       Dependencies: {}
     Info_1:
-      Name: menu_fx_683c317ac082d03d8463c6f8488c0480
+      Name: menu_fx_2d337ae3ba761c6df32ba2cd9586f60d
       Dependencies: {}
     Info_2:
-      Name: menu_core_17217af13290ab9d12b0e920f6cc268f
+      Name: menu_core_cab0431a61570ed78c641da66f60851d
       Dependencies: {}
     Info_3:
-      Name: dialogue_bg_f007d9034c5ad6c6be5e4c3f6f20d118
+      Name: dialogue_bg_ba903c14a9dbaecc75a2b947c8d7f6f9
       Dependencies: {}
     Info_4:
-      Name: dialogue_script_c495fb06e68dd1c0afa029b363466534
+      Name: dialogue_script_692c6a1bcf201f90048e54a06723e668
       Dependencies: {}
     Info_5:
-      Name: dialogue_portrait_b9e332a767e840163aa93c86038d5d9b
+      Name: dialogue_portrait_3693064dd9ef3f76e083be3024113df0
       Dependencies: {}
     Info_6:
-      Name: dialogue_ui_b474ba756a3a42bd45a1c43c4a56fd8b
+      Name: dialogue_ui_7ac9611194ad70742e93bebd5ef9c288
       Dependencies:
-        Dependency_0: dialogue_bg_f007d9034c5ad6c6be5e4c3f6f20d118
-        Dependency_1: dialogue_script_c495fb06e68dd1c0afa029b363466534
-        Dependency_2: dialogue_portrait_b9e332a767e840163aa93c86038d5d9b
+        Dependency_0: dialogue_bg_ba903c14a9dbaecc75a2b947c8d7f6f9
+        Dependency_1: dialogue_script_692c6a1bcf201f90048e54a06723e668
+        Dependency_2: dialogue_portrait_3693064dd9ef3f76e083be3024113df0
+    Info_7:
+      Name: contracting_ui_fca472f026730dd113c4bb3d15be30d1
+      Dependencies: {}

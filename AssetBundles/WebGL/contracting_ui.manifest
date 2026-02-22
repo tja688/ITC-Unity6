@@ -1,0 +1,127 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.3.9f1
+CRC: 3361023321
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: fca472f026730dd113c4bb3d15be30d1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 92ed60bd3a1f82f60e521c356666e898
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: e99dd778b89a2358f60361e3c603954f
+HashAppended: 1
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 72807f9d04a842269a48c9955a919cb2, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 13df52dd5d5d46988250268248778143, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9244d7d79c208bf4c8fabc4890073112, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 453e007753e35c3448dece83c47a4f3b, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d6154d00fc8e1924db7dafe7a41c4fd3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 16618fa480d7b4e418886d6d4606ea8a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 033306822e534befbcbe04c4f3e3230e, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c4016b4399b24865b364b2eed54478b5, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 487bb384df5e4df6b57d2463b6bac29e, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ef012dee743e4596a1b8babffcc398ef, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: acad4eabc3064f9493ce51a97cf4cccf, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4871832212394b0eacd5b225e55ba4b0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a98608e07bca45943a65adca89b004df, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c9238a315d0618842ab13f8f961e74c6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.FaceInfo_Legacy
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.FontAssetCreationSettings
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.KerningTable
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_Character
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_FontFeatureTable
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_FontWeightPair
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.VertexGradient
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.PersistentCallGroup
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.RectOffset
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.FaceInfo
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.Glyph
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.GlyphMetrics
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.GlyphRect
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.AnimationTriggers
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Button/ButtonClickedEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.ColorBlock
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Navigation
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.SpriteState
+Assets:
+- Assets/Prefabs/UI/SettlementPanel.prefab
+- Assets/Prefabs/UI/BeanSellPanel.prefab
+- Assets/Prefabs/UI/DocumentReviewPanel.prefab
+- Assets/Prefabs/UI/RuneTypingPanel.prefab
+- Assets/Prefabs/UI/SoulCollectPanel.prefab
+- Assets/Prefabs/UI/RuneVerifyPanel.prefab
+- Assets/Prefabs/UI/StampPanel.prefab
+Dependencies: []

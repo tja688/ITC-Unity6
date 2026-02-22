@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
-UnityVersion: 6000.3.0f1
-CRC: 4109312900
+UnityVersion: 6000.3.9f1
+CRC: 1310600548
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c495fb06e68dd1c0afa029b363466534
+    Hash: 692c6a1bcf201f90048e54a06723e668
   TypeTreeHash:
     serializedVersion: 2
     Hash: dda98594b914e5de9d31c9e8f6ee5656
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: ae6d8e9de3025d1e0ed6e80d2eab65a3
+    Hash: 8a5b4ed243add5c710b1310194f4b0ae
 HashAppended: 1
 ClassTypes:
 - Class: 49
@@ -31,6 +31,8 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: YarnSpinner.Unity
   ClassName: Yarn.Unity.SerializableDictionary`2
 Assets:
-- Assets/Doc/ITC Doc/dialogue/TestProject.yarnproject
-- Assets/Doc/ITC Doc/dialogue/ITC_YARN_DATA_TEXT_ANIM.yarn
+- "Assets/Doc/ITC Doc/dialogue/Yarn\u793A\u4F8B/ITC_YARN_DATA_TEST.yarn"
+- "Assets/Doc/ITC Doc/dialogue/ITC_YarnWorkSpace/ITC_\u5E8F\u7AE0.yarn"
+- "Assets/Doc/ITC Doc/dialogue/ITC_YarnWorkSpace/ITC_\u7B2C\u4E00\u5929\u4E0A\u73ED\u524D.yarn"
+- Assets/Doc/ITC Doc/dialogue/ITC_YarnWorkSpace/ITC_YARN_Project.yarnproject
 Dependencies: []

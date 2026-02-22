@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
-UnityVersion: 6000.3.0f1
-CRC: 2633059607
+UnityVersion: 6000.3.9f1
+CRC: 835448144
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 683c317ac082d03d8463c6f8488c0480
+    Hash: 2d337ae3ba761c6df32ba2cd9586f60d
   TypeTreeHash:
     serializedVersion: 2
     Hash: bc9f87c7e64ff656997db0f2b2a91703
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: f4165d3a22e798af2d8ab1994bca012c
+    Hash: 40a320e780845607cdd4dccff2b11222
 HashAppended: 1
 ClassTypes:
 - Class: 28
@@ -19,5 +19,5 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
-- "Assets/Arts/Texture2d\u56FE\u7247/\u4EBA\u7269/620/menu.png"
+- "Assets/Arts/Texture2d\u56FE\u7247/\u521D\u7248\u8D44\u6E90/\u4EBA\u7269/620/menu.png"
 Dependencies: []

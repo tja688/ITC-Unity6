@@ -8,8 +8,8 @@ namespace ITC.Editor
     public static class ITCDialogueResKitBuildTools
     {
         private const string DialoguePrefabPath = "Assets/Prefabs/UI/ITC DialogueSystem.prefab";
-        private const string DialogueYarnPath = "Assets/Doc/ITC Doc/dialogue/ITC_YARN_DATA_TEXT_ANIM.yarn";
-        private const string DialogueYarnProjectPath = "Assets/Doc/ITC Doc/dialogue/TestProject.yarnproject";
+        private const string DialogueYarnPath = "Assets/Doc/ITC Doc/dialogue/ITC_YarnWorkSpace/ITC_序章.yarn";
+        private const string DialogueYarnProjectPath = "Assets/Doc/ITC Doc/dialogue/ITC_YarnWorkSpace/ITC_YARN_Project.yarnproject";
         private const string BackgroundFolderPath = "Assets/Arts/Texture2d图片/占位背景原画";
         private const string PortraitFolderPath = "Assets/Arts/Texture2d图片/占位人物立绘";
 

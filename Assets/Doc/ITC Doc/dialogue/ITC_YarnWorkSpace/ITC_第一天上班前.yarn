@@ -1,0 +1,226 @@
+title: ITC_BeforeWork_Scene1_Day1Transition
+tags: beforework, timeline
+---
+<<itc_bg hotel_room>>
+<<itc_pc_avatar_hide>>
+<<itc_npc_main_hide>>
+<<itc_npc_avatar_hide>>
+
+Narrator: |fade|Barks深吸一口气（尽管作为一具尸体，<waitfor=0.15>这完全是徒劳的），<waitfor=0.15>推开了大门。
+<<jump ITC_BeforeWork_Scene3_Lobby>>
+===
+
+title: ITC_BeforeWork_Scene3_Lobby
+---
+<<itc_bg ITC大厅>>
+Narrator: |fade|大厅里人来人往，<waitfor=0.15>充满着各种不同种族的人形动物。<waitfor=0.15>有长着巨大羊角的，<waitfor=0.15>有带着长条尾巴的。
+Narrator: |fade|还有一些看起来和Barks一样困惑的普通人，<waitfor=0.15>脸上写满了"我是来还债还是来贷款"的纠结。
+Narrator: |fade|突然，<waitfor=0.15>一个声音从她身后响起——
+<<itc_npc_main receptionist_default>>
+<<itc_npc_avatar receptionist_default>>
+Receptionist: |typewriter|欢迎来到Infernal Transfer Company。<waitfor=0.15>灵魂买卖，<waitfor=0.15>童叟无欺。<waitfor=0.15>请问你有预约吗？
+Narrator: |fade|Barks转身，<waitfor=0.15>看到一位穿着整齐、面无表情的女士正对她。
+Narrator: |fade|【人物介绍】ITC圣纽约客分公司-前台文员。严肃冷漠的工作狂。<waitfor=0.15>对待工作态度严谨认真。
+Narrator: |fade|她胸前的名牌写着"Receptionist"，<waitfor=0.15>连个名字都没有，<waitfor=0.15>仿佛她的个人身份早已被工作消磨殆尽。
+<<itc_pc_avatar barks_default>>
+Barks: |typewriter|呃，你好...<waitfor=0.15>门口那位骷髅先生让我去Henet女士的办公室。<waitfor=0.15>他看起来像是刚从墓地直接来上班的那种。
+<<itc_npc_main_hide>>
+<<itc_npc_avatar_hide>>
+Receptionist: |typewriter|明白了。<waitfor=0.15>电梯在进门右手边，<waitfor=0.15>Henet女士的办公室在6层66号房。<waitfor=0.15>祝你好运。
+Barks: |typewriter|（内心独白）6层66号？<waitfor=0.15>真是毫不掩饰啊。<waitfor=0.15>快给她提个建议把，<waitfor=0.15>比如把办公室建在火山口？
+<<jump ITC_BeforeWork_Scene4_Elevator>>
+===
+
+title: ITC_BeforeWork_Scene4_Elevator
+---
+<<itc_bg ITC电梯内部>>
+Narrator: |fade|Barks乘电梯来到6层。<waitfor=0.15>电梯里播放着轻快的音乐，<waitfor=0.15>歌词却异常诡异："签下你的名字，<waitfor=0.15>交出你的灵魂，<waitfor=0.15>我们保证不会让你太孤单～"
+Barks: |typewriter|这歌词怎么听起来这么耳熟？<waitfor=0.15>等等，<waitfor=0.15>这不会是这家公司的广告歌吧？
+<<itc_bg ITC办公区>>
+Narrator: |fade|电梯门打开，<waitfor=0.15>Barks走进了一个开放式办公区。
+Narrator: |fade|Barks环顾四周，<waitfor=0.15>试图找到Henet的办公室。
+Narrator: |fade|突然，<waitfor=0.15>一个高大的身影挡在了她面前。<waitfor=0.15>Barks抬头一看，<waitfor=0.15>发现是一个穿着西装的骷髅。
+<<itc_npc_main oldtom_default>>
+<<itc_npc_avatar oldtom_default>>
+OldTom: |typewriter|你好，年轻人。<waitfor=0.15>看起来你是来见Henet女士的？
+Narrator: |fade|【人物介绍】Old Tom，作为Henet的贴身侍从、管家，<waitfor=0.15>他数千年来一直都是Henet最得力的助手...
+Barks: |typewriter|是的，先生。<waitfor=0.15>我在找Henet女士的办公室。
+OldTom: |typewriter|啊，Henet女士。<waitfor=0.15>她的办公室就在那边。<waitfor=0.15>不过我得警告你，<waitfor=0.15>她今天心情不太好。<waitfor=0.15>似乎是因为昨天的灵魂配额没有达标。
+Barks: |typewriter|（内心独白）太棒了，<waitfor=0.15>刚来到这儿就要面对一个暴怒的老板。<waitfor=0.15>前景简直越来越值得期待了。
+Barks: |typewriter|谢谢您的提醒，先生。<waitfor=0.15>我会尽量不成为她今天的第一个牺牲品。
+<<itc_npc_main_hide>>
+<<itc_npc_avatar_hide>>
+OldTom: |typewriter|不用谢，孩子。<waitfor=0.15>对了，我是Old Tom。<waitfor=0.15>如果你需要任何帮助，随时来找我。
+Narrator: |fade|Barks点点头，走向Henet的办公室。<waitfor=0.15>Barks深吸一口气（再次，纯粹是习惯），敲了敲门。
+<<jump ITC_BeforeWork_Scene7_HenetOffice>>
+===
+
+title: ITC_BeforeWork_Scene7_HenetOffice
+---
+<<itc_bg Henet办公室>>
+Narrator: |fade|面前一个黑发黑西服的干练女士坐在一张巨大的书桌后面。
+Narrator: |fade|她转过椅子看着Barks，<waitfor=0.15>好像一点都不觉得惊讶。
+Narrator: |fade|Barks总觉得她看起来很眼熟，<waitfor=0.15>她的长相跟刚才Barks向上望时看见的那个恶魔长得一模一样。
+<<itc_npc_main henet_default>>
+<<itc_npc_avatar henet_default>>
+Henet: |typewriter|（露出一个可怕的笑容）自我介绍一下，<waitfor=0.15>我是这家公司的老板：Henet。<waitfor=0.15>我们公司主要业务是灵魂契约以及——豆类罐头销售。<waitfor=0.15>你有什么特长吗？
+Barks: |typewriter|（思考了一下，<waitfor=0.15>突然意识到自己根本不记得自己有什么特长。）
+Barks: |typewriter|（内心独白）快说点什么！<waitfor=0.15>不然她会觉得你是个无用的灵魂！<waitfor=0.15>我，呃，<waitfor=0.15>我擅长...签订合同和...数豆子？
+Narrator: |fade|Henet的眼睛突然亮了起来。
+Henet: |typewriter|太棒了！<waitfor=0.15>你简直就是为公司量身定做的！<waitfor=0.15>欢迎加入ITC大家庭。<waitfor=0.15>希望你不介意我们的工作环境有点...热。
+Barks: |typewriter|（内心独白）恭喜你，<waitfor=0.15>你刚刚把自己卖给了一家地狱公司。<waitfor=0.15>字面意义上的。
+Barks: |typewriter|等等...我入职了？<waitfor=0.15>就这样？<waitfor=0.15>甚至没有面试环节？
+Narrator: |fade|Barks有些恍惚地接过Henet递来的合同，<waitfor=0.15>上面写着：<waitfor=0.15>“本人自愿成为 Infernal Trasfer Company公司的试工期文员...”
+Barks: |typewriter|呃，这合同是不是有点......
+<<itc_npc_main henet_default>>
+<<itc_npc_avatar henet_default>>
+Henet: |typewriter|怎么，<waitfor=0.15>你有什么要补充的吗？<waitfor=0.15>（Henet的眼睛开始冒火。）
+Barks: |typewriter|（内心独白）快签！<waitfor=0.15>除非你想知道还有比这更糟糕的去处！
+Narrator: |fade|Barks颤抖着签下了自己的名字，<waitfor=0.15>感觉自己刚刚完成了一笔比卖身还亏的交易。
+Henet: |typewriter|欢迎加入ITC——暂时的。<waitfor=0.15>试用工，<waitfor=0.15>你的工作在13号窗口进行。
+Barks: |typewriter|（紧张）没问题，Henet女士。<waitfor=0.15>我已经迫不及待要开始工作了。
+<<jump ITC_BeforeWork_Scene10_HenetInstruction>>
+===
+
+title: ITC_BeforeWork_Scene10_HenetInstruction
+---
+Henet: |typewriter|很好。<waitfor=0.15>你的工作很简单——帮助人们签订灵魂契约，<waitfor=0.15>同时推销我们的豆类产品。
+Henet: |typewriter|记住我们的口号：一份灵魂换一罐豆子，<waitfor=0.15>买一送一！
+Barks: |typewriter|（内心独白）灵魂和豆子？<waitfor=0.15>这组合听起来比地狱里的冰淇淋还要奇怪。
+Henet: |typewriter|记住，<waitfor=0.15>我们的目标是尽可能多地签订契约。<waitfor=0.15>不要同情那些来签约的人，<waitfor=0.15>他们知道自己在做什么。
+Barks: |typewriter|呃......Henet女士，<waitfor=0.15>如果有人后悔了怎么办？
+Henet: |typewriter|（冷笑一声）后悔？<waitfor=0.15>在ITC，<waitfor=0.15>我们不接受契约退订。
+Narrator: |fade|Barks微微低头，能看到Henet掌心里的火焰像海浪般一波一波地翻滚着。
+Henet: |typewriter|我，<waitfor=0.15>也有自己的信念，<waitfor=0.15>每天保证正确地、完整地为8位客户提供服务。
+Henet: |typewriter|如果你不知道该怎么做，先想办法熬过这13天的试工期。
+Henet: |typewriter|如果你没有通过试工期——我保证你在圣纽约客的生活会比现在凄惨得多。
+Henet: |typewriter|不过在那之前，<waitfor=0.15>我恐怕要先请你离开了。
+Narrator: |fade|Henet又转回到自己的办公桌前。<waitfor=0.15>Barks战战兢兢地走出办公室。
+<<jump ITC_BeforeWork_Scene13_Window13>>
+===
+
+title: ITC_BeforeWork_Scene13_Window13
+---
+<<itc_bg 13号窗口 (外部反打)>> 
+Narrator: |fade|下了电梯，<waitfor=0.15>最后成功在一排排如同罐头般紧密排列的工作窗口找到了自己该去的窗口。
+Barks: |typewriter|（清了清嗓子）呃,你好？我是新来的...
+<<itc_npc_main window13_staff_default>>
+<<itc_npc_avatar window13_staff_default>>
+Window13Staff: |typewriter|（惊喜）啊,新人！欢迎加入ITC，<waitfor=0.15>我是这个岗位的前员工,现在你来了,我终于可以退休了。
+Window13Staff: |typewriter|在我光荣退休之前...我需要指导你作为文员如何工作。<waitfor=0.15>竖起耳朵认真听吧。
+Window13Staff: |typewriter|当客户出现在窗口，首先要问候。<waitfor=0.15>然后耐心聆听客户的陈述。
+
+-> 欢迎来到ITC
+    Barks: |typewriter|呃...欢迎来到ITC...请问有什么能帮到您？
+
+Window13Staff: |typewriter|很好！没错，就是这样。
+Window13Staff: |typewriter|接着，客户会递交申请。<waitfor=0.15>点击气动通道接收文件，然后拖动到桌面查看。
+Narrator: |typewriter|（此处应该弹出一个小游戏/教程流程，目前暂用占位跳过）
+Window13Staff: |typewriter|仔细检查文件、日期、肖像是否符合规定。
+<<jump ITC_BeforeWork_Scene14_Rules>>
+===
+
+title: ITC_BeforeWork_Scene14_Rules
+---
+Window13Staff: |typewriter|一、文书封蜡破损：必须拒绝办理。
+Window13Staff: |typewriter|二、伪造文书：文书展开后使用普通纸张或文字歪斜，皆属伪造，应立即驳回。
+Window13Staff: |typewriter|我这张文件纸就是正确的范式，好好记住它的样子。
+
+-> 霞金墨水？
+    Window13Staff: |typewriter|仔细看看...<waitfor=0.15>跟普通的墨水可不一样。
+-> 特制羊皮纸？
+    Window13Staff: |typewriter|只有ITC这种大公司才能用特制高档羊皮纸。
+-> 这个字已经很歪了
+    Window13Staff: |typewriter|这是非常古典且优美的花体。
+-> 我知道了
+    Barks: |typewriter|我知道了。
+
+Window13Staff: |typewriter|三、内容不符：若口头所求与契约文书所载不符，需向顾客确认。<waitfor=0.15>不可随意修改。
+Window13Staff: |typewriter|四、预约日期：核对文书上的签约预约日期与当日日期是否一致。
+
+-> 询问当前日期
+    Window13Staff: |typewriter|现在是1905年4月1日。
+-> 你文件上的日期错了
+    Window13Staff: |typewriter|哈哈，你观察的很仔细！
+-> 我知道了
+    Window13Staff: |typewriter|没错。
+
+Window13Staff: |typewriter|五、身份核实：对比相片与本人面貌。
+Window13Staff: |typewriter|发现任何文书不合规时，应立即退回。<waitfor=0.15>否则将记录一次失误。
+<<jump ITC_BeforeWork_Scene18_MoreTutorial>>
+===
+
+title: ITC_BeforeWork_Scene18_MoreTutorial
+---
+-> 再说一遍吧，我没记清。
+    Window13Staff: |typewriter|没问题，想听多少遍都行。
+-> 不用了，我知道了。
+    Barks: |typewriter|不用了，我知道了。
+
+Window13Staff: |typewriter|第二步就是填写文件了。<waitfor=0.15>把文件拖入打字机，正确完成后进入盖章环节。
+Narrator: |typewriter|（此处应该弹出一个填写小游戏，目前暂用占位跳过）
+Window13Staff: |typewriter|瞧！电话响了。<waitfor=0.15>点击电话把它接起来。
+Caller: |typewriter|喂！老巴蒂！赶紧给老娘还钱！小心老娘喊人去砸了你的场子！
+Barks: |typewriter|您…您好？
+Caller: |typewriter|恩？死赌狗又在耍什么花样…噢，操。打错了。
+Narrator: |fade|电话：嘟…嘟…嘟…
+Window13Staff: |typewriter|哈哈！这是常有的事，保持冷静，<waitfor=0.15>公司不为员工工伤提供赔偿。
+Window13Staff: |typewriter|请看这里，这里是印章架。<waitfor=0.15>印章类型有金钱、名利、特技和事件四种。
+Window13Staff: |typewriter|选好印章后，把它拿到纸张上进行盖章。
+Narrator: |typewriter|（盖章操作略过）
+Window13Staff: |typewriter|最后一步，<waitfor=0.15>使用灵魂收成器切割客户的灵魂！
+Narrator: |typewriter|（灵魂切割小游戏占位跳过）
+Window13Staff: |typewriter|最后，将盖章文件交回客户。
+
+-> 祝您愉快，感谢选择ITC
+    Barks: |typewriter|祝您愉快，感谢选择ITC
+
+Window13Staff: |typewriter|嗯……作为新人来讲，你还不错。<waitfor=0.15>如果客户也觉得你不错，或许会付小费。
+Window13Staff: |typewriter|一定记住，每个环节都不能出错。<waitfor=0.15>你的工作合同取决于你的表现。
+Window13Staff: |typewriter|哈哈，你是个聪明的姑娘... （站起来,骨头咔咔作响）
+Window13Staff: |typewriter|终于可以退休了！我要去地狱的阳光海滩度假。
+Window13Staff: |typewriter|新人，记住，在ITC，永远不要... ...
+Narrator: |fade|他的话还没说完,整具骷髅就变成了一堆散落的骨头。
+Barks: |typewriter|（目瞪口呆） 你...你还好吗？
+Barks: |typewriter|（内心独白）这就是未来吗？几十年后变成一堆骨头。
+Narrator: |fade|Barks叹了口气，整理了一下自己的制服。<waitfor=0.15>她的工作徽章上写着"试用期"。
+<<jump ITC_BeforeWork_Scene22_AtDesk>>
+===
+
+title: ITC_BeforeWork_Scene22_AtDesk
+---
+<<itc_bg 13号窗口 (外部反打)>> 
+<<itc_npc_main_hide>>
+<<itc_npc_avatar_hide>>
+Barks: |typewriter|冷静点。这只是一份工作。<waitfor=0.15>我们只需要按照规则来。
+<<itc_npc_main oldtom_default>>
+<<itc_npc_avatar oldtom_default>>
+OldTom: |typewriter|早上好，Barks小姐。<waitfor=0.15>（十分绅士地鞠了一躬）
+Barks: |typewriter|早上好，Tom先生。
+OldTom: |typewriter|别紧张，孩子。<waitfor=0.15>只要记住:在这里,灵魂只是另一种货币。
+<<itc_npc_main receptionist_default>>
+<<itc_npc_avatar receptionist_default>>
+Receptionist: |typewriter|早班咖啡。<waitfor=0.15>根据公司规定,每位员工每天必须摄入至少250毫升咖啡以保持工作效率。
+Barks: |typewriter|（勉强喝了一口）天呐...这比我喝过的任何东西都苦。
+<<itc_npc_main veer_default>>
+<<itc_npc_avatar veer_default>>
+Veer: |typewriter|新员工！让我看看你的脑子里都装了些什么！！！
+Barks: |typewriter|啊啊啊！你是从哪里冒出来的？
+Veer: |typewriter|物理是种幻觉，亲爱的。<waitfor=0.15>说到理智,你的看起来需要心理咨询帮助。
+<<itc_npc_main oldtom_default>>
+<<itc_npc_avatar oldtom_default>>
+OldTom: |typewriter|够了，Veer。别吓坏我们的新员工。
+<<itc_npc_main veer_default>>
+<<itc_npc_avatar veer_default>>
+Veer: |typewriter|准备好签订一些灵魂了吗?
+Barks: |typewriter|也......也许是的?
+<<itc_npc_main oldtom_default>>
+<<itc_npc_avatar oldtom_default>>
+OldTom: |typewriter|没关系，不用太紧张。
+<<itc_npc_main_hide>>
+<<itc_npc_avatar_hide>>
+Narrator: |fade|Old Tom把另外两人遣走，留下Barks独自面对即将到来的客户
+Barks: |typewriter|好吧，看来这工作比我想象的...惊险多了。
+Narrator: |typewriter|（此处应有准备接客的小游戏展示占位提示等）
+<<jump Next_Scene_Node>>
+===
