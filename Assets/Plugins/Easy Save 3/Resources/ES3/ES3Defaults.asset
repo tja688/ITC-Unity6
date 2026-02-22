@@ -48,6 +48,7 @@ MonoBehaviour:
     - QFramework
     - QFramework.CoreKit
     - ResKit
+    - spine-unity
     - SupportOldQF
     - UIKit
     - UniTask

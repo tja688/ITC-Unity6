@@ -1,12 +1,12 @@
 ﻿
-using MoreMountains.Feedbacks;
-using PixelCrushers.DialogueSystem;
-using QFramework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
+using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
+using Yarn.Unity;
 
 
 
@@ -29,7 +29,7 @@ public class DebugStage : IContractStage
     {
     }
 
-    
+
     public void Update()
     {
     }
@@ -57,7 +57,7 @@ public static class HeCoroutineUtil
     }
 }
 [Serializable]
-enum StampType
+enum HeStampType
 {
     Circular,
     Diamond,
@@ -65,7 +65,7 @@ enum StampType
     Spherical,
     None
 }
-[SerializeField]
+/// <summary>
 /// <summary>
 /// 文书错误类型枚举
 /// 用于标识在文书核验过程中可能出现的各种问题
@@ -85,7 +85,7 @@ public enum DocumentError
     /// 无错误 
     /// </summary>
     Pass,
-    
+
     ///<summary,>伪实现，不判断类型只判断对错</summary>
     Stub,
     /// <summary>封蜡破损 - 文书的封蜡不完整</summary>
@@ -139,23 +139,23 @@ public class DocumentVerifier : IContractStage
 
 
 
-  
+
     public void Enter()
     {
         context = GameObject.FindFirstObjectByType<SigningFlowManager>()?.ctx;
         uiManager = GameObject.FindFirstObjectByType<HeContractUIManager>();
         uiManager.RestoreTypeWriterGameObject();
         Debug.Log("=== 开始文书核验阶段 ===");
-        
+
         // 显示文书核验UI
         //uiManager?.ShowDocumentVerification(ctx);
         initRes();
         // 执行核验逻辑
         PerformDocumentVerification();
         //Debug.Assert(detectedErrors.Count>0);
-    
-       
-         Debug.Log($"检测到{detectedErrors.Count}个问题，等待玩家决策...");
+
+
+        Debug.Log($"检测到{detectedErrors.Count}个问题，等待玩家决策...");
 
     }
 
@@ -171,7 +171,7 @@ public class DocumentVerifier : IContractStage
         completed = true;
         // 向 Sequencer 发送小游戏完成消息
         Debug.Log("向 Sequencer 发送小游戏完成消息");
-        Sequencer.Message("DocumentVerifierGameDone");
+        SigningFlowManager.OnMinigameDone?.Invoke("DocumentVerifierGameDone");
     }
 
 
@@ -198,11 +198,11 @@ public class DocumentVerifier : IContractStage
 
 
 
-        SlotCenter.Instance.add_listener<DocumentError>(HeEventNames.DocumentErrorChosen, DocumentJudgeProsses,true);
+        SlotCenter.Instance.add_listener<DocumentError>(HeEventNames.DocumentErrorChosen, DocumentJudgeProsses, true);
         var Hover = uiManager.pneumaticChannelSkeleton.GetComponent<SkeletonHoverHighLight>();
 
         //Hover.SetHighLight();
-       
+
     }
     public void Exit()
     {
@@ -228,81 +228,81 @@ public class DocumentVerifier : IContractStage
         var doc = context.document;
         var customer = context.customer;
         detectedErrors.Clear();
-        
+
         // 检查封蜡
         if (!doc.isSealed)
         {
             detectedErrors.Add(DocumentError.BrokenSeal);
             Debug.Log($"文书错误: {GetErrorDescription(DocumentError.BrokenSeal)}");
         }
-        
+
         // 检查文书真伪
         if (!doc.isGenuine)
         {
             detectedErrors.Add(DocumentError.ForgeryDocument);
             Debug.Log($"文书错误: {GetErrorDescription(DocumentError.ForgeryDocument)}");
         }
-        
+
         if (!doc.hasITCWatermark)
         {
             detectedErrors.Add(DocumentError.MissingWatermark);
             Debug.Log($"文书错误: {GetErrorDescription(DocumentError.MissingWatermark)}");
         }
-        
+
         if (!doc.isInkGenuine)
         {
             detectedErrors.Add(DocumentError.FakeInk);
             Debug.Log($"文书错误: {GetErrorDescription(DocumentError.FakeInk)}");
         }
-        
+
         // 检查内容匹配
         if (!doc.isContentMatched)
         {
             detectedErrors.Add(DocumentError.ContentMismatch);
             Debug.Log($"文书错误: {GetErrorDescription(DocumentError.ContentMismatch)}");
         }
-        
+
         // 检查日期
         if (!doc.isDateCorrect)
         {
             detectedErrors.Add(DocumentError.IncorrectDate);
             Debug.Log($"文书错误: {GetErrorDescription(DocumentError.IncorrectDate)}");
         }
-        
+
         // 检查身份
         if (!doc.isIdentityMatched)
         {
             detectedErrors.Add(DocumentError.IdentityMismatch);
             Debug.Log($"文书错误: {GetErrorDescription(DocumentError.IdentityMismatch)}");
         }
-        
+
         if (customer.isDisguised)
         {
             detectedErrors.Add(DocumentError.DisguisedCustomer);
             Debug.Log($"文书错误: {GetErrorDescription(DocumentError.DisguisedCustomer)}");
         }
-        
+
         if (customer.isClocardalMember)
         {
 
             detectedErrors.Add(DocumentError.DangerousCustomer);
             Debug.Log($"文书错误: {GetErrorDescription(DocumentError.DangerousCustomer)}");
         }
-        
+
         // 判断验证结果
         if (detectedErrors.Count > 0)
         {
             Debug.Log($"文书核验发现 {detectedErrors.Count} 个问题，需要拒绝签约");
             //Stub
             detectedErrors.Add(DocumentError.Stub);
-        
+
         }
         else
         {
-          
+
         }
     }
-    
+
     /// <summary>
     /// 获取错误描述
     /// </summary>
@@ -324,9 +324,9 @@ public class DocumentVerifier : IContractStage
     }
     private void JudgeFaild()
     {
-      
-       
-      
+
+
+
     }
     private void JudgeSuccess()
     {
@@ -338,8 +338,8 @@ public class DocumentVerifier : IContractStage
         {
             Debug.Log("强制下一阶段");
 
-       
-        
+
+
             JudgeSuccess();
         }
         else
@@ -351,7 +351,7 @@ public class DocumentVerifier : IContractStage
 
                 JudgeFaild();
             }
-            else if (error==DocumentError.NoPass)
+            else if (error == DocumentError.NoPass)
             {
                 Debug.Log("存在问题，判断正确");
                 JudgeSuccess();
@@ -374,7 +374,7 @@ public class DocumentVerifier : IContractStage
             if (error == DocumentError.Pass)
             {
                 Debug.Log("玩家选择文书无误，通过到下一阶段");
-               
+
                 JudgeSuccess();
             }
             else
@@ -385,7 +385,7 @@ public class DocumentVerifier : IContractStage
             }
 
         }
-        
+
 
 
     }
@@ -412,8 +412,8 @@ public class RuneInputManager : IContractStage
     public string StageName => "符文输入";
 
     private bool enableTimer = false;
-    
-    private bool detailsFillCompleted = false;  
+
+    private bool detailsFillCompleted = false;
     private float runeShowDuration;
 
     private int ArrowMaxCount;
@@ -424,7 +424,7 @@ public class RuneInputManager : IContractStage
     {
         detailsFillCompleted = false;
 
-        context =  GameObject.FindFirstObjectByType<SigningFlowManager>()?.ctx; ;
+        context = GameObject.FindFirstObjectByType<SigningFlowManager>()?.ctx; ;
         uiManager = GameObject.FindFirstObjectByType<HeContractUIManager>();
         uiManager.RestoreTypeWriterGameObject();
 
@@ -439,16 +439,16 @@ public class RuneInputManager : IContractStage
         ArrowMinCount = gameConfig.runeInputCountMinLimit;
         var targetTuneCount = gameConfig.runeGameTuneCount;
         Debug.Log("=== 开始符文输入阶段 ===");
-       
-  
+
+
         timeRemaining = gameConfig?.runeInputTimeLimit ?? 10f;
 
-        if (uiManager != null )
+        if (uiManager != null)
         {
-           uiManager.ArrowGroupGameObject.GetComponent<Rhythmgame>()
-                .SetHandle(  new RhythmgameHandle(targetTuneCount,ArrowMinCount,ArrowMaxCount));
-           SlotCenter.Instance.trigger_event(HeEventNames.LetStartTypeWriter);
-           SlotCenter.Instance.add_listener<HeSuccessLayer>(HeEventNames.OnRythmGameEnd,OnRythmGameEnd);
+            uiManager.ArrowGroupGameObject.GetComponent<Rhythmgame>()
+                 .SetHandle(new RhythmgameHandle(targetTuneCount, ArrowMinCount, ArrowMaxCount));
+            SlotCenter.Instance.trigger_event(HeEventNames.LetStartTypeWriter);
+            SlotCenter.Instance.add_listener<HeSuccessLayer>(HeEventNames.OnRythmGameEnd, OnRythmGameEnd);
         }
         else
         {
@@ -462,18 +462,18 @@ public class RuneInputManager : IContractStage
 
     public void Exit()
     {
-   
+
     }
     public void Update()
     {
         return;
 
     }
-    private  void ToEnd()
+    private void ToEnd()
     {
         completed = true;
         // 向 Sequencer 发送小游戏完成消息
-        Sequencer.Message("RuneInputGameDone");
+        SigningFlowManager.OnMinigameDone?.Invoke("RuneInputGameDone");
     }
     private void OnRythmGameEnd(HeSuccessLayer success)
     {
@@ -517,7 +517,7 @@ public class RuneInputManager : IContractStage
 
 
 
-    }
+}
 #endregion
 
 
@@ -534,7 +534,7 @@ public class SpecialEventSystem : IContractStage
     private bool failed = false;
     private EventData currentEvent;
     private float eventTimer;
-    
+
     public bool IsCompleted => completed;
     public bool HasFailed => failed;
     public string StageName => "特殊事件";
@@ -546,12 +546,12 @@ public class SpecialEventSystem : IContractStage
         uiManager = GameObject.FindFirstObjectByType<HeContractUIManager>();
         //uiManager.ResotreContractDocumentsGameObject();
         gameConfig = GameObject.FindFirstObjectByType<SigningFlowManager>()?.gameConfig;
-        
+
         Debug.Log("=== 开始特殊事件阶段 ===");
-        
+
         // 随机决定是否触发事件
         float triggerChance = gameConfig?.eventTriggerChance ?? 0.3f;
-        if (UnityEngine.Random.value < triggerChance&&false)//直接跳过特殊事件
+        if (UnityEngine.Random.value < triggerChance && false)//直接跳过特殊事件
         {
             TriggerRandomEvent();
         }
@@ -561,19 +561,19 @@ public class SpecialEventSystem : IContractStage
             completed = true;
             context.eventHandled = true;
             // 向 Sequencer 发送小游戏完成消息
-            Sequencer.Message("SpecialEventGameDone");
+            SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone");
         }
     }
 
     public void Update()
     {
         if (completed || failed || currentEvent == null) return;
-        
+
         eventTimer -= Time.deltaTime;
-        
+
         // 处理事件输入
         HandleEventInput();
-        
+
         // 事件超时
         if (eventTimer <= 0)
         {
@@ -583,7 +583,7 @@ public class SpecialEventSystem : IContractStage
             // 如果 OnFail 回调中没有发送消息，这里发送
             if (!completed && failed)
             {
-                Sequencer.Message("SpecialEventGameDone");
+                SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone");
             }
         }
     }
@@ -597,12 +597,12 @@ public class SpecialEventSystem : IContractStage
     {
         var eventTypes = System.Enum.GetValues(typeof(ContractEventType));
         var randomEventType = (ContractEventType)eventTypes.GetValue(UnityEngine.Random.Range(0, eventTypes.Length));
-        
+
         currentEvent = CreateEventData(randomEventType);
         eventTimer = currentEvent.duration;
-        
+
         Debug.Log($"触发特殊事件: {currentEvent.description}");
-        
+
         // 特殊事件UI
         //uiManager?.ShowSpecialEvent(currentEvent);
     }
@@ -617,50 +617,50 @@ public class SpecialEventSystem : IContractStage
                     type = ContractEventType.Phone,
                     description = "电话突然响起，需要接听",
                     duration = 5f,
-                    OnResolve = (ctx) => { Debug.Log("成功接听电话"); completed = true; ctx.eventHandled = true; Sequencer.Message("SpecialEventGameDone"); },
-                    OnFail = (ctx) => { Debug.Log("未能及时接听电话"); ctx.DecreaseSatisfaction(); failed = true; Sequencer.Message("SpecialEventGameDone"); }
+                    OnResolve = (ctx) => { Debug.Log("成功接听电话"); completed = true; ctx.eventHandled = true; SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); },
+                    OnFail = (ctx) => { Debug.Log("未能及时接听电话"); ctx.DecreaseSatisfaction(); failed = true; SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); }
                 };
-                
+
             case ContractEventType.Gun:
                 return new EventData
                 {
                     type = ContractEventType.Gun,
                     description = "顾客突然拔枪，需要迅速应对!",
                     duration = 3f,
-                    OnResolve = (ctx) => { Debug.Log("成功化解枪械威胁"); completed = true; ctx.eventHandled = true; ctx.IncreaseSatisfaction(); Sequencer.Message("SpecialEventGameDone"); },
-                    OnFail = (ctx) => { Debug.Log("未能应对枪械威胁"); ctx.AddFailure(); failed = true; Sequencer.Message("SpecialEventGameDone"); }
+                    OnResolve = (ctx) => { Debug.Log("成功化解枪械威胁"); completed = true; ctx.eventHandled = true; ctx.IncreaseSatisfaction(); SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); },
+                    OnFail = (ctx) => { Debug.Log("未能应对枪械威胁"); ctx.AddFailure(); failed = true; SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); }
                 };
-                
+
             case ContractEventType.Epilepsy:
                 return new EventData
                 {
                     type = ContractEventType.Epilepsy,
                     description = "顾客突然癫痫发作，需要紧急救助",
                     duration = 8f,
-                    OnResolve = (ctx) => { Debug.Log("成功救助癫痫顾客"); completed = true; ctx.eventHandled = true; Sequencer.Message("SpecialEventGameDone"); },
-                    OnFail = (ctx) => { Debug.Log("未能及时救助"); ctx.DecreaseSatisfaction(); failed = true; Sequencer.Message("SpecialEventGameDone"); }
+                    OnResolve = (ctx) => { Debug.Log("成功救助癫痫顾客"); completed = true; ctx.eventHandled = true; SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); },
+                    OnFail = (ctx) => { Debug.Log("未能及时救助"); ctx.DecreaseSatisfaction(); failed = true; SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); }
                 };
-                
+
             case ContractEventType.Transform:
                 return new EventData
                 {
                     type = ContractEventType.Transform,
                     description = "顾客显露非人类特征，正在变形!",
                     duration = 4f,
-                    OnResolve = (ctx) => { Debug.Log("镇定应对非人类顾客"); completed = true; ctx.eventHandled = true; Sequencer.Message("SpecialEventGameDone"); },
-                    OnFail = (ctx) => { Debug.Log("被非人类特征吓到"); ctx.DecreaseSatisfaction(2); failed = true; Sequencer.Message("SpecialEventGameDone"); }
+                    OnResolve = (ctx) => { Debug.Log("镇定应对非人类顾客"); completed = true; ctx.eventHandled = true; SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); },
+                    OnFail = (ctx) => { Debug.Log("被非人类特征吓到"); ctx.DecreaseSatisfaction(2); failed = true; SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); }
                 };
-                
+
             case ContractEventType.Dialogue:
                 return new EventData
                 {
                     type = ContractEventType.Dialogue,
                     description = "顾客突然开始对话，需要适当回应",
                     duration = 6f,
-                    OnResolve = (ctx) => { Debug.Log("恰当回应顾客对话"); completed = true; ctx.eventHandled = true; Sequencer.Message("SpecialEventGameDone"); },
-                    OnFail = (ctx) => { Debug.Log("回应不当"); ctx.DecreaseSatisfaction(); failed = true; Sequencer.Message("SpecialEventGameDone"); }
+                    OnResolve = (ctx) => { Debug.Log("恰当回应顾客对话"); completed = true; ctx.eventHandled = true; SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); },
+                    OnFail = (ctx) => { Debug.Log("回应不当"); ctx.DecreaseSatisfaction(); failed = true; SigningFlowManager.OnMinigameDone?.Invoke("SpecialEventGameDone"); }
                 };
-                
+
             default:
                 return null;
         }
@@ -669,7 +669,7 @@ public class SpecialEventSystem : IContractStage
     private void HandleEventInput()
     {
         if (currentEvent == null) return;
-        
+
         // 根据事件类型处理不同的输入
         switch (currentEvent.type)
         {
@@ -679,28 +679,28 @@ public class SpecialEventSystem : IContractStage
                     currentEvent.OnResolve?.Invoke(context);
                 }
                 break;
-                
+
             case ContractEventType.Gun:
                 if (Input.GetKeyDown(KeyCode.F))
                 {
                     currentEvent.OnResolve?.Invoke(context);
                 }
                 break;
-                
+
             case ContractEventType.Epilepsy:
                 if (Input.GetKeyDown(KeyCode.H))
                 {
                     currentEvent.OnResolve?.Invoke(context);
                 }
                 break;
-                
+
             case ContractEventType.Transform:
                 if (Input.GetKeyDown(KeyCode.C))
                 {
                     currentEvent.OnResolve?.Invoke(context);
                 }
                 break;
-                
+
             case ContractEventType.Dialogue:
                 if (Input.GetKeyDown(KeyCode.R))
                 {
@@ -731,20 +731,20 @@ public class StampSystem : IContractStage
     private bool stampSelected = false;
     private bool isCharging = false;
     private float chargeTime = 0f;
-    private HeContractType selectedStampType;
-    private HeContractType neededStampType;
+    private HeContractType selectedHeStampType;
+    private HeContractType neededHeStampType;
     public bool IsCompleted => completed;
     public bool HasFailed => failed;
     public string StageName => "契约盖印";
-    private StampType stampType = StampType.None;
+    private HeStampType stampType = HeStampType.None;
     public void Enter()
     {
         context = GameObject.FindFirstObjectByType<SigningFlowManager>()?.ctx;
         uiManager = GameObject.FindFirstObjectByType<HeContractUIManager>();
-     
+
         uiManager.ResotreContractDocumentsGameObject();
         gameConfig = GameObject.FindFirstObjectByType<SigningFlowManager>()?.gameConfig;
-        neededStampType = HeContractType.Event; // TODO: 根据契约类型设置需要的印章类型
+        neededHeStampType = HeContractType.Event; // TODO: 根据契约类型设置需要的印章类型
         Debug.Log("=== 开始契约盖印阶段 ===");
 
 
@@ -810,7 +810,7 @@ public class StampSystem : IContractStage
                 break;
         }
         // 无论成功还是失败，都向 Sequencer 发送小游戏完成消息
-        Sequencer.Message("StampGameDone");
+        SigningFlowManager.OnMinigameDone?.Invoke("StampGameDone");
     }
 }
 #endregion
@@ -831,7 +831,7 @@ public class SoulHarvestSystem : IContractStage
     private float targetPercentage;
     private float currentCutPosition = 0.5f;
     private float cutterShake = 0f;
-    
+
     public bool IsCompleted => completed;
     public bool HasFailed => failed;
     public string StageName => "灵魂收取";
@@ -842,12 +842,12 @@ public class SoulHarvestSystem : IContractStage
 
         uiManager = GameObject.FindFirstObjectByType<HeContractUIManager>();
         gameConfig = GameObject.FindFirstObjectByType<SigningFlowManager>()?.gameConfig;
-        
+
         Debug.Log("=== 开始灵魂收取阶段 ===");
-        
+
         targetPercentage = context.document.soulPercentage;
         Debug.Log($"需要收取 {targetPercentage * 100}% 的灵魂");
-        
+
         // 显示灵魂分割界面
         uiManager?.ShowSoulHarvest(targetPercentage);
         cutterActive = true;
@@ -856,7 +856,7 @@ public class SoulHarvestSystem : IContractStage
     public void Update()
     {
         if (completed || failed) return;
-        
+
         if (cutterActive)
         {
             HandleSoulCutting();
@@ -874,15 +874,15 @@ public class SoulHarvestSystem : IContractStage
         float moveInput = Input.GetAxis("Horizontal");
         float moveSpeed = gameConfig?.soulCutterMoveSpeed ?? 0.5f;
         currentCutPosition = Mathf.Clamp01(currentCutPosition + moveInput * Time.deltaTime * moveSpeed);
-        
+
         // 添加手部颤抖效果
         cutterShake += Time.deltaTime;
         float shakeAmount = gameConfig?.soulCutterShake ?? 0.02f;
         float shakeOffset = Mathf.Sin(cutterShake * 10f) * shakeAmount;
         float actualPosition = currentCutPosition + shakeOffset;
-        
+
         // TODO: 更新分灵刀位置显示
-        
+
         // 点击进行切割
         if (Input.GetMouseButtonDown(0))
         {
@@ -893,18 +893,18 @@ public class SoulHarvestSystem : IContractStage
     private void PerformSoulCut(float cutPosition)
     {
         Debug.Log($"在位置 {cutPosition * 100}% 处切割灵魂");
-        
+
         // 计算误差
         float error = Mathf.Abs(cutPosition - targetPercentage);
         float allowedError = gameConfig?.soulHarvestAccuracy ?? 0.05f; // 半成
-        
+
         if (error <= allowedError)
         {
             Debug.Log("灵魂收取成功!");
             completed = true;
             context.soulHarvested = true;
             // 向 Sequencer 发送小游戏完成消息
-            Sequencer.Message("SoulHarvestGameDone");
+            SigningFlowManager.OnMinigameDone?.Invoke("SoulHarvestGameDone");
         }
         else if (cutPosition > targetPercentage)
         {
@@ -912,7 +912,7 @@ public class SoulHarvestSystem : IContractStage
             context.DecreaseSatisfaction();
             failed = true;
             // 向 Sequencer 发送小游戏完成消息
-            Sequencer.Message("SoulHarvestGameDone");
+            SigningFlowManager.OnMinigameDone?.Invoke("SoulHarvestGameDone");
         }
         else
         {
@@ -920,9 +920,9 @@ public class SoulHarvestSystem : IContractStage
             context.AddFailure();
             failed = true;
             // 向 Sequencer 发送小游戏完成消息
-            Sequencer.Message("SoulHarvestGameDone");
+            SigningFlowManager.OnMinigameDone?.Invoke("SoulHarvestGameDone");
         }
-        
+
         cutterActive = false;
     }
 }
@@ -938,8 +938,7 @@ public class SoulHarvestSystem : IContractStage
 /// </summary>
 public class SigningFlowManager : MonoBehaviour
 {
-
-
+    public static Action<string> OnMinigameDone;
     public void DebugStageStart()
     {
         currentStage?.Exit();
@@ -977,6 +976,50 @@ public class SigningFlowManager : MonoBehaviour
         documentVerifierStage.Enter();
         currentStage = documentVerifierStage;
     }
+
+    private IEnumerator WaitForMinigameAsync(string doneMessage)
+    {
+        bool isDone = false;
+        Action<string> onDone = msg => { if (msg == doneMessage) isDone = true; };
+        OnMinigameDone += onDone;
+        while (!isDone) yield return null;
+        OnMinigameDone -= onDone;
+    }
+
+    [YarnCommand("he_doc_review")]
+    public IEnumerator RunDocumentVerifierGameYarn()
+    {
+        DocumentVerifierStageStart();
+        yield return WaitForMinigameAsync("DocumentVerifierGameDone");
+    }
+
+    [YarnCommand("he_rune_typing")]
+    public IEnumerator RunRuneInputGameYarn()
+    {
+        RuneInputStageStart();
+        yield return WaitForMinigameAsync("RuneInputGameDone");
+    }
+
+    [YarnCommand("he_stamp_select")]
+    public IEnumerator RunStampGameYarn()
+    {
+        StampStageStart();
+        yield return WaitForMinigameAsync("StampGameDone");
+    }
+
+    [YarnCommand("he_soul_collect")]
+    public IEnumerator RunSoulHarvestGameYarn()
+    {
+        SoulHarvestStageStart();
+        yield return WaitForMinigameAsync("SoulHarvestGameDone");
+    }
+
+    [YarnCommand("he_special_event")]
+    public IEnumerator RunSpecialEventGameYarn()
+    {
+        SpecialEventSystem();
+        yield return WaitForMinigameAsync("SpecialEventGameDone");
+    }
     /// <summary>
     /// 初始化设置
     /// 传入天数[0,n]
@@ -1006,17 +1049,17 @@ public class SigningFlowManager : MonoBehaviour
     [Header("=== 游戏配置 ===")]
     [Tooltip("游戏配置资源 (建议使用ScriptableObject)")]
     public HeContractGameConfig gameConfig;
-    
+
     [Header("=== 备用配置 ===")]
     [Tooltip("如果没有配置资源，使用此内嵌配置")]
     public GameConfig fallbackConfig;
-    
+
     [Header("=== 测试数据 ===")]
     [Tooltip("测试用的契约文书")]
     public ContractDocument testDocument;
     [Tooltip("测试用的顾客信息")]
     public Customer testCustomer;
-    
+
     [Header("=== 随机生成设置 ===")]
     [Tooltip("是否使用随机生成的契约数据")]
     public bool useRandomGeneration = true;
@@ -1026,7 +1069,7 @@ public class SigningFlowManager : MonoBehaviour
     public string[] occupations = { "铁匠", "商人", "学者", "农夫", "工匠", "守卫" };
     [Tooltip("顾客照片资源")]
     public Sprite[] customerPhotos;
-    
+
     // 私有变量
     private IContractStage currentStage;
     private Queue<IContractStage> stages;
@@ -1041,17 +1084,17 @@ public class SigningFlowManager : MonoBehaviour
     private DocumentVerifier documentVerifierStage = new DocumentVerifier();
     private RuneInputManager runeInputStage = new RuneInputManager();
     private SpecialEventSystem specialEventStage = new SpecialEventSystem();
-    private  StampSystem stampStage = new StampSystem();
-    private SoulHarvestSystem soulHarvestSystem= new SoulHarvestSystem();
+    private StampSystem stampStage = new StampSystem();
+    private SoulHarvestSystem soulHarvestSystem = new SoulHarvestSystem();
 
     void Start()
     {
         // 获取UI管理器
         uiManager = FindFirstObjectByType<HeContractUIManager>();
-        
+
         // 初始化配置
         UpdataConfig(0);
-        
+
         // 初始化契约
         InitializeContract();
 
@@ -1060,17 +1103,17 @@ public class SigningFlowManager : MonoBehaviour
         {
             st.add_listener(HeEventNames.TriggerDebugStage, DebugStageStart);
             st.add_listener(HeEventNames.TriggerRuneInputStage, RuneInputStageStart);
-            st.add_listener(HeEventNames.TriggerStampStage, StampStageStart);   
-            st.add_listener(HeEventNames.TriggerSoulHarvestStage, SoulHarvestStageStart);   
+            st.add_listener(HeEventNames.TriggerStampStage, StampStageStart);
+            st.add_listener(HeEventNames.TriggerSoulHarvestStage, SoulHarvestStageStart);
             st.add_listener(HeEventNames.TriggerSpecialEventStage, SpecialEventSystem);
-            st.add_listener(HeEventNames.TriggerDocumentVerifierStage,DocumentVerifierStageStart);
+            st.add_listener(HeEventNames.TriggerDocumentVerifierStage, DocumentVerifierStageStart);
         }
         else
         {
             Debug.LogError("SlotCenter实例未找到，事件系统可能无法正常工作");
         }
     }
-    
+
 
     /// <summary>
     /// 概率判定rcx=0-100
@@ -1081,13 +1124,13 @@ public class SigningFlowManager : MonoBehaviour
     {
         return UnityEngine.Random.Range(1, 101) > s;
     }
-  
+
 
 
     private void InitializeContract()
     {
         ctx = new HeContractContext();
-        
+
         // 决定使用测试数据还是随机生成
         if (!useRandomGeneration && testCustomer != null && testDocument != null)
         {
@@ -1100,7 +1143,7 @@ public class SigningFlowManager : MonoBehaviour
             GenerateRandomContract();
             Debug.Log("使用随机数据初始化契约");
         }
-        
+
         ctx.satisfaction = gameConfig?.initialSatisfaction ?? 3;
         Debug.Log($"契约初始化完成 - 顾客: {ctx.customer.name}, 契约类型: {ctx.document.HeContractType}");
     }
@@ -1108,9 +1151,9 @@ public class SigningFlowManager : MonoBehaviour
     //private void SetupStages()
     //{
     //    stages = new Queue<IContractStage>(new IContractStage[] {
-         
+
     //    });
-        
+
     //    Debug.Log($"签约流程已设置，共{stages.Count}个阶段");
     //}
 
@@ -1121,7 +1164,7 @@ public class SigningFlowManager : MonoBehaviour
     //        EndGame(true); 
     //        return; 
     //    }
-        
+
     //    currentStage?.Exit();
     //    currentStage = stages.Dequeue();
     //    Debug.Log($"进入阶段: {currentStage.StageName}");
@@ -1145,10 +1188,10 @@ public class SigningFlowManager : MonoBehaviour
         Debug.Log($"结果: {(success ? "签约成功" : "签约失败")}");
         Debug.Log($"最终满意度: {ctx.satisfaction}");
         Debug.Log($"失败次数: {ctx.failCount}");
-        
+
         // 显示结果界面
         uiManager?.ShowGameResult(success, ctx);
-        
+
         // TODO: 保存游戏结果、解锁成就等
     }
 
@@ -1162,10 +1205,10 @@ public class SigningFlowManager : MonoBehaviour
             photo = GetRandomPhoto(),
             spokenRequest = GenerateRandomSpokenRequest()
         };
-        
+
         // 生成随机契约
         HeContractType randomType = (HeContractType)UnityEngine.Random.Range(0, System.Enum.GetValues(typeof(HeContractType)).Length);
-        
+
         ctx.document = new ContractDocument
         {
             customerName = ctx.customer.name,
@@ -1176,7 +1219,7 @@ public class SigningFlowManager : MonoBehaviour
             soulPercentage = gameConfig?.GetRandomSoulPercentage(randomType) ?? UnityEngine.Random.Range(0.2f, 0.6f),
             HeContractType = randomType
         };
-        
+
         // 随机生成一些文书问题 (用于增加游戏难度)
         GenerateDocumentIssues();
     }
@@ -1208,7 +1251,7 @@ public class SigningFlowManager : MonoBehaviour
             "我需要改变我的命运",
             "我想要获得力量"
         };
-        
+
         return requests[UnityEngine.Random.Range(0, requests.Length)];
     }
 
@@ -1241,7 +1284,7 @@ public class SigningFlowManager : MonoBehaviour
             { DocumentError.DisguisedCustomer, 0.05f },      // 5%几率伪装顾客
             { DocumentError.DangerousCustomer, 0.02f }       // 2%几率危险人物
         };
-        
+
         foreach (var rule in errorGenerationRules)
         {
             if (UnityEngine.Random.value < rule.Value)
@@ -1250,7 +1293,7 @@ public class SigningFlowManager : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// 应用特定的文书错误
     /// </summary>
@@ -1262,46 +1305,46 @@ public class SigningFlowManager : MonoBehaviour
                 ctx.document.isSealed = false;
                 Debug.Log($"生成文书问题: {DocumentVerifier.GetErrorDescription(error)}");
                 break;
-                
+
             case DocumentError.ForgeryDocument:
                 ctx.document.isGenuine = false;
                 Debug.Log($"生成文书问题: {DocumentVerifier.GetErrorDescription(error)}");
                 break;
-                
+
             case DocumentError.MissingWatermark:
                 ctx.document.hasITCWatermark = false;
                 Debug.Log($"生成文书问题: {DocumentVerifier.GetErrorDescription(error)}");
                 break;
-                
+
             case DocumentError.FakeInk:
                 ctx.document.isInkGenuine = false;
                 Debug.Log($"生成文书问题: {DocumentVerifier.GetErrorDescription(error)}");
                 break;
-                
+
             case DocumentError.ContentMismatch:
                 ctx.document.isContentMatched = false;
                 Debug.Log($"生成文书问题: {DocumentVerifier.GetErrorDescription(error)}");
                 break;
-                
+
             case DocumentError.IncorrectDate:
                 ctx.document.isDateCorrect = false;
                 ctx.document.appointmentDate = DateTime.Today.AddDays(UnityEngine.Random.Range(-3, 4));
                 Debug.Log($"生成文书问题: {DocumentVerifier.GetErrorDescription(error)}");
                 break;
-                
+
             case DocumentError.DisguisedCustomer:
                 ctx.customer.isDisguised = true;
                 ctx.document.isIdentityMatched = false;
                 Debug.Log($"生成文书问题: {DocumentVerifier.GetErrorDescription(error)}");
                 break;
-                
+
             case DocumentError.DangerousCustomer:
                 ctx.customer.isClocardalMember = true;
                 Debug.Log($"生成文书问题: {DocumentVerifier.GetErrorDescription(error)}");
                 break;
         }
     }
-    
+
     /// <summary>
     /// 获取当前契约的所有文书错误
     /// </summary>
@@ -1310,19 +1353,19 @@ public class SigningFlowManager : MonoBehaviour
         var currentVerifier = currentStage as DocumentVerifier;
         return currentVerifier?.DetectedErrors ?? new List<DocumentError>();
     }
-    
+
     /// <summary>
     /// 公共方法：重新开始契约
     /// </summary>
     public void RestartContract()
     {
         Debug.Log("重新开始契约签约流程");
-        
+
         // 重置游戏状态
         ctx = null;
         currentStage = null;
         stages?.Clear();
-        
+
         // 重新开始
         Start();
     }
@@ -1333,12 +1376,12 @@ public class SigningFlowManager : MonoBehaviour
     public void QuitGame()
     {
         Debug.Log("退出游戏");
-        
-        #if UNITY_EDITOR
+
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        #else
+#else
         Application.Quit();
-        #endif
+#endif
     }
 
     /// <summary>
@@ -1355,7 +1398,7 @@ public class SigningFlowManager : MonoBehaviour
     public string GetGameStateInfo()
     {
         if (ctx == null) return "游戏未初始化";
-        
+
         return $"当前阶段: {currentStage?.StageName ?? "无"}\n" +
                $"满意度: {ctx.satisfaction}\n" +
                $"失败次数: {ctx.failCount}\n" +

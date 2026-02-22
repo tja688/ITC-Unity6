@@ -1,15 +1,15 @@
-﻿using PrimeTween;
-using Spine.Unity;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+using DG.Tweening;
 using MoreMountains;
 using MoreMountains.Feedbacks;
-using System;
+using Spine.Unity;
+using UnityEngine;
+using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class EntryAnimation : MonoBehaviour
 {
-    public MMF_Player Enter; 
+    public MMF_Player Enter;
     public MMF_Player Exit;
     public Action OnEntryComplete;
     public Action OnExitComplete;
@@ -22,7 +22,7 @@ public class EntryAnimation : MonoBehaviour
 
     private void Start()
     {
-        
+
     }
 
     /// <summary>

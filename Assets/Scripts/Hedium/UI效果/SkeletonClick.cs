@@ -1,7 +1,7 @@
+using MoreMountains.Feedbacks;
 using Spine.Unity;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using MoreMountains.Feedbacks;
 public class SkeletonClick : MonoBehaviour,
     IPointerDownHandler,
     IPointerUpHandler
@@ -13,14 +13,14 @@ public class SkeletonClick : MonoBehaviour,
     [SerializeField]
     private string animationNameRelease;
     [SerializeField]
-    public bool enableOnceClick=true;
+    public bool enableOnceClick = true;
     [SerializeField]
     public MMF_Player clickMMf;
 
     [SerializeField]
     public MMF_Player clickMMfRestore;
     public bool IsStamp = true;
-    StampType type;
+    HeStampType type;
 
 
     private bool isClicking = false;
@@ -29,7 +29,7 @@ public class SkeletonClick : MonoBehaviour,
         if (eventData.button != PointerEventData.InputButton.Left)
         {
             return;
-            
+
         }
         if (enableOnceClick == false)
         {
@@ -37,8 +37,8 @@ public class SkeletonClick : MonoBehaviour,
         }
 
 
-        if(IsStamp)
-       { //Debug.Log("animationNameClick");    
+        if (IsStamp)
+        { //Debug.Log("animationNameClick");    
             GetComponent<SkeletonGraphic>().AnimationState.SetAnimation(0, animationNameClick, false);
             var track = GetComponent<SkeletonGraphic>().AnimationState.AddAnimation(0, animationNameRelease, false, 0);
             track.Complete += OnAnimationComplete;
@@ -46,8 +46,8 @@ public class SkeletonClick : MonoBehaviour,
         }
         else
         {
-            if(clickMMf)
-            clickMMf.PlayFeedbacks();
+            if (clickMMf)
+                clickMMf.PlayFeedbacks();
             else
             {
                 Debug.LogWarning("clickMMf is not assigned!");
@@ -59,19 +59,19 @@ public class SkeletonClick : MonoBehaviour,
 
     }
 
- 
+
 
     void OnAnimationComplete(Spine.TrackEntry trackEntry)
     {
-        if(IsStamp)
-        SlotCenter.Instance.trigger_event<StampType>(HeEventNames.ChosenStampType, type);
+        if (IsStamp)
+            SlotCenter.Instance.trigger_event<HeStampType>(HeEventNames.ChosenStampType, type);
     }
     void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
     {
-        if(!IsStamp)
-        if (isClicking == true)
-        {
-            isClicking = false;
+        if (!IsStamp)
+            if (isClicking == true)
+            {
+                isClicking = false;
                 if (clickMMfRestore != null)
                 {
                     clickMMf.StopFeedbacks();
@@ -84,10 +84,10 @@ public class SkeletonClick : MonoBehaviour,
 
             }
             else
-        {
-            Debug.Log("Not Clicked");
-        }
-     
+            {
+                Debug.Log("Not Clicked");
+            }
+
     }
 
 
