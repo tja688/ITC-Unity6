@@ -13,7 +13,8 @@ description: 批量剧本转译Yarn与游戏接入流程 (Script to Yarn Pipelin
    - 为每个核心段落创建唯一的 Yarn 逻辑节点。
    - 使用 `<<itc_bg ...>>` 声明式加载和切换背景图。
    - 使用 `<<itc_npc_main ...>>`，`<<itc_pc_avatar ...>>`，`<<itc_npc_avatar ...>>` 调用立绘。
-   - 参考《目前已有的素材清单.md》匹配可用资产。如果不确定或未开发好的图片文件，使用通用占位图作为托底。
+   - 参考《目前已有的素材清单.md》匹配可用资产。**绝对不可使用中文词汇（如“ITC大厅”）作为bg或npc_main等指令的参数**，所有插图资源的引用必须严格比对 `DialogueVisualCatalog.asset` 中定义的纯英文/数字 `key` 名称。
+   - **章节过渡禁绝使用 `<<itc_load_scene ...>>`**：除非确实需要在 Unity 里加载一个全新的场景 (.unity 文件)，否则只是在 Yarn 中跨节点或跨章节跳转故事走向，必须统一使用 `<<jump 目标Yarn节点名>>` 来保障运行期对话板依然保持开启。
 3. **文本表现与禁塑规则 (CRITICAL)**：
    - ⚠️ **严禁**：不要使用针对局部文字的放大/形变/震动等 inline Text Animator tag（例如 `<incr>`, `<shake>`, `<wave>`, `<wiggle>`, `<size>`）。
    - ✅ **允许**：务必保留用于行内停顿和节奏的 `<waitfor=0.15>`，以及针对该行全局显示的 `|fade|` 或 `|typewriter|` 前缀。

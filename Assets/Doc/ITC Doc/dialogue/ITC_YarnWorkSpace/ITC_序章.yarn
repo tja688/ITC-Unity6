@@ -143,5 +143,5 @@ Narrator: |fade|电话那头传来一个沙哑的声音，听起来像砂纸摩�
 OldGuard: |typewriter|Barks 小姐，Henet 女士——也就是我们公司的总管——要求您立即去她的办公室。
 Barks: |typewriter|什么？但我才刚到……<waitfor=0.12>我连公司是做什么的都不清楚，难道不需要先填表格或者……
 OldGuard: |typewriter|在 Infernal Transfer Company，我们遵从上级的指令。<waitfor=0.12>快去吧，不要让 Henet 女士等急了。
-<<itc_load_scene NextScenePlaceholder>>
+<<jump ITC_BeforeWork_Scene1_Day1Transition>>
 ===

@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.3.9f1
-CRC: 941094989
+CRC: 3583879384
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 7ac9611194ad70742e93bebd5ef9c288
+    Hash: 2fbec957edaeb54dedee6b6e0bea635c
   TypeTreeHash:
     serializedVersion: 2
-    Hash: ae0539b6e20784f644b54dbf3d158e73
+    Hash: 8c8a15e6d21dc672f4a67bb2c432fa14
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: dc093135ca55c055268a2c5ec1b41898
+    Hash: 57b48be37bf1ac6d29ac2d387ba8a19b
 HashAppended: 1
 ClassTypes:
 - Class: 1
@@ -36,11 +36,17 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 4c1826305467e07438adce96fa49ecdf, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 24405ca3f263b0f46bb841b8ad3b4be0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f554bafc3e37d1c48a07bea9e2970ee2, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: d36f97a2fb87bde49b9444a12715cb9c, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
 - Class: 114
@@ -57,6 +63,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: ca200c7010639400ab741813a61274b6, type: 3}
 - Class: 115
   Script: {instanceID: 0}
+- Class: 128
+  Script: {instanceID: 0}
 - Class: 213
   Script: {instanceID: 0}
 - Class: 222
@@ -68,6 +76,8 @@ ClassTypes:
 - Class: 225
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: ITC.Dialogue.Testing.YarnTestFileInfo
 - AssemblyName: Febucci.TextAnimatorCore
   ClassName: Febucci.TextAnimatorCore.Settings.AnimatorSettings
 - AssemblyName: Febucci.TextAnimatorForUnity.Runtime
@@ -106,8 +116,24 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.TextCore.GlyphMetrics
 - AssemblyName: UnityEngine.TextCoreFontEngineModule
   ClassName: UnityEngine.TextCore.GlyphRect
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.LowLevel.GlyphAdjustmentRecord
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.LowLevel.GlyphPairAdjustmentRecord
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.LowLevel.GlyphValueRecord
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.AnimationTriggers
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Button/ButtonClickedEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.ColorBlock
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Navigation
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.SpriteState
 - AssemblyName: YarnSpinner.Unity
   ClassName: Yarn.Unity.UnityEventString
 Assets:
@@ -115,4 +141,4 @@ Assets:
 Dependencies:
 - C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_bg_ba903c14a9dbaecc75a2b947c8d7f6f9
 - C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_portrait_3693064dd9ef3f76e083be3024113df0
-- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_script_692c6a1bcf201f90048e54a06723e668
+- C:/Users/jinji/Documents/GitHub/ITC-Unity6/ITC-Unity6/AssetBundles/WebGL/dialogue_script_1aaa3c3ff1302f95e3e64e73ae23ae90

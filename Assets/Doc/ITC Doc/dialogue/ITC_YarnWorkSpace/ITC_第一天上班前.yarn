@@ -12,7 +12,7 @@ Narrator: |fade|Barks深吸一口气（尽管作为一具尸体，<waitfor=0.15>
 
 title: ITC_BeforeWork_Scene3_Lobby
 ---
-<<itc_bg ITC大厅>>
+<<itc_bg itc_lobby>>
 Narrator: |fade|大厅里人来人往，<waitfor=0.15>充满着各种不同种族的人形动物。<waitfor=0.15>有长着巨大羊角的，<waitfor=0.15>有带着长条尾巴的。
 Narrator: |fade|还有一些看起来和Barks一样困惑的普通人，<waitfor=0.15>脸上写满了"我是来还债还是来贷款"的纠结。
 Narrator: |fade|突然，<waitfor=0.15>一个声音从她身后响起——
@@ -33,10 +33,10 @@ Barks: |typewriter|（内心独白）6层66号？<waitfor=0.15>真是毫不掩�
 
 title: ITC_BeforeWork_Scene4_Elevator
 ---
-<<itc_bg ITC电梯内部>>
+<<itc_bg itc_elevator>>
 Narrator: |fade|Barks乘电梯来到6层。<waitfor=0.15>电梯里播放着轻快的音乐，<waitfor=0.15>歌词却异常诡异："签下你的名字，<waitfor=0.15>交出你的灵魂，<waitfor=0.15>我们保证不会让你太孤单～"
 Barks: |typewriter|这歌词怎么听起来这么耳熟？<waitfor=0.15>等等，<waitfor=0.15>这不会是这家公司的广告歌吧？
-<<itc_bg ITC办公区>>
+<<itc_bg itc_office>>
 Narrator: |fade|电梯门打开，<waitfor=0.15>Barks走进了一个开放式办公区。
 Narrator: |fade|Barks环顾四周，<waitfor=0.15>试图找到Henet的办公室。
 Narrator: |fade|突然，<waitfor=0.15>一个高大的身影挡在了她面前。<waitfor=0.15>Barks抬头一看，<waitfor=0.15>发现是一个穿着西装的骷髅。
@@ -57,7 +57,7 @@ Narrator: |fade|Barks点点头，走向Henet的办公室。<waitfor=0.15>Barks�
 
 title: ITC_BeforeWork_Scene7_HenetOffice
 ---
-<<itc_bg Henet办公室>>
+<<itc_bg henet_office>>
 Narrator: |fade|面前一个黑发黑西服的干练女士坐在一张巨大的书桌后面。
 Narrator: |fade|她转过椅子看着Barks，<waitfor=0.15>好像一点都不觉得惊讶。
 Narrator: |fade|Barks总觉得她看起来很眼熟，<waitfor=0.15>她的长相跟刚才Barks向上望时看见的那个恶魔长得一模一样。
@@ -101,11 +101,11 @@ Narrator: |fade|Henet又转回到自己的办公桌前。<waitfor=0.15>Barks战�
 
 title: ITC_BeforeWork_Scene13_Window13
 ---
-<<itc_bg 13号窗口 (外部反打)>> 
+<<itc_bg window13>> 
 Narrator: |fade|下了电梯，<waitfor=0.15>最后成功在一排排如同罐头般紧密排列的工作窗口找到了自己该去的窗口。
 Barks: |typewriter|（清了清嗓子）呃,你好？我是新来的...
-<<itc_npc_main window13_staff_default>>
-<<itc_npc_avatar window13_staff_default>>
+<<itc_npc_main oldclerk13_default>>
+<<itc_npc_avatar oldclerk13_default>>
 Window13Staff: |typewriter|（惊喜）啊,新人！欢迎加入ITC，<waitfor=0.15>我是这个岗位的前员工,现在你来了,我终于可以退休了。
 Window13Staff: |typewriter|在我光荣退休之前...我需要指导你作为文员如何工作。<waitfor=0.15>竖起耳朵认真听吧。
 Window13Staff: |typewriter|当客户出现在窗口，首先要问候。<waitfor=0.15>然后耐心聆听客户的陈述。
@@ -189,7 +189,7 @@ Narrator: |fade|Barks叹了口气，整理了一下自己的制服。<waitfor=0.
 
 title: ITC_BeforeWork_Scene22_AtDesk
 ---
-<<itc_bg 13号窗口 (外部反打)>> 
+<<itc_bg window13>> 
 <<itc_npc_main_hide>>
 <<itc_npc_avatar_hide>>
 Barks: |typewriter|冷静点。这只是一份工作。<waitfor=0.15>我们只需要按照规则来。

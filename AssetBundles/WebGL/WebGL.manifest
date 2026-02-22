@@ -1,6 +1,6 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.3.9f1
-CRC: 2401696548
+CRC: 3452762390
 HashAppended: 1
 AssetBundleManifest:
   AssetBundleInfos:
@@ -17,16 +17,16 @@ AssetBundleManifest:
       Name: dialogue_bg_ba903c14a9dbaecc75a2b947c8d7f6f9
       Dependencies: {}
     Info_4:
-      Name: dialogue_script_692c6a1bcf201f90048e54a06723e668
+      Name: dialogue_script_1aaa3c3ff1302f95e3e64e73ae23ae90
       Dependencies: {}
     Info_5:
       Name: dialogue_portrait_3693064dd9ef3f76e083be3024113df0
       Dependencies: {}
     Info_6:
-      Name: dialogue_ui_7ac9611194ad70742e93bebd5ef9c288
+      Name: dialogue_ui_2fbec957edaeb54dedee6b6e0bea635c
       Dependencies:
         Dependency_0: dialogue_bg_ba903c14a9dbaecc75a2b947c8d7f6f9
-        Dependency_1: dialogue_script_692c6a1bcf201f90048e54a06723e668
+        Dependency_1: dialogue_script_1aaa3c3ff1302f95e3e64e73ae23ae90
         Dependency_2: dialogue_portrait_3693064dd9ef3f76e083be3024113df0
     Info_7:
       Name: contracting_ui_fca472f026730dd113c4bb3d15be30d1
