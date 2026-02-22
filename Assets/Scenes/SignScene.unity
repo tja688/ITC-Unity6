@@ -205,9 +205,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6e212a7c12f54947910085ed7364d84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueSceneFlowLauncher
-  startNode: ITC_Act3_Entry
   autoOpenDialogueOnStart: 1
   startupDelaySeconds: 0.2
+  startNode: ITC_Act3_Entry
+  dialoguePanelAssetBundleName: dialogue_ui
+  dialoguePanelPrefabName: ITC DialogueSystem
 --- !u!4 &2141118058
 Transform:
   m_ObjectHideFlags: 0

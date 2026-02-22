@@ -1,0 +1,147 @@
+title: ITC_Prologue_Start
+tags: prologue
+---
+<<itc_bg hotel_room>>
+<<itc_pc_avatar_hide>>
+<<itc_npc_main_hide>>
+<<itc_npc_avatar_hide>>
+<<jump ITC_Prologue_Scene1_Awake>>
+===
+
+title: ITC_Prologue_Scene1_Awake
+---
+<<itc_bg hotel_room>>
+<<itc_pc_avatar barks_default>>
+<<itc_npc_main_hide>>
+<<itc_npc_avatar_hide>>
+Narrator: |fade|Barks <incr>睁开眼睛</incr>，<waitfor=0.12>发现自己身处一个<incr>小而简陋</incr>的接待室，<waitfor=0.12>四周景象<shake a=0.2>陌生</shake>。
+Narrator: |fade|她<incr>试图回忆</incr>昨晚发生的事，<waitfor=0.12>但脑海<shake a=0.2>一片空白</shake>，<waitfor=0.18>仿佛记忆被人用<incr>橡皮擦</incr><wave>狠狠地</wave>抹去了。
+Narrator: |fade|<incr>我是谁</incr>？<waitfor=0.12>我在<incr>哪</incr>？<waitfor=0.12>我<incr>为什么</incr>会在这里？<waitfor=0.18>这些问题像烦人的<wave>苍蝇</wave>，<waitfor=0.12>在她脑中<wiggle>嗡嗡作响</wiggle>。
+Narrator: |fade|一个声音在<incr>耳边响起</incr>，<waitfor=0.12>如同<wave>恶魔的低语</wave>：<waitfor=0.35>欢迎来到<incr>地狱</incr>，<waitfor=0.12><shake a=0.2>新来的</shake>。
+Narrator: |fade|从床上爬起来，<waitfor=0.12><incr>环顾四周</incr>，<waitfor=0.12>房间的装饰风格停留在<incr>19世纪末</incr>，
+Narrator: |fade|墙上挂着几幅<incr>褪色</incr>的风景画，<waitfor=0.12>角落里一盏<incr>煤油灯</incr>散发着<incr>昏黄</incr>的光。
+Narrator: |fade|空气中弥漫着<incr>陈旧的霉味</incr>，<waitfor=0.12>仿佛这里已经<incr>很久</incr><shake a=0.2>无人造访</shake>。
+Narrator: |fade|一张<incr>古旧</incr>的木桌旁放着一把看起来很<incr>不舒服</incr>的椅子。
+Narrator: |fade|桌上摆着一部<incr>老式电话</incr>，<waitfor=0.12>虽然 Barks 不记得电话是什么时候<incr>发明的</incr>，<waitfor=0.18>但它的<incr>存在</incr>为这个房间增添了一丝<shake a=0.2>诡异</shake>。
+Barks: |typewriter|<incr>冷静点</incr>，<waitfor=0.12>伙计。<waitfor=0.18>你现在在一个<incr>陌生</incr>的地方，<waitfor=0.12>身体被<incr>改造过</incr>，<waitfor=0.12>记忆<shake a=0.2>丢失</shake>。
+Barks: |typewriter|<incr>别担心</incr>，<waitfor=0.12>至少你可能<incr>不是唯一</incr>一个遭遇这种情况的人。
+Narrator: |fade|<incr>突然</incr>，<waitfor=0.12>一阵<shake a=0.4>响亮的</shake>敲门声在小房间里回荡，
+Narrator: |fade|仿佛<incr>整个宇宙</incr>都在<wave>不耐烦</wave>地等待她打开那扇<shake a=0.4>该死的门</shake>。
+Narrator: |fade|Barks <wave>紧张地</wave>站起身，<waitfor=0.12><incr>向门口</incr>走去。
+<<jump ITC_Prologue_Scene2_Doorman>>
+===
+
+title: ITC_Prologue_Scene2_Doorman
+---
+<<itc_bg hotel_room>>
+<<itc_npc_main skeletonbellboy_default>>
+<<itc_npc_avatar skeletonbellboy_default>>
+Narrator: |fade|打开门，<waitfor=0.12>看到一个穿着<incr>门童服装</incr>的<incr>骷髅</incr>。<waitfor=0.12>骷髅的眼窝里闪烁着<shake a=0.4>幽蓝的火焰</shake>，<waitfor=0.18>吓得 Barks 一屁股<shake a=0.4>跌坐在地上</shake>。
+SkeletonBellboy: |typewriter|<incr>瞧你</incr>那模样，<waitfor=0.12>倒像是看到<incr>活人</incr>了似的。<waitfor=0.18>在这里，<waitfor=0.12><shake a=0.2>死人才是常态</shake>，亲爱的。
+Barks: |typewriter|<incr>你</incr>……<waitfor=0.12><incr>我</incr>……<waitfor=0.12>我<shake a=0.2>在哪里</shake>？
+SkeletonBellboy: |typewriter|这是<incr>地狱</incr>的<incr>接待处</incr>，<waitfor=0.12>小姐。
+SkeletonBellboy: |typewriter|很遗憾地告诉您，<waitfor=0.12>您已经<incr>死了</incr>，<waitfor=0.18>并且灵魂<incr>没有被</incr>天堂或地狱<incr>任何一方</incr>收取——
+SkeletonBellboy: |typewriter|——因此成为了一名<incr>货真价实的</incr>“<incr>无魂者</incr>”。<waitfor=0.18>希望您的<wave>永恒死亡生活</wave>过得<incr>愉快</incr>。
+Narrator: |fade|Barks 把手<incr>按在胸口</incr>，<waitfor=0.12>却<incr>感受不到</incr>...<waitfor=0.12><shake a=0.2>任何跳动</shake>，<waitfor=0.12>甚至<shake a=0.2>连呼吸都</shake>没有。
+<<jump ITC_Prologue_Scene2_Mirror>>
+===
+
+title: ITC_Prologue_Scene2_Mirror
+---
+<<itc_bg mirror_room>>
+<<itc_npc_main_hide>>
+<<itc_npc_avatar_hide>>
+Narrator: |fade|Barks <incr>冲进浴室</incr>，<waitfor=0.18><incr>镜中</incr>映出一个女人的身影——<incr>罩着布袋</incr>，<waitfor=0.12>脖子被<incr>绳子缠绕</incr>了数圈。
+Narrator: |fade|她<incr>试图解开</incr>绳子，<waitfor=0.12>却发现它<incr>仿佛已成为</incr>她存在的<incr>一部分</incr>。
+Barks: |typewriter|不仅死了，<waitfor=0.12>还成了个<incr>行走的</incr><wave>时尚灾难</wave>。<waitfor=0.18>这造型是<incr>哪个恶魔</incr><incr>设计师</incr>想出来的？
+Narrator: |fade|<incr>挣扎许久</incr>后，<waitfor=0.18>Barks <incr>终于平静</incr>了一些。
+Narrator: |fade|她努力<incr>回想过去</incr>，<waitfor=0.12>却只剩<shake a=0.2>一片虚无</shake>，<waitfor=0.18>仿佛人生是一本被<incr>撕去所有</incr><incr>页面</incr>的书。
+Narrator: |fade|——<incr>唯一记得</incr>的，<waitfor=0.18>只有自己的名字：<incr>巴克斯·卡莱特</incr>。
+<<jump ITC_Prologue_Scene3_KeyAndLetter>>
+===
+
+title: ITC_Prologue_Scene3_KeyAndLetter
+---
+<<itc_bg hotel_room>>
+<<itc_npc_main skeletonbellboy_default>>
+<<itc_npc_avatar skeletonbellboy_default>>
+SkeletonBellboy: |typewriter|小姐，<waitfor=0.12>新来的无魂者<incr>都是这样</incr>，<waitfor=0.12><incr>习惯就好</incr>。<waitfor=0.18>这是稍早时<incr>一位女士</incr>带来的，<waitfor=0.12>说让我<incr>交给你</incr>。
+SkeletonBellboy: |typewriter|——哦，对了，<waitfor=0.12><incr>还有这个</incr>。
+Narrator: |fade|骷髅门童递给来一把<incr>奇特的钥匙</incr>，
+Narrator: |fade|钥匙的造型仿佛混合了古董店橱窗里的<incr>古董</incr>与<incr>未来主义者</incr>的梦境，
+Narrator: |fade|金属部分闪烁着<incr>不自然</incr>的光芒，<waitfor=0.12>上面刻着"<incr>圣纽约市</incr>"的字样。
+SkeletonBellboy: |typewriter|这是<incr>重返人间</incr>，<waitfor=0.12><incr>通往</incr>圣纽约市的钥匙，<waitfor=0.18>门就在地狱旅馆外面。<waitfor=0.18>听说那里<incr>机会不少</incr>，<waitfor=0.12>也许你会<incr>想去看看</incr>。
+Note: |fade|亲爱的 Barks 小姐，<incr>欢迎</incr>来到地狱，<waitfor=0.12>希望您喜欢我们的<wave>永恒折磨套餐</wave>。<waitfor=0.18>这几天不妨在附近转转，<waitfor=0.12>等您<incr>适应了</incr>被诅咒的存在后<incr>就来找我</incr>。<waitfor=0.18>相信我，这里<incr>比西部小说还有趣</incr>。
+Note: |fade|附：一份诚聘请柬，<waitfor=0.12>希望您准备好<incr>出卖灵魂</incr>了。<waitfor=0.18>毕竟，那是我们这里唯一的<incr>硬通货</incr>。<waitfor=0.18>灵魂和霞金一样，<waitfor=0.12>周一至周五<incr>价格浮动</incr>，<waitfor=0.12>周末<incr>略有上涨</incr>。<waitfor=0.18>——<incr>Infernal Transfer Company</incr> 的灵魂交接员。
+SkeletonBellboy: |typewriter|Barks 小姐，<waitfor=0.12>我会在<incr>房间外等您</incr>。<waitfor=0.18>待您休整好后，<waitfor=0.12>我很乐意做您的<incr>向导</incr>，<waitfor=0.12>带您<incr>前往</incr>那扇通向圣纽约市的门。
+Narrator: |fade|骷髅门童说完，<waitfor=0.12><incr>恭敬地</incr><incr>鞠了一躬</incr>，<waitfor=0.12><incr>关上了</incr>房门。
+Barks: |typewriter|看来<incr>地狱之旅</incr><incr>才刚刚开始</incr>。<waitfor=0.18>希望这里<incr>至少有</incr><incr>免费的咖啡</incr>。
+<<jump ITC_Prologue_Scene4_FlameGate>>
+===
+
+title: ITC_Prologue_Scene4_FlameGate
+---
+<<itc_bg flame_gate>>
+<<itc_npc_main_hide>>
+<<itc_npc_avatar_hide>>
+Narrator: |fade|Barks <incr>简单整顿</incr>和平复心情后，<waitfor=0.12>来到了<incr>地狱旅馆外</incr>......
+Narrator: |fade|她看见了那扇"<incr>通往人间</incr>的大门"，<waitfor=0.12>门上的火焰发出<incr>诡异的</incr>光芒，<waitfor=0.35><wave>仿佛在邀请</wave>她走近。
+Narrator: |fade|Barks <incr>深吸一口气</incr>，<waitfor=0.12><incr>握紧钥匙</incr>，<waitfor=0.18><incr>缓步走向</incr>那扇<incr>燃烧的门</incr>......
+Narrator: |fade|当她将钥匙<incr>插入锁孔</incr>时，<waitfor=0.12>火焰突然变得<shake a=0.4>更加猛烈</shake>。
+Narrator: |fade|随着<shake a=0.4>一声巨响</shake>，<waitfor=0.12>门开了，<waitfor=0.18>一道<incr>刺眼的光芒</incr>涌出。
+Narrator: |fade|Barks 踏入光芒中，<waitfor=0.12>感觉自己正在穿越<incr>某种界限</incr>，<waitfor=0.18>就像跨过酒精与清醒的那条<incr>危险边界</incr>......
+<<jump ITC_Prologue_Scene5_City>>
+===
+
+title: ITC_Prologue_Scene5_City
+---
+<<itc_bg city_center>>
+Narrator: |fade|当 Barks <incr>再次睁开</incr>眼睛时，<waitfor=0.12>发现自己站在一座<incr>繁华城市</incr>的中心。
+Narrator: |fade|一块<incr>巨大的标牌</incr>映入眼帘，<waitfor=0.12>上面写着：<waitfor=0.12>欢迎来到圣纽约市——<waitfor=0.18><incr>霞金</incr>、<waitfor=0.12><incr>希望与绝望</incr>的圣地。
+Narrator: |fade|Barks <incr>踏上</incr>圣纽约市的街道。
+Narrator: |fade|这座城市宛如一座<incr>巨大的熔炉</incr>，<waitfor=0.12>各种种族、文化和欲望在此<incr>交织融合</incr>。
+Narrator: |fade|空气中弥漫着<incr>霞金的味道</incr>，<waitfor=0.12>那是一种介于<incr>金钱与绝望</incr>之间的奇特香气。
+Narrator: |fade|Barks 决定按照<incr>请柬上面</incr>的地址<incr>寻找</incr> Infernal Transfer Company。
+Barks: |typewriter|天呐，<waitfor=0.12>那边有个人正在<incr>向一棵树</incr><incr>兜售保险</incr>。<waitfor=0.18>这座城市真是<shake a=0.2>疯了</shake>。
+Barks: |typewriter|也许我们<incr>都疯了</incr>。<waitfor=0.18>毕竟，<waitfor=0.12>谁会<incr>神志清醒地</incr>来应聘<incr>地狱旗下</incr>的公司呢？
+<<jump ITC_Prologue_Scene6_Building>>
+===
+
+title: ITC_Prologue_Scene6_Building
+---
+<<itc_bg itc_building>>
+Narrator: |fade|Barks 来到地狱集团在圣纽约的<incr>分转公司</incr>的大楼前。<waitfor=0.18>这栋建筑像一个<incr>巨大的罐头</incr>。
+Narrator: |fade|金色大铁门的门框上用英文拼出了"<incr>Infernal Transfer Company</incr>"的字样，<waitfor=0.18>下面还有一行小字："Where <incr>souls</incr> meet <incr>beans</incr>"。
+Barks: |typewriter|<incr>别那么悲观</incr>。<waitfor=0.18>也许工作会很有趣呢？<waitfor=0.12>比如<incr>烧烤恶人</incr>什么的。
+Narrator: |fade|Barks 向 Infernal Transfer Company <incr>走去</incr>。
+Narrator: |fade|她感觉自己就像是被扔进<incr>陌生戏里</incr>的玩家，<waitfor=0.12><incr>不知道</incr>接下来会发生什么，<waitfor=0.18>却又<incr>隐隐期待着</incr>。
+Barks: |typewriter|既然已经来了，<waitfor=0.12>那就<incr>入乡随俗</incr>吧。<waitfor=0.18>希望这个游戏有<incr>存档功能</incr>。
+<<jump ITC_Prologue_Scene7_GuardHenet>>
+===
+
+title: ITC_Prologue_Scene7_GuardHenet
+---
+<<itc_bg itc_guard>>
+<<itc_npc_main oldguard_default>>
+<<itc_npc_avatar oldguard_default>>
+Narrator: |fade|Barks 正<wave>忐忑不安</wave>地站在<incr>老骷髅门卫</incr>的窗口前，<waitfor=0.12>思考着自己的选择人生——<waitfor=0.18>或者更准确地说，<waitfor=0.12><shake a=0.2>选择死亡</shake>。
+Narrator: |fade|突然感到<shake a=0.4>一阵寒意</shake>袭来。
+<<itc_npc_main henet_default>>
+<<itc_npc_avatar henet_default>>
+Narrator: |fade|Barks <incr>抬头看见</incr><incr>恶魔</incr>正站在楼上的窗前，<waitfor=0.18>那双仿佛能<shake a=0.4>洞穿灵魂</shake>的眼睛<shake a=0.2>直勾勾</shake>地盯着她。
+Narrator: |fade|她的外表<incr>既美艳又可怖</incr>。<waitfor=0.12>她有着一头<incr>美丽的白发</incr>，随着每个动作舞动，宛如有生命一般。
+Narrator: |fade|最引人注目的是她那双<incr>异常大的眼睛</incr>，<waitfor=0.12>虹膜呈现出<incr>不断变化</incr>的色彩，从深邃的紫色到炽热的金色，仿佛映射着地狱的<incr>万种风情</incr>。
+Narrator: |fade|她的瞳孔竖直，如同猫科动物，给人一种<shake a=0.4>掠食者</shake>的<shake a=0.4>危险感</shake>；涂着<incr>深红色</incr>的口红，与苍白的肤色形成鲜明对比。
+Narrator: |fade|当她露出笑容时，Barks <shake a=0.4>惊恐地发现</shake>她的牙齿<incr>异常尖利</incr>，特别是那对犬齿，简直就像吸血鬼的<shake a=0.4>獠牙</shake>。
+Narrator: |fade|她穿着一件剪裁精良的紫红色西装，但材质不像普通布料，而是某种闪烁着微光的奇特材质，仿佛由<incr>凝固的岩浆</incr>制成。
+Barks: |typewriter|她看起来就像从最<shake a=0.4>可怕的噩梦</shake>中走出来的。<waitfor=0.18>但为什么我还是觉得她有种<wave>奇怪的魅力</wave>？
+Narrator: |fade|Barks 深吸一口气，<incr>努力平复</incr>剧烈的心跳。<waitfor=0.12>她感觉自己像是误入了一场<incr>荒诞的梦境</incr>。
+Narrator: |fade|就在此时，一通<shake a=0.4>急促的</shake>电话铃响起，老骷髅<incr>立即</incr>接起了电话。
+<<itc_npc_main oldguard_default>>
+<<itc_npc_avatar oldguard_default>>
+Narrator: |fade|电话那头传来一个<incr>沙哑的声音</incr>，听起来像砂纸摩擦骨头，Barks 听不清对面说了什么，只是看到老骷髅脸上的<incr>表情变了又变</incr>。
+OldGuard: |typewriter|Barks 小姐，<incr>Henet 女士</incr>——也就是我们公司的总管——<incr>要求您</incr><incr>立即</incr>去她的办公室。
+Barks: |typewriter|<shake a=0.4>什么</shake>？但我<incr>才刚到</incr>……<waitfor=0.12>我连公司是做什么的<incr>都不清楚</incr>，难道不需要先填表格或者……
+OldGuard: |typewriter|在 Infernal Transfer Company，我们<incr>遵从</incr>上级的指令。<waitfor=0.12><incr>快去吧</incr>，不要让 Henet 女士<incr>等急了</incr>。
+<<itc_load_scene NextScenePlaceholder>>
+===
