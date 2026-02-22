@@ -36,6 +36,15 @@ public static class YarnTestCatalogGenerator
                 description = "第一天报到：进入大楼大厅，到6楼面见Henet分配到13号窗口，接受骷髅教学，认识Old Tom和Veer。",
                 commandsUsed = "itc_bg, itc_npc_main, itc_npc_avatar, itc_pc_avatar",
                 variableNodes = new List<string>()
+            },
+            new YarnTestFileInfo
+            {
+                yarnFileName = "ITC_第一天上班签约.yarn",
+                startNode = "Sign_Day1_Start",
+                endNode = "Ending_Placeholder",
+                description = "第一天签约小游戏环节：接待4个客户（醉汉、生病矿工、假酒保、武器专家），审核契约并通过小游戏验证盖章和取魂，期间有上司Henet的电话监测考核。",
+                commandsUsed = "itc_bg, itc_npc_main, itc_npc_avatar, itc_pc_avatar, jump",
+                variableNodes = new List<string>()
             }
         };
 

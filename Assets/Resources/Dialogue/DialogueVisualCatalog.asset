@@ -295,3 +295,45 @@ MonoBehaviour:
     assetBundleName: 
     fallbackKey: barks_default
     editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: sullivan_default
+    slot: 1
+    assetName: 通用标准立绘
+    subSpriteName: 通用标准立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准立绘.png"
+  - key: sullivan_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: sullivan_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: reggie_default
+    slot: 1
+    assetName: 通用标准立绘
+    subSpriteName: 通用标准立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准立绘.png"
+  - key: reggie_default
+    slot: 2
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
+  - key: reggie_default
+    slot: 3
+    assetName: 通用标准人物头像
+    subSpriteName: 头像立绘_0
+    assetBundleName: 
+    fallbackKey: barks_default
+    editorAssetPath: "Assets/Arts/Texture2d图片/占位人物立绘/通用标准人物头像.png"
