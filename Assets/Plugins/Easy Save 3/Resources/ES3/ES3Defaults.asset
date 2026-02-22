@@ -33,6 +33,8 @@ MonoBehaviour:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
     - AudioKit
+    - DOTween.Modules
+    - DOTweenPro.Scripts
     - Febucci.Attributes.Runtime
     - Febucci.TextAnimator.Demo.Runtime
     - Febucci.TextAnimator.Demo.Sounds.Runtime
@@ -40,7 +42,9 @@ MonoBehaviour:
     - Febucci.TextAnimatorForUnity.Runtime
     - Febucci.TextAnimatorForUnity.TMP.Runtime
     - Febucci.TextAnimatorForUnity.UITk.Runtime
+    - Lofelt.NiceVibrations
     - MCPForUnity.Runtime
+    - MoreMountains.Tools
     - QFramework
     - QFramework.CoreKit
     - ResKit
