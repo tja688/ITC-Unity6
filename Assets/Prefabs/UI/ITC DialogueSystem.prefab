@@ -1556,7 +1556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0cd0d0412ea34813959f8ddaf02a6eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: YarnSpinner.Unity::Yarn.Unity.OptionsPresenter
-  canvasGroup: {fileID: 7459671645252107539}
+  canvasGroup: {fileID: 0}
   optionViewPrefab: {fileID: 7566080524407951962, guid: 31476319ca884c14f8ed196235cb595f, type: 3}
   showsLastLine: 0
   lastLineText: {fileID: 0}
@@ -1564,8 +1564,8 @@ MonoBehaviour:
   lastLineCharacterNameText: {fileID: 0}
   lastLineCharacterNameContainer: {fileID: 0}
   showUnavailableOptions: 0
-  useFadeEffect: 1
-  fadeUpDuration: 0.25
+  useFadeEffect: 0
+  fadeUpDuration: 0
   fadeDownDuration: 0.2
 --- !u!114 &5999628104632651271
 MonoBehaviour:
