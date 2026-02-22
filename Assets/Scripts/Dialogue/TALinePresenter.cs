@@ -146,12 +146,19 @@ namespace ITC.Dialogue
             onTextShowComplete = () => textShowCompletionSource.TrySetResult(true);
             isSkipping = false;
 
+            // 快进优化：如果处于快进模式，禁用渐入特效，确保文字能立即被看见
+            if (DialogueContinueHandler.IsFastForwarding)
+            {
+                textAnimator.SetAppearancesActive(false);
+            }
+
             // 使用 TextAnimator 设置文本并启动打字机
-            // 注：不使用 typewriter.ShowText()，因为它依赖内部初始化可能失败
             textAnimator.SetText(normalizedDisplayText, true);
 
             // 4. 淡入 UI
-            // 智能淡入：首行时淡入整个面板，后续行只淡入文本区域（避免角色名和按钮闪烁）
+            // 快进优化：快进模式下不进行渐入动画
+            float actualFadeInDuration = DialogueContinueHandler.IsFastForwarding ? 0 : fadeInDuration;
+
             if (useFadeEffect && canvasGroup != null)
             {
                 if (isFirstLineOfDialogue)
@@ -159,15 +166,14 @@ namespace ITC.Dialogue
                     // 首次：淡入整个面板
                     if (lineTextCanvasGroup != null)
                         lineTextCanvasGroup.alpha = 1; // 确保文本区域可见
-                    await FadeAlphaAsync(canvasGroup, 0, 1, fadeInDuration, token.HurryUpToken);
+                    await FadeAlphaAsync(canvasGroup, 0, 1, actualFadeInDuration, token.HurryUpToken);
                     isFirstLineOfDialogue = false;
                 }
                 else if (lineTextCanvasGroup != null)
                 {
                     // 后续行：只淡入文本区域
-                    await FadeAlphaAsync(lineTextCanvasGroup, 0, 1, fadeInDuration, token.HurryUpToken);
+                    await FadeAlphaAsync(lineTextCanvasGroup, 0, 1, actualFadeInDuration, token.HurryUpToken);
                 }
-                // 如果没有 lineTextCanvasGroup，后续行不做淡入动画，直接显示
             }
             else if (canvasGroup != null)
             {
@@ -179,18 +185,13 @@ namespace ITC.Dialogue
             // 5. 启动打字机
             typewriter.StartShowingText(true);
 
-            // 5.1 边界情况：纯标签无可见文本（如 "<waitfor=1>"）
-            // TextAnimator 解析后可见字符数为 0 时，onTextShowed 事件不会触发，
-            // 需要手动触发完成，否则会死等
+            // 5.1 边界情况：纯标签无可见文本
             if (textAnimator.CharactersCount == 0)
             {
-                // 没有可见字符，直接完成
                 textShowCompletionSource.TrySetResult(true);
             }
 
-            // 6. 注册加速/跳过处理（带兜底）
-            // 注意: textShowCompletionSource 只代表"文字已完整呈现或被强制完成"
-            // 兜底触发来源: onTextShowed / HurryUpToken(Skip) / OnDisable
+            // 6. 注册加速/跳过处理
             using var hurryUpRegistration = token.HurryUpToken.Register(() =>
             {
                 if (isShowingLine && typewriter != null)
@@ -198,52 +199,51 @@ namespace ITC.Dialogue
                     isSkipping = true;
                     typewriter.SkipTypewriter();
                     isTextFullyShown = true;
-                    // 兜底：确保 completion 被触发，防止死等
                     textShowCompletionSource.TrySetResult(true);
                 }
             });
 
             // 7. 等待文本显示完成
-            // 注意: 不注册 NextContentToken，保持语义隔离:
-            // - textShowCompletionSource: 文字显示完成
-            // - NextContentToken: 用户确认继续
             await textShowCompletionSource.Task;
+
+            // 恢复特效状态
+            textAnimator.SetAppearancesActive(true);
 
             isTextFullyShown = true;
             isSkipping = false;
             currentTextShowCompletionSource = null;
             onLineFinished?.Invoke();
 
-            // 8. 等待用户确认或自动前进 (第二阶段等待)
-            if (autoAdvance)
+            // 8. 等待用户确认或自动前进
+            if (autoAdvance && !DialogueContinueHandler.IsFastForwarding)
             {
-                // 创建延迟任务
                 var delayTask = YarnTask.Delay(TimeSpan.FromSeconds(autoAdvanceDelay), token.NextContentToken);
                 await delayTask;
             }
             else
             {
-                // 等待用户点击继续
+                // 等待用户点击继续（快进时，由 DialogueContinueHandler 驱动 token.NextContentToken 取消）
                 await YarnTask.WaitUntilCanceled(token.NextContentToken);
             }
 
             // 9. 淡出 UI
-            // 智能淡出：只淡出文本区域（如果有），不淡出整个面板
-            // 这样角色名和按钮保持可见，不会闪烁
+            // 快进优化：快进模式下不进行渐出动画
+            float actualFadeOutDuration = DialogueContinueHandler.IsFastForwarding ? 0 : fadeOutDuration;
+
             if (useFadeEffect && lineTextCanvasGroup != null)
             {
-                // 只淡出文本区域
-                await FadeAlphaAsync(lineTextCanvasGroup, 1, 0, fadeOutDuration, token.HurryUpToken);
+                await FadeAlphaAsync(lineTextCanvasGroup, 1, 0, actualFadeOutDuration, token.HurryUpToken);
             }
             else if (useFadeEffect && canvasGroup != null)
             {
-                // 回退：如果没有 lineTextCanvasGroup，使用整个面板（会有闪烁）
-                await FadeAlphaAsync(canvasGroup, 1, 0, fadeOutDuration, token.HurryUpToken);
+                await FadeAlphaAsync(canvasGroup, 1, 0, actualFadeOutDuration, token.HurryUpToken);
             }
             else if (canvasGroup != null)
             {
                 canvasGroup.alpha = 0;
             }
+
+
 
             isShowingLine = false;
             isTextFullyShown = false;

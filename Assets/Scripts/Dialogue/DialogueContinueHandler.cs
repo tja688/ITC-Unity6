@@ -28,12 +28,27 @@ namespace ITC.Dialogue
         [Header("快进设置")]
         [SerializeField] private bool useFastForward = true;
         [SerializeField] private Key fastForwardKey = Key.LeftCtrl;
-        [SerializeField] private float fastForwardInterval = 0.05f;
-        private float fastForwardTimer = 0f;
+        [SerializeField] private float fastForwardInterval = 0.05f; // 旧逻辑保留兼容
+
+        [Header("稳定快进设置")]
+        [Tooltip("跳过打字机前等待的时间，确保能看见开头的字符 (秒)")]
+        [SerializeField] private float ffMinShowTime = 0.12f;
+        [Tooltip("全显示后等待多久跳到下一行 (秒)")]
+        [SerializeField] private float ffNextLineDelay = 0.05f;
 
         [Header("UI 按钮（可选）")]
         [SerializeField] private UnityEngine.UI.Button continueButton;
         [SerializeField] private UnityEngine.UI.Button skipButton;
+
+        private float fastForwardTimer = 0f;
+        private float currentLineStateTime = 0f;
+        private bool wasShowingLineLastFrame = false;
+        private bool wasLineFullyShownLastFrame = false;
+
+        /// <summary>
+        /// 全局快进状态，供 Presenter 等组件查询以优化外观效果
+        /// </summary>
+        public static bool IsFastForwarding { get; private set; }
 
         private void Start()
         {
@@ -65,31 +80,26 @@ namespace ITC.Dialogue
         private void Update()
         {
             if (dialogueRunner == null || !dialogueRunner.IsDialogueRunning)
-                return;
-
-            // 快进功能
-            if (useFastForward && Keyboard.current != null)
             {
-                // 检测是否长按对应的快进键或者左/右Ctrl键
-                if (Keyboard.current[fastForwardKey].isPressed ||
-                    Keyboard.current[Key.LeftCtrl].isPressed ||
-                    Keyboard.current[Key.RightCtrl].isPressed)
-                {
-                    fastForwardTimer += Time.deltaTime;
-                    if (fastForwardTimer >= fastForwardInterval)
-                    {
-                        fastForwardTimer = 0f;
-                        RequestFastForwardContinue();
-                    }
-                    return; // 快进时跳过其他常规输入检测
-                }
-                else
-                {
-                    fastForwardTimer = 0f;
-                }
+                IsFastForwarding = false;
+                return;
             }
 
-            // 键盘输入
+            // 更新快进状态
+            UpdateFastForwardStatus();
+
+            if (IsFastForwarding)
+            {
+                HandleFastForwardRhythm();
+                return; // 快进时跳过其他常规输入检测
+            }
+
+            // 重置状态计时
+            currentLineStateTime = 0f;
+            wasShowingLineLastFrame = false;
+            wasLineFullyShownLastFrame = false;
+
+            // 键盘常规输入
             if (useKeyboard)
             {
                 if (Keyboard.current != null)
@@ -118,6 +128,95 @@ namespace ITC.Dialogue
             }
         }
 
+        private void UpdateFastForwardStatus()
+        {
+            if (!useFastForward || Keyboard.current == null)
+            {
+                IsFastForwarding = false;
+                return;
+            }
+
+            IsFastForwarding = Keyboard.current[fastForwardKey].isPressed ||
+                               Keyboard.current[Key.LeftCtrl].isPressed ||
+                               Keyboard.current[Key.RightCtrl].isPressed;
+        }
+
+        /// <summary>
+        /// 处理稳定的快进节奏
+        /// </summary>
+        private void HandleFastForwardRhythm()
+        {
+            if (linePresenter == null)
+            {
+                // 回退到简单逻辑
+                fastForwardTimer += Time.deltaTime;
+                if (fastForwardTimer >= fastForwardInterval)
+                {
+                    fastForwardTimer = 0f;
+                    RequestContinueOrNext();
+                }
+                return;
+            }
+
+            bool isShowing = linePresenter.IsShowingLine;
+            bool isFullyShown = linePresenter.IsTextFullyShown;
+
+            // 状态切换检测
+            if (isShowing != wasShowingLineLastFrame || isFullyShown != wasLineFullyShownLastFrame)
+            {
+                currentLineStateTime = 0f;
+            }
+            else
+            {
+                currentLineStateTime += Time.deltaTime;
+            }
+
+            wasShowingLineLastFrame = isShowing;
+            wasLineFullyShownLastFrame = isFullyShown;
+
+            if (isShowing)
+            {
+                if (!isFullyShown)
+                {
+                    // 阶段 1: 文本显示中。等待一小会儿（出俩字）再跳过。
+                    if (currentLineStateTime >= ffMinShowTime)
+                    {
+                        linePresenter.SkipCurrentLine();
+                        // 注意：跳过会立即让 isFullyShown 变为 true (在下帧或本帧)
+                    }
+                }
+                else
+                {
+                    // 阶段 2: 文本已全显示。等待极短时间后再跳下一句，保持节奏感。
+                    if (currentLineStateTime >= ffNextLineDelay)
+                    {
+                        dialogueRunner.RequestNextLine();
+                        currentLineStateTime = 0f; // 重置以防连续请求
+                    }
+                }
+            }
+            else
+            {
+                // 阶段 3: 对话间隙（如等待指令或过渡）。持续请求以尽快进入下一行。
+                dialogueRunner.RequestNextLine();
+            }
+        }
+
+        private void RequestContinueOrNext()
+        {
+            if (linePresenter != null && linePresenter.IsShowingLine)
+            {
+                if (!linePresenter.IsTextFullyShown)
+                    linePresenter.SkipCurrentLine();
+                else
+                    dialogueRunner.RequestNextLine();
+            }
+            else
+            {
+                dialogueRunner.RequestNextLine();
+            }
+        }
+
         private void OnContinueClicked()
         {
             RequestContinue();
@@ -128,66 +227,27 @@ namespace ITC.Dialogue
             RequestSkip();
         }
 
-        /// <summary>
-        /// 请求继续对话
-        /// </summary>
         public void RequestContinue()
         {
             if (dialogueRunner == null) return;
 
-            // 如果正在显示文本，先跳过打字机
             if (linePresenter != null && linePresenter.IsShowingLine)
             {
                 if (linePresenter.IsTextFullyShown)
-                {
                     dialogueRunner.RequestNextLine();
-                }
                 else
-                {
                     linePresenter.SkipCurrentLine();
-                }
                 return;
             }
 
-            // 否则请求继续
             dialogueRunner.RequestNextLine();
         }
 
-        /// <summary>
-        /// 请求跳过当前打字机效果
-        /// </summary>
         public void RequestSkip()
         {
             if (dialogueRunner == null) return;
-
             dialogueRunner.RequestHurryUpLine();
-        }
-
-        /// <summary>
-        /// 专门用于长按快进的继续逻辑
-        /// </summary>
-        private void RequestFastForwardContinue()
-        {
-            if (dialogueRunner == null) return;
-
-            if (linePresenter != null && linePresenter.IsShowingLine)
-            {
-                if (!linePresenter.IsTextFullyShown)
-                {
-                    // 如果尚未全显示，先跳过当前打字机
-                    linePresenter.SkipCurrentLine();
-                }
-
-                // 跳过后，再次检查是否全显示并立即跳下一句，以达到高速效果
-                if (linePresenter.IsTextFullyShown)
-                {
-                    dialogueRunner.RequestNextLine();
-                }
-                return;
-            }
-
-            // 防止对话不在显示行时停滞，也直接请求下一行
-            dialogueRunner.RequestNextLine();
         }
     }
 }
+
