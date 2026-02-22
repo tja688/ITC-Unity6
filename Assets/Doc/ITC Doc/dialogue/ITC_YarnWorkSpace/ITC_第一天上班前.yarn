@@ -222,5 +222,5 @@ OldTom: |typewriter|没关系，不用太紧张。
 Narrator: |fade|Old Tom把另外两人遣走，留下Barks独自面对即将到来的客户
 Barks: |typewriter|好吧，看来这工作比我想象的...惊险多了。
 Narrator: |typewriter|（此处应有准备接客的小游戏展示占位提示等）
-<<jump Next_Scene_Node>>
+<<jump Sign_Day1_Start>>
 ===
