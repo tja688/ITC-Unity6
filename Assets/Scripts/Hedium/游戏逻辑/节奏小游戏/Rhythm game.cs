@@ -81,14 +81,33 @@ public class Rhythmgame : MonoBehaviour
     }
     public void SetHandle(RhythmgameHandle handle1)
     {
+        if (handle != null && !ReferenceEquals(handle, handle1))
+        {
+            handle.Dispose();
+        }
+
         handle = handle1;
-        handle1.rhythGame = this;
+        if (handle1 != null)
+        {
+            handle1.rhythGame = this;
+        }
         return;
     }
     public void ClearHandle()
     {
         handle = null;
         return;
+    }
+    public void DisposeHandle()
+    {
+        if (handle == null)
+        {
+            return;
+        }
+
+        var current = handle;
+        handle = null;
+        current.Dispose();
     }
     
 
@@ -101,11 +120,28 @@ public class Rhythmgame : MonoBehaviour
         {3, "右"}  // 右
     };
 
-    private void Start()
+    private void OnEnable()
     {
-        HeKeyInput.Instance.OnMoveAction += ProcessRuneInput;
-        
+        if (HeKeyInput.Instance != null)
+        {
+            HeKeyInput.Instance.OnMoveAction -= ProcessRuneInput;
+            HeKeyInput.Instance.OnMoveAction += ProcessRuneInput;
+        }
+    }
 
+    private void OnDisable()
+    {
+        if (HeKeyInput.Instance != null)
+        {
+            HeKeyInput.Instance.OnMoveAction -= ProcessRuneInput;
+        }
+
+        DisableKeyInput();
+    }
+
+    private void OnDestroy()
+    {
+        DisposeHandle();
     }
     private void EnterAnimationFlow(GameObject obj)
     {
@@ -253,7 +289,10 @@ public class Rhythmgame : MonoBehaviour
             System.Collections.IEnumerator Inner()
             {
                 yield return new WaitForSeconds(TuneIntervalTime);
-                handle.GameScheduling(type);
+                if (handle != null)
+                {
+                    handle.GameScheduling(type);
+                }
             }
         }));
 
@@ -360,6 +399,8 @@ public class RhythmgameHandle
     private int FailCountCurrent;
 HeSuccessLayer SuccessLayer = HeSuccessLayer.Normal;
     public Rhythmgame rhythGame;
+    private bool disposed;
+
     public RhythmgameHandle(int tuneCount, int minArrowCount, int maxArrowCount)
     {
         if (maxArrowCount < minArrowCount)
@@ -367,34 +408,48 @@ HeSuccessLayer SuccessLayer = HeSuccessLayer.Normal;
             Debug.LogError("最大箭头数量小于最小箭头数量，参数错误");
         }
         Debug.Log($"RhythmgameHandle创建 参数:tuneCount:{tuneCount},maxArrowCount:{maxArrowCount},minArrowCount{minArrowCount}");
-        SlotCenter.Instance.add_listener(HeEventNames.OnIsReadyTypeWriter, OnTypeWriterIsReady, true);
-
-
-
-        SlotCenter.Instance.add_listener("NextTuneRhygame", OnTypeWriterIsReady);
+        if (SlotCenter.Instance != null)
+        {
+            SlotCenter.Instance.add_listener(HeEventNames.OnIsReadyTypeWriter, OnTypeWriterIsReady, true);
+            SlotCenter.Instance.add_listener("NextTuneRhygame", OnTypeWriterIsReady);
+        }
         TuneCount = tuneCount;
         MaxArrowCount = maxArrowCount;
         MinArrowCount = minArrowCount;
         TuneCountCurrent = 0;
-
+        FailCountCurrent = 0;
 
     }
 
-    ~RhythmgameHandle()
+    public void Dispose()
     {
+        if (disposed)
+        {
+            return;
+        }
+        disposed = true;
+
         if (SlotCenter.Instance != null)
         {
             SlotCenter.Instance.remove_listener(HeEventNames.OnIsReadyTypeWriter, OnTypeWriterIsReady);
             SlotCenter.Instance.remove_listener(HeEventNames.NextTuneRhygame, OnTypeWriterIsReady);
         }
-        rhythGame?.ClearHandle();
 
+        var owner = rhythGame;
+        rhythGame = null;
+        owner?.ClearHandle();
     }
     private void OnTypeWriterIsReady()
     {
+        if (disposed)
+        {
+            return;
+        }
+
         if (rhythGame == null)
         {
             Debug.LogError("句柄未绑定游戏实例");
+            Dispose();
         }
         else
             onReadyForBreakLine();
@@ -419,7 +474,10 @@ HeSuccessLayer SuccessLayer = HeSuccessLayer.Normal;
         else
         {
             Debug.Log($"第 {TuneCountCurrent + 1} 轮游戏开始");
-            SlotCenter.Instance.add_listener(HeEventNames.OnReadyForBreakLine, onReadyForBreakLine, true);
+            if (SlotCenter.Instance != null)
+            {
+                SlotCenter.Instance.add_listener(HeEventNames.OnReadyForBreakLine, onReadyForBreakLine, true);
+            }
         }
 
     }
@@ -432,6 +490,11 @@ HeSuccessLayer SuccessLayer = HeSuccessLayer.Normal;
 
     public void GameScheduling(HeSuccessLayer type)
     {
+        if (disposed || SlotCenter.Instance == null)
+        {
+            return;
+        }
+
         switch (type)
         {
          
@@ -445,13 +508,14 @@ HeSuccessLayer SuccessLayer = HeSuccessLayer.Normal;
                     
                     SlotCenter.Instance.trigger_event<HeSuccessLayer>(HeEventNames.OnRythmGameEnd, HeSuccessLayer.Fail); 
                     SlotCenter.Instance.trigger_event(HeEventNames.LetStopTypeWriter);
+                    Dispose();
 
 
                 }
                       else
                 {
-                    SlotCenter.Instance.trigger_event(HeEventNames.LetLineBreakTypeWriter);
                     NextTune();
+                    SlotCenter.Instance.trigger_event(HeEventNames.LetLineBreakTypeWriter);
 
                 }
 
@@ -463,6 +527,7 @@ HeSuccessLayer SuccessLayer = HeSuccessLayer.Normal;
                 {
                     SlotCenter.Instance.trigger_event<HeSuccessLayer>(HeEventNames.OnRythmGameEnd, HeSuccessLayer.Success);
                     SlotCenter.Instance.trigger_event(HeEventNames.LetStopTypeWriter);
+                    Dispose();
 
 
 
@@ -471,8 +536,8 @@ HeSuccessLayer SuccessLayer = HeSuccessLayer.Normal;
                 }
                 else
                 {
-                    SlotCenter.Instance.trigger_event(HeEventNames.LetLineBreakTypeWriter);
                     NextTune();
+                    SlotCenter.Instance.trigger_event(HeEventNames.LetLineBreakTypeWriter);
 
 
 

@@ -32,12 +32,29 @@ public class TimelineLoopControllerTypeWriter : MonoBehaviour
     }
     private void Start()
     {
+        if (SlotCenter.Instance == null)
+        {
+            Debug.LogError("SlotCenter 未初始化，TypeWriter 事件注册失败。");
+            return;
+        }
 
         SlotCenter.Instance.add_listener(HeEventNames.LetStopTypeWriter, StopLoop);
         SlotCenter.Instance.add_listener(HeEventNames.LetStartTypeWriter, StartLoop);
         SlotCenter.Instance.add_listener(HeEventNames.LetContinueTypeWriter, ContinueLoop);
         SlotCenter.Instance.add_listener(HeEventNames.LetLineBreakTypeWriter, LineBreak);
 
+    }
+    private void OnDestroy()
+    {
+        if (SlotCenter.Instance == null)
+        {
+            return;
+        }
+
+        SlotCenter.Instance.remove_listener(HeEventNames.LetStopTypeWriter, StopLoop);
+        SlotCenter.Instance.remove_listener(HeEventNames.LetStartTypeWriter, StartLoop);
+        SlotCenter.Instance.remove_listener(HeEventNames.LetContinueTypeWriter, ContinueLoop);
+        SlotCenter.Instance.remove_listener(HeEventNames.LetLineBreakTypeWriter, LineBreak);
     }
     public void OnPausePoint()
     {
@@ -58,12 +75,12 @@ public class TimelineLoopControllerTypeWriter : MonoBehaviour
     }
     private void OnTypeWriterEndType(TrackEntry entry)
     {
-        SlotCenter.Instance.trigger_event(HeEventNames.OnTypeWriterEndType);
+        SlotCenter.Instance?.trigger_event(HeEventNames.OnTypeWriterEndType);
         entry.Complete -= OnTypeWriterEndType;
     }
     public void EmitIsReadyTypeWriter()
     {
-        SlotCenter.Instance.trigger_event(HeEventNames.OnIsReadyTypeWriter);
+        SlotCenter.Instance?.trigger_event(HeEventNames.OnIsReadyTypeWriter);
     }
     public void OnCycleEndSignal()
     {
@@ -84,7 +101,9 @@ public class TimelineLoopControllerTypeWriter : MonoBehaviour
     private void OnNextTune()
     {
         if(isLineBroken&&isOnGameTuneEnd)
-        SlotCenter.Instance.trigger_event(HeEventNames.OnReadyForBreakLine);
+        {
+            SlotCenter.Instance?.trigger_event(HeEventNames.OnReadyForBreakLine);
+        }
         
     }
     public void OnReadyForBreakLine()
@@ -138,7 +157,7 @@ public class TimelineLoopControllerTypeWriter : MonoBehaviour
         {
             director.Play();
         }
-        else if(director.state != PlayState.Paused)
+        else if(director != null && director.state != PlayState.Paused)
         {
             disablePauseCount++;
 

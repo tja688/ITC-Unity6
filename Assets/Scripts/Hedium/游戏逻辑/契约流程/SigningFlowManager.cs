@@ -142,13 +142,15 @@ public class DocumentVerifier : IContractStage
 
     public void Enter()
     {
+        completed = false;
+        failed = false;
         context = GameObject.FindFirstObjectByType<SigningFlowManager>()?.ctx;
         uiManager = GameObject.FindFirstObjectByType<HeContractUIManager>();
-        uiManager.RestoreTypeWriterGameObject();
+        uiManager?.ResotreContractDocumentsGameObject();
         Debug.Log("=== 开始文书核验阶段 ===");
 
         // 显示文书核验UI
-        //uiManager?.ShowDocumentVerification(ctx);
+        uiManager?.ShowDocumentVerification(context);
         initRes();
         // 执行核验逻辑
         PerformDocumentVerification();
@@ -167,7 +169,10 @@ public class DocumentVerifier : IContractStage
     }
     public void ToExit()
     {
-        context.documentVerified = true;
+        if (context != null)
+        {
+            context.documentVerified = true;
+        }
         completed = true;
         // 向 Sequencer 发送小游戏完成消息
         Debug.Log("向 Sequencer 发送小游戏完成消息");
@@ -184,9 +189,22 @@ public class DocumentVerifier : IContractStage
     }
     public void initRes()
     {
-        uiManager.pneumaticChannelSkeleton.GetComponent<SkeletonHoverHighLight>().effectTurn.EnableAllEffect = true;
+        if (uiManager == null || uiManager.pneumaticChannelSkeleton == null)
+        {
+            Debug.LogError("文书核验UI资源缺失，无法初始化。");
+            return;
+        }
+
+        var hover = uiManager.pneumaticChannelSkeleton.GetComponent<SkeletonHoverHighLight>();
+        var button = uiManager.pneumaticChannelSkeleton.GetComponent<Button>();
+        if (hover == null || button == null)
+        {
+            Debug.LogError("文书核验关键组件缺失（SkeletonHoverHighLight/Button）。");
+            return;
+        }
+
+        hover.effectTurn.EnableAllEffect = true;
         Debug.Log("初始化气动辅助钩按钮事件");
-        Button button = uiManager.pneumaticChannelSkeleton.GetComponent<Button>();
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(
            pneumaticAuxiliaryHook
@@ -196,24 +214,34 @@ public class DocumentVerifier : IContractStage
 
 
 
-
-
         SlotCenter.Instance.add_listener<DocumentError>(HeEventNames.DocumentErrorChosen, DocumentJudgeProsses, true);
-        var Hover = uiManager.pneumaticChannelSkeleton.GetComponent<SkeletonHoverHighLight>();
 
         //Hover.SetHighLight();
 
     }
     public void Exit()
     {
+        if (uiManager?.pneumaticChannelSkeleton == null)
+        {
+            SlotCenter.Instance?.remove_listener<DocumentError>(HeEventNames.DocumentErrorChosen, DocumentJudgeProsses);
+            detectedErrors.Clear();
+            return;
+        }
 
-        Button button = uiManager.pneumaticChannelSkeleton.GetComponent<Button>();
-        button.onClick.RemoveAllListeners();
-        button.interactable = false;
+        var button = uiManager.pneumaticChannelSkeleton.GetComponent<Button>();
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            button.interactable = false;
+        }
+
         SlotCenter.Instance.remove_listener<DocumentError>(HeEventNames.DocumentErrorChosen, DocumentJudgeProsses);
         detectedErrors.Clear();
-        var Hover = uiManager?.pneumaticChannelSkeleton.GetComponent<SkeletonHoverHighLight>();
-        Hover.enableHighLightOnHover = false;
+        var Hover = uiManager.pneumaticChannelSkeleton.GetComponent<SkeletonHoverHighLight>();
+        if (Hover != null)
+        {
+            Hover.enableHighLightOnHover = false;
+        }
         Debug.Log("=== 文书核验阶段结束 ===");
         if (detectedErrors.Count > 0)
         {
@@ -422,11 +450,13 @@ public class RuneInputManager : IContractStage
     bool enableProcessedKey = false;
     public void Enter()
     {
+        completed = false;
+        failed = false;
         detailsFillCompleted = false;
 
         context = GameObject.FindFirstObjectByType<SigningFlowManager>()?.ctx; ;
         uiManager = GameObject.FindFirstObjectByType<HeContractUIManager>();
-        uiManager.RestoreTypeWriterGameObject();
+        uiManager?.RestoreTypeWriterGameObject();
 
 
 
@@ -434,6 +464,12 @@ public class RuneInputManager : IContractStage
 
 
         gameConfig = GameObject.FindFirstObjectByType<SigningFlowManager>()?.gameConfig;
+        if (gameConfig == null)
+        {
+            Debug.LogError("HeContractGameConfig 未找到，无法初始化符文输入阶段。");
+            return;
+        }
+
         runeShowDuration = gameConfig.runeShowTimeLimit;
         ArrowMaxCount = gameConfig.runeInputCountMaxLimit;
         ArrowMinCount = gameConfig.runeInputCountMinLimit;
@@ -445,9 +481,18 @@ public class RuneInputManager : IContractStage
 
         if (uiManager != null)
         {
-            uiManager.ArrowGroupGameObject.GetComponent<Rhythmgame>()
-                 .SetHandle(new RhythmgameHandle(targetTuneCount, ArrowMinCount, ArrowMaxCount));
+            var rhythmGame = uiManager.ArrowGroupGameObject != null
+                ? uiManager.ArrowGroupGameObject.GetComponent<Rhythmgame>()
+                : null;
+            if (rhythmGame == null)
+            {
+                Debug.LogError("未找到 Rhythmgame 组件，无法启动符文输入。");
+                return;
+            }
+
+            rhythmGame.SetHandle(new RhythmgameHandle(targetTuneCount, ArrowMinCount, ArrowMaxCount));
             SlotCenter.Instance.trigger_event(HeEventNames.LetStartTypeWriter);
+            SlotCenter.Instance.remove_listener<HeSuccessLayer>(HeEventNames.OnRythmGameEnd, OnRythmGameEnd);
             SlotCenter.Instance.add_listener<HeSuccessLayer>(HeEventNames.OnRythmGameEnd, OnRythmGameEnd);
         }
         else
@@ -462,6 +507,11 @@ public class RuneInputManager : IContractStage
 
     public void Exit()
     {
+        SlotCenter.Instance?.remove_listener<HeSuccessLayer>(HeEventNames.OnRythmGameEnd, OnRythmGameEnd);
+        var rhythmGame = uiManager?.ArrowGroupGameObject != null
+            ? uiManager.ArrowGroupGameObject.GetComponent<Rhythmgame>()
+            : null;
+        rhythmGame?.DisposeHandle();
 
     }
     public void Update()
@@ -477,6 +527,7 @@ public class RuneInputManager : IContractStage
     }
     private void OnRythmGameEnd(HeSuccessLayer success)
     {
+        SlotCenter.Instance?.remove_listener<HeSuccessLayer>(HeEventNames.OnRythmGameEnd, OnRythmGameEnd);
         switch (success)
         {
             case HeSuccessLayer.BigSuccess:
