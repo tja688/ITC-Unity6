@@ -1028,43 +1028,65 @@ public class SigningFlowManager : MonoBehaviour
         currentStage = documentVerifierStage;
     }
 
-    private IEnumerator WaitForMinigameAsync(string doneMessage)
+    private IEnumerator RunStageFromYarn(Action stageStarter, string doneMessage, float timeoutSeconds = 180f)
     {
         bool isDone = false;
-        Action<string> onDone = msg => { if (msg == doneMessage) isDone = true; };
+        Action<string> onDone = msg =>
+        {
+            if (msg == doneMessage)
+            {
+                isDone = true;
+            }
+        };
+
         OnMinigameDone += onDone;
-        while (!isDone) yield return null;
+        stageStarter?.Invoke();
+        var stageAtStart = currentStage;
+
+        var elapsed = 0f;
+        while (!isDone && elapsed < timeoutSeconds)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
         OnMinigameDone -= onDone;
+
+        if (!isDone)
+        {
+            Debug.LogError($"等待小游戏完成超时: {doneMessage}");
+        }
+
+        if (stageAtStart != null && ReferenceEquals(currentStage, stageAtStart))
+        {
+            stageAtStart.Exit();
+            currentStage = null;
+        }
     }
 
     public IEnumerator RunDocumentVerifierGameYarn()
     {
-        DocumentVerifierStageStart();
-        yield return WaitForMinigameAsync("DocumentVerifierGameDone");
+        yield return RunStageFromYarn(DocumentVerifierStageStart, "DocumentVerifierGameDone", 240f);
     }
 
     public IEnumerator RunRuneInputGameYarn()
     {
-        RuneInputStageStart();
-        yield return WaitForMinigameAsync("RuneInputGameDone");
+        yield return RunStageFromYarn(RuneInputStageStart, "RuneInputGameDone", 240f);
     }
 
     public IEnumerator RunStampGameYarn()
     {
-        StampStageStart();
-        yield return WaitForMinigameAsync("StampGameDone");
+        yield return RunStageFromYarn(StampStageStart, "StampGameDone", 180f);
     }
 
     public IEnumerator RunSoulHarvestGameYarn()
     {
-        SoulHarvestStageStart();
-        yield return WaitForMinigameAsync("SoulHarvestGameDone");
+        yield return RunStageFromYarn(SoulHarvestStageStart, "SoulHarvestGameDone", 180f);
     }
 
     public IEnumerator RunSpecialEventGameYarn()
     {
-        SpecialEventSystem();
-        yield return WaitForMinigameAsync("SpecialEventGameDone");
+        yield return RunStageFromYarn(SpecialEventSystem, "SpecialEventGameDone", 180f);
     }
     /// <summary>
     /// 初始化设置
@@ -1121,6 +1143,10 @@ public class SigningFlowManager : MonoBehaviour
     private Queue<IContractStage> stages;
     public HeContractContext ctx;
     private HeContractUIManager uiManager;
+    private SlotCenter cachedSlotCenter;
+    private Yarn.Unity.DialogueRunner cachedDialogueRunner;
+    private bool slotListenersRegistered;
+    private bool yarnCommandsRegistered;
 
 
 
@@ -1135,6 +1161,19 @@ public class SigningFlowManager : MonoBehaviour
 
     void Start()
     {
+        InitializeRuntime();
+    }
+
+    private void OnDestroy()
+    {
+        currentStage?.Exit();
+        currentStage = null;
+        UnregisterSlotCenterListeners();
+        UnregisterYarnCommands();
+    }
+
+    private void InitializeRuntime()
+    {
         // 获取UI管理器
         uiManager = FindFirstObjectByType<HeContractUIManager>();
 
@@ -1144,31 +1183,97 @@ public class SigningFlowManager : MonoBehaviour
         // 初始化契约
         InitializeContract();
 
+        RegisterSlotCenterListeners();
+        RegisterYarnCommands();
+    }
+
+    private void RegisterSlotCenterListeners()
+    {
         var st = SlotCenter.Instance;
-        if (st != null)
-        {
-            st.add_listener(HeEventNames.TriggerDebugStage, DebugStageStart);
-            st.add_listener(HeEventNames.TriggerRuneInputStage, RuneInputStageStart);
-            st.add_listener(HeEventNames.TriggerStampStage, StampStageStart);
-            st.add_listener(HeEventNames.TriggerSoulHarvestStage, SoulHarvestStageStart);
-            st.add_listener(HeEventNames.TriggerSpecialEventStage, SpecialEventSystem);
-            st.add_listener(HeEventNames.TriggerDocumentVerifierStage, DocumentVerifierStageStart);
-        }
-        else
+        if (st == null)
         {
             Debug.LogError("SlotCenter实例未找到，事件系统可能无法正常工作");
+            return;
         }
 
-        // 注册Yarn Commands，以允许直接用<<命令>>触发，并避免静态与实例靶向的问题
-        var runner = UnityEngine.Object.FindAnyObjectByType<Yarn.Unity.DialogueRunner>();
-        if (runner != null)
+        if (!ReferenceEquals(cachedSlotCenter, st))
         {
-            runner.AddCommandHandler("he_doc_review", new Func<IEnumerator>(RunDocumentVerifierGameYarn));
-            runner.AddCommandHandler("he_rune_typing", new Func<IEnumerator>(RunRuneInputGameYarn));
-            runner.AddCommandHandler("he_stamp_select", new Func<IEnumerator>(RunStampGameYarn));
-            runner.AddCommandHandler("he_soul_collect", new Func<IEnumerator>(RunSoulHarvestGameYarn));
-            runner.AddCommandHandler("he_special_event", new Func<IEnumerator>(RunSpecialEventGameYarn));
+            UnregisterSlotCenterListeners();
+            cachedSlotCenter = st;
         }
+
+        if (slotListenersRegistered)
+        {
+            return;
+        }
+
+        cachedSlotCenter.add_listener(HeEventNames.TriggerDebugStage, DebugStageStart);
+        cachedSlotCenter.add_listener(HeEventNames.TriggerRuneInputStage, RuneInputStageStart);
+        cachedSlotCenter.add_listener(HeEventNames.TriggerStampStage, StampStageStart);
+        cachedSlotCenter.add_listener(HeEventNames.TriggerSoulHarvestStage, SoulHarvestStageStart);
+        cachedSlotCenter.add_listener(HeEventNames.TriggerSpecialEventStage, SpecialEventSystem);
+        cachedSlotCenter.add_listener(HeEventNames.TriggerDocumentVerifierStage, DocumentVerifierStageStart);
+        slotListenersRegistered = true;
+    }
+
+    private void UnregisterSlotCenterListeners()
+    {
+        if (!slotListenersRegistered || cachedSlotCenter == null)
+        {
+            return;
+        }
+
+        cachedSlotCenter.remove_listener(HeEventNames.TriggerDebugStage, DebugStageStart);
+        cachedSlotCenter.remove_listener(HeEventNames.TriggerRuneInputStage, RuneInputStageStart);
+        cachedSlotCenter.remove_listener(HeEventNames.TriggerStampStage, StampStageStart);
+        cachedSlotCenter.remove_listener(HeEventNames.TriggerSoulHarvestStage, SoulHarvestStageStart);
+        cachedSlotCenter.remove_listener(HeEventNames.TriggerSpecialEventStage, SpecialEventSystem);
+        cachedSlotCenter.remove_listener(HeEventNames.TriggerDocumentVerifierStage, DocumentVerifierStageStart);
+        slotListenersRegistered = false;
+        cachedSlotCenter = null;
+    }
+
+    private void RegisterYarnCommands()
+    {
+        var runner = UnityEngine.Object.FindAnyObjectByType<Yarn.Unity.DialogueRunner>();
+        if (runner == null)
+        {
+            return;
+        }
+
+        if (!ReferenceEquals(cachedDialogueRunner, runner))
+        {
+            UnregisterYarnCommands();
+            cachedDialogueRunner = runner;
+        }
+
+        if (yarnCommandsRegistered)
+        {
+            return;
+        }
+
+        cachedDialogueRunner.AddCommandHandler("he_doc_review", new Func<IEnumerator>(RunDocumentVerifierGameYarn));
+        cachedDialogueRunner.AddCommandHandler("he_rune_typing", new Func<IEnumerator>(RunRuneInputGameYarn));
+        cachedDialogueRunner.AddCommandHandler("he_stamp_select", new Func<IEnumerator>(RunStampGameYarn));
+        cachedDialogueRunner.AddCommandHandler("he_soul_collect", new Func<IEnumerator>(RunSoulHarvestGameYarn));
+        cachedDialogueRunner.AddCommandHandler("he_special_event", new Func<IEnumerator>(RunSpecialEventGameYarn));
+        yarnCommandsRegistered = true;
+    }
+
+    private void UnregisterYarnCommands()
+    {
+        if (!yarnCommandsRegistered || cachedDialogueRunner == null)
+        {
+            return;
+        }
+
+        cachedDialogueRunner.RemoveCommandHandler("he_doc_review");
+        cachedDialogueRunner.RemoveCommandHandler("he_rune_typing");
+        cachedDialogueRunner.RemoveCommandHandler("he_stamp_select");
+        cachedDialogueRunner.RemoveCommandHandler("he_soul_collect");
+        cachedDialogueRunner.RemoveCommandHandler("he_special_event");
+        yarnCommandsRegistered = false;
+        cachedDialogueRunner = null;
     }
 
 
@@ -1419,12 +1524,15 @@ public class SigningFlowManager : MonoBehaviour
         Debug.Log("重新开始契约签约流程");
 
         // 重置游戏状态
+        currentStage?.Exit();
         ctx = null;
         currentStage = null;
         stages?.Clear();
+        UnregisterSlotCenterListeners();
+        UnregisterYarnCommands();
 
         // 重新开始
-        Start();
+        InitializeRuntime();
     }
 
     /// <summary>

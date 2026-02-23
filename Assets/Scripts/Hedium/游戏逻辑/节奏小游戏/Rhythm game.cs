@@ -41,6 +41,7 @@ public class Rhythmgame : MonoBehaviour
 
 
     private List<GameObject> spawnedItems = new List<GameObject>();
+    private HeKeyInput subscribedInput;
 
 
 
@@ -122,26 +123,60 @@ public class Rhythmgame : MonoBehaviour
 
     private void OnEnable()
     {
-        if (HeKeyInput.Instance != null)
-        {
-            HeKeyInput.Instance.OnMoveAction -= ProcessRuneInput;
-            HeKeyInput.Instance.OnMoveAction += ProcessRuneInput;
-        }
+        EnsureInputHooked();
+    }
+
+    private void Start()
+    {
+        EnsureInputHooked();
+    }
+
+    private void Update()
+    {
+        EnsureInputHooked();
     }
 
     private void OnDisable()
     {
-        if (HeKeyInput.Instance != null)
-        {
-            HeKeyInput.Instance.OnMoveAction -= ProcessRuneInput;
-        }
+        ReleaseInputHook();
 
         DisableKeyInput();
     }
 
     private void OnDestroy()
     {
+        ReleaseInputHook();
         DisposeHandle();
+    }
+
+    private void EnsureInputHooked()
+    {
+        var input = HeKeyInput.Instance;
+        if (input == null)
+        {
+            return;
+        }
+
+        if (ReferenceEquals(subscribedInput, input))
+        {
+            return;
+        }
+
+        ReleaseInputHook();
+        input.OnMoveAction -= ProcessRuneInput;
+        input.OnMoveAction += ProcessRuneInput;
+        subscribedInput = input;
+    }
+
+    private void ReleaseInputHook()
+    {
+        if (subscribedInput == null)
+        {
+            return;
+        }
+
+        subscribedInput.OnMoveAction -= ProcessRuneInput;
+        subscribedInput = null;
     }
     private void EnterAnimationFlow(GameObject obj)
     {
