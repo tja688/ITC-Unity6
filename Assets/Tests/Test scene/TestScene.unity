@@ -150,6 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HediumContractAutoSmoke
   runOnStart: 1
   startDelaySeconds: 1
+  stage: 0
 --- !u!4 &255779851
 Transform:
   m_ObjectHideFlags: 0
@@ -173,9 +174,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2992381469032631267, guid: 62d043b3fd3b76f4a89d57a6d33f428d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3565965371999933683, guid: 62d043b3fd3b76f4a89d57a6d33f428d, type: 3}
       propertyPath: m_Name
       value: "\u7B7E\u7EA6\u573A\u666F\u6253\u5305_\u79FB\u690D\u7528"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3598858999693842428, guid: 62d043b3fd3b76f4a89d57a6d33f428d, type: 3}
+      propertyPath: m_RenderMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3598858999693842428, guid: 62d043b3fd3b76f4a89d57a6d33f428d, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4364131691617994693, guid: 62d043b3fd3b76f4a89d57a6d33f428d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -10.8
       objectReference: {fileID: 0}
     - target: {fileID: 5907712098994911646, guid: 62d043b3fd3b76f4a89d57a6d33f428d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -740,7 +757,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2800450365897156658}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -1253,7 +1270,7 @@ Transform:
   m_GameObject: {fileID: 4662445094895145051}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1032.8557, y: 513.03107, z: 0}
+  m_LocalPosition: {x: 837, y: 672, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1314,7 +1331,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 10.5678, y: -31.5593}
+  m_AnchoredPosition: {x: -624, y: 472}
   m_SizeDelta: {x: 638.9622, y: 184.6429}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8427557098309966099
