@@ -4078,10 +4078,10 @@ MonoBehaviour:
   leftBookSkeleton: {fileID: 1097859347215157091}
   rightBookSkeleton: {fileID: 5165569496899106907}
   typewriterSkeleton: {fileID: 8792301470432333209}
-  typewriterGameObject: {fileID: 0}
+  typewriterGameObject: {fileID: 2754448045042632548}
   telephoneSkeleton: {fileID: 351001110958806891}
   canSkeleton: {fileID: 3384490573611164508}
-  contractDocumentsGameObject: {fileID: 0}
+  contractDocumentsGameObject: {fileID: 5559805179163467509}
   contractDocumentsImage: {fileID: 7081943374938012740}
   arrowImage: {fileID: 0}
   roleImage: {fileID: 1353167398514761136}

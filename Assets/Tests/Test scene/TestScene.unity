@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HediumContractAutoSmoke
   runOnStart: 1
   startDelaySeconds: 1
-  stage: 0
+  stage: 1
 --- !u!4 &255779851
 Transform:
   m_ObjectHideFlags: 0
