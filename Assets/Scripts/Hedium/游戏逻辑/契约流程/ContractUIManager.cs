@@ -1,9 +1,9 @@
-﻿using MoreMountains.Feedbacks;
-using QFramework;
-using Spine.Unity;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
+using QFramework;
+using Spine.Unity;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -87,7 +87,7 @@ public class HeContractUIManager : MonoBehaviour
 
 
     private Image stampChargeRing;
-  
+
     private Coroutine _chargeCoroutine;
 
 
@@ -104,7 +104,7 @@ public class HeContractUIManager : MonoBehaviour
         InitCheck();
         InitializeUI();
         RegisterAllEvent();
-        
+
     }
 
     private void InitCheck()
@@ -117,7 +117,7 @@ public class HeContractUIManager : MonoBehaviour
     }
     private void RegisterAllEvent()
     {
-      
+
     }
     /// <summary>
     /// 
@@ -126,12 +126,12 @@ public class HeContractUIManager : MonoBehaviour
     public void RestoreTypeWriterGameObject()
     {
         Debug.Log("恢复打字机入场动画");
-        if (contractDocumentsGameObject.activeSelf)
+        if (contractDocumentsGameObject != null && contractDocumentsGameObject.activeSelf)
         {
-            var player = contractDocumentsGameObject.transform.Find("MMF_Exit").GetComponent<MMF_Player>();
+            var player = contractDocumentsGameObject.transform.Find("MMF_Exit")?.GetComponent<MMF_Player>();
             if (player)
             {
-                  
+
                 player.PlayFeedbacks();
             }
             else
@@ -140,30 +140,27 @@ public class HeContractUIManager : MonoBehaviour
             }
         }
 
-    if (!typewriterGameObject.activeSelf)
-    {
-       typewriterGameObject.SetActive(true);
-        var player = typewriterGameObject.transform.Find("MMF_Enter").GetComponent<MMF_Player>();
-        if (player)
+        if (typewriterGameObject != null && !typewriterGameObject.activeSelf)
         {
-            player.PlayFeedbacks();
+            typewriterGameObject.SetActive(true);
+            var player = typewriterGameObject.transform.Find("MMF_Enter")?.GetComponent<MMF_Player>();
+            if (player)
+            {
+                player.PlayFeedbacks();
+            }
+            else
+            {
+                Debug.LogError("MMF_Player 入场动画丢失");
+            }
         }
-        else
-        {
-            Debug.LogError("MMF_Player 入场动画丢失");
-        }
-    }
-        
-
-
     }
 
     public void ResotreContractDocumentsGameObject()
     {
-        if (!contractDocumentsGameObject.activeSelf)
+        if (contractDocumentsGameObject != null && !contractDocumentsGameObject.activeSelf)
         {
 
-            var player = contractDocumentsGameObject.transform.Find("MMF_Enter").GetComponent<MMF_Player>();
+            var player = contractDocumentsGameObject.transform.Find("MMF_Enter")?.GetComponent<MMF_Player>();
             contractDocumentsGameObject.SetActive(true);
             if (player)
             {
@@ -176,7 +173,7 @@ public class HeContractUIManager : MonoBehaviour
             }
         }
 
-        if (typewriterGameObject.activeSelf)
+        if (typewriterGameObject != null && typewriterGameObject.activeSelf)
         {
             var player = typewriterGameObject.transform.Find("MMF_Exit")?.GetComponent<MMF_Player>();
             if (player)
@@ -273,9 +270,9 @@ public class HeContractUIManager : MonoBehaviour
         switch (panel)
         {
             case UIState.DocumentVerification:
-                
 
-               
+
+
 
                 //pneumaticChannelAnimatorOpen = true;
                 // TODO: 添加文书验证面板显示逻辑
@@ -356,8 +353,8 @@ public class HeContractUIManager : MonoBehaviour
         //关闭悬浮高亮与按钮与高亮
         var Hover = pneumaticChannelSkeleton.GetComponent<SkeletonHoverHighLight>();
         Hover.enableHighLightOnHover = false;
-        Hover.UnSetHighLight(); 
-    
+        Hover.UnSetHighLight();
+
 
         var button = pneumaticChannelSkeleton.GetComponent<Button>();
         button.interactable = false;
@@ -380,7 +377,7 @@ public class HeContractUIManager : MonoBehaviour
         SkeletonGraphic animate = pneumaticChannelSkeleton.GetComponent<SkeletonGraphic>();
         var trackEntry = animate.AnimationState.SetAnimation(0, "B关门", false);
 
-       
+
         trackEntry.Complete += OnCloseAnimationComplete;
         //关闭按钮与悬浮高亮
         var button = pneumaticChannelSkeleton.GetComponent<Button>();
@@ -394,9 +391,9 @@ public class HeContractUIManager : MonoBehaviour
     private void OnCloseAnimationComplete(Spine.TrackEntry trackEntry)
     {
 
-       var entrt =  contractDocumentsImage.GetComponent<EntryAnimation>();
+        var entrt = contractDocumentsImage.GetComponent<EntryAnimation>();
         entrt.PlayEntryAnimation();
-        entrt.OnEntryComplete+= OncontractDocumentsImagePlayEntryAnimationEnd;
+        entrt.OnEntryComplete += OncontractDocumentsImagePlayEntryAnimationEnd;
 
 
         //var track =  entryAnimation.PlayEntryAnimation();
@@ -418,7 +415,7 @@ public class HeContractUIManager : MonoBehaviour
 
 
         var typewriter = typewriterSkeleton?.GetComponent<SkeletonGraphicHighLightDragHover>();
-        var role  = roleImage?.GetComponent<ImageHighLightDragHover>();
+        var role = roleImage?.GetComponent<ImageHighLightDragHover>();
         if (role)
         {
             SlotCenter.Instance.add_listener<DocumentError>(role.eventName, OnDragEndToChooseDocumentAction, true);

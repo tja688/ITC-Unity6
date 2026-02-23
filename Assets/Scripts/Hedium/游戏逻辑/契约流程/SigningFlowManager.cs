@@ -986,35 +986,30 @@ public class SigningFlowManager : MonoBehaviour
         OnMinigameDone -= onDone;
     }
 
-    [YarnCommand("he_doc_review")]
     public IEnumerator RunDocumentVerifierGameYarn()
     {
         DocumentVerifierStageStart();
         yield return WaitForMinigameAsync("DocumentVerifierGameDone");
     }
 
-    [YarnCommand("he_rune_typing")]
     public IEnumerator RunRuneInputGameYarn()
     {
         RuneInputStageStart();
         yield return WaitForMinigameAsync("RuneInputGameDone");
     }
 
-    [YarnCommand("he_stamp_select")]
     public IEnumerator RunStampGameYarn()
     {
         StampStageStart();
         yield return WaitForMinigameAsync("StampGameDone");
     }
 
-    [YarnCommand("he_soul_collect")]
     public IEnumerator RunSoulHarvestGameYarn()
     {
         SoulHarvestStageStart();
         yield return WaitForMinigameAsync("SoulHarvestGameDone");
     }
 
-    [YarnCommand("he_special_event")]
     public IEnumerator RunSpecialEventGameYarn()
     {
         SpecialEventSystem();
@@ -1111,6 +1106,17 @@ public class SigningFlowManager : MonoBehaviour
         else
         {
             Debug.LogError("SlotCenter实例未找到，事件系统可能无法正常工作");
+        }
+
+        // 注册Yarn Commands，以允许直接用<<命令>>触发，并避免静态与实例靶向的问题
+        var runner = UnityEngine.Object.FindAnyObjectByType<Yarn.Unity.DialogueRunner>();
+        if (runner != null)
+        {
+            runner.AddCommandHandler("he_doc_review", new Func<IEnumerator>(RunDocumentVerifierGameYarn));
+            runner.AddCommandHandler("he_rune_typing", new Func<IEnumerator>(RunRuneInputGameYarn));
+            runner.AddCommandHandler("he_stamp_select", new Func<IEnumerator>(RunStampGameYarn));
+            runner.AddCommandHandler("he_soul_collect", new Func<IEnumerator>(RunSoulHarvestGameYarn));
+            runner.AddCommandHandler("he_special_event", new Func<IEnumerator>(RunSpecialEventGameYarn));
         }
     }
 

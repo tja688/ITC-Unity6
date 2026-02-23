@@ -25,25 +25,47 @@ public class HeKeyInput : MonoBehaviour
 
     public void EnableMoveAction()
     {
+        if (moveAction == null || moveAction.action == null)
+        {
+            Debug.LogWarning("[HeKeyInput] MoveAction is not assigned; skipping enable.");
+            return;
+        }
+
         moveAction.action.performed += OnMovePerformed;
-        moveAction?.action.Enable();
+        moveAction.action.Enable();
     }
     public void DisableMoveAction()
     {
+        if (moveAction == null || moveAction.action == null)
+        {
+            return;
+        }
+
         moveAction.action.performed -= OnMovePerformed;
         moveAction.action.Disable();
     }
 
     public void EnableInteractAction()
     {
+        if (interactAction == null || interactAction.action == null)
+        {
+            Debug.LogWarning("[HeKeyInput] InteractAction is not assigned; skipping enable.");
+            return;
+        }
+
         interactAction.action.canceled += OnInteractPerformed;
-        interactAction?.action.Enable();
+        interactAction.action.Enable();
     }
 
     public void DisableInteractAction()
     {
+        if (interactAction == null || interactAction.action == null)
+        {
+            return;
+        }
+
         interactAction.action.canceled -= OnInteractPerformed;
-        interactAction?.action.Disable();
+        interactAction.action.Disable();
     }
 
 
