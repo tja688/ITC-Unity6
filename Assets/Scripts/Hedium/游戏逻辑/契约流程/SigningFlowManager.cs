@@ -242,11 +242,10 @@ public class DocumentVerifier : IContractStage
         {
             Hover.enableHighLightOnHover = false;
         }
+        uiManager?.SwitchPanel(HeContractUIManager.UIState.None);
         Debug.Log("=== 文书核验阶段结束 ===");
         if (detectedErrors.Count > 0)
         {
-
-
             Debug.Log($"检测到的错误: {string.Join(", ", detectedErrors)}");
         }
     }
@@ -512,7 +511,7 @@ public class RuneInputManager : IContractStage
             ? uiManager.ArrowGroupGameObject.GetComponent<Rhythmgame>()
             : null;
         rhythmGame?.DisposeHandle();
-
+        uiManager?.SwitchPanel(HeContractUIManager.UIState.None);
     }
     public void Update()
     {
@@ -827,9 +826,8 @@ public class StampSystem : IContractStage
 
     public void Exit()
     {
+        uiManager?.SwitchPanel(HeContractUIManager.UIState.None);
         Debug.Log("=== 契约盖印阶段结束 ===");
-
-        ;
     }
 
 
@@ -916,6 +914,7 @@ public class SoulHarvestSystem : IContractStage
 
     public void Exit()
     {
+        uiManager?.SwitchPanel(HeContractUIManager.UIState.None);
         Debug.Log("=== 灵魂收取阶段结束 ===");
     }
 
@@ -1164,10 +1163,16 @@ public class SigningFlowManager : MonoBehaviour
         InitializeRuntime();
     }
 
+    void Update()
+    {
+        currentStage?.Update();
+    }
+
     private void OnDestroy()
     {
         currentStage?.Exit();
         currentStage = null;
+        uiManager?.HideAllMinigameUI();
         UnregisterSlotCenterListeners();
         UnregisterYarnCommands();
     }

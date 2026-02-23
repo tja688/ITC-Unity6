@@ -212,6 +212,27 @@ public class HeContractUIManager : MonoBehaviour
 
 
     /// <summary>
+    /// 隐藏所有小游戏相关的UI元素
+    /// </summary>
+    public void HideAllMinigameUI()
+    {
+        if (pneumaticChannelGameObject) pneumaticChannelGameObject.SetActive(false);
+        if (pneumaticChannelSkeleton) pneumaticChannelSkeleton.SetActive(false);
+        if (typewriterGameObject) typewriterGameObject.SetActive(false);
+        if (contractDocumentsGameObject) contractDocumentsGameObject.SetActive(false);
+        if (ArrowGroupGameObject) ArrowGroupGameObject.SetActive(false);
+        if (ChargingGroupGameObject) ChargingGroupGameObject.SetActive(false);
+        if (telephoneSkeleton) telephoneSkeleton.SetActive(false);
+
+        if (circularRunaSkeleton) circularRunaSkeleton.SetActive(false);
+        if (diamondRunaSkeleton) diamondRunaSkeleton.SetActive(false);
+        if (triangularRunaSkeleton) triangularRunaSkeleton.SetActive(false);
+        if (sphericalRunaSkeleton) sphericalRunaSkeleton.SetActive(false);
+
+        currentActivePanel = UIState.None;
+    }
+
+    /// <summary>
     /// 切换面板
     /// </summary>
     public void SwitchPanel(UIState targetPanel)
@@ -221,42 +242,76 @@ public class HeContractUIManager : MonoBehaviour
         // 隐藏当前面板
         if (currentActivePanel != UIState.None)
         {
-            StartCoroutine(HidePanelCoroutine(currentActivePanel));
+            HidePanel(currentActivePanel);
         }
 
         // 显示目标面板
+        currentActivePanel = targetPanel;
         if (targetPanel != UIState.None)
         {
-            currentActivePanel = targetPanel;
-            StartCoroutine(ShowPanelCoroutine(targetPanel));
+            ShowPanel(targetPanel);
+        }
+    }
+
+    private void HidePanel(UIState panel)
+    {
+        switch (panel)
+        {
+            case UIState.DocumentVerification:
+                if (pneumaticChannelGameObject) pneumaticChannelGameObject.SetActive(false);
+                if (contractDocumentsGameObject) contractDocumentsGameObject.SetActive(false);
+                break;
+            case UIState.RuneInput:
+                if (typewriterGameObject) typewriterGameObject.SetActive(false);
+                if (ArrowGroupGameObject) ArrowGroupGameObject.SetActive(false);
+                break;
+            case UIState.EventHandling:
+                if (telephoneSkeleton) telephoneSkeleton.SetActive(false);
+                break;
+            case UIState.StampSelection:
+                if (ChargingGroupGameObject) ChargingGroupGameObject.SetActive(false);
+                if (circularRunaSkeleton) circularRunaSkeleton.SetActive(false);
+                if (diamondRunaSkeleton) diamondRunaSkeleton.SetActive(false);
+                if (triangularRunaSkeleton) triangularRunaSkeleton.SetActive(false);
+                if (sphericalRunaSkeleton) sphericalRunaSkeleton.SetActive(false);
+                break;
+            case UIState.SoulHarvest:
+                // TODO: 魂魄收取的特定UI隐藏
+                break;
+        }
+    }
+
+    private void ShowPanel(UIState panel)
+    {
+        switch (panel)
+        {
+            case UIState.DocumentVerification:
+                if (pneumaticChannelGameObject) pneumaticChannelGameObject.SetActive(true);
+                // 契约文档显示由ResotreContractDocumentsGameObject控制
+                break;
+            case UIState.RuneInput:
+                if (typewriterGameObject) typewriterGameObject.SetActive(true);
+                if (ArrowGroupGameObject) ArrowGroupGameObject.SetActive(true);
+                break;
+            case UIState.EventHandling:
+                if (telephoneSkeleton) telephoneSkeleton.SetActive(true);
+                break;
+            case UIState.StampSelection:
+                if (ChargingGroupGameObject) ChargingGroupGameObject.SetActive(true);
+                if (circularRunaSkeleton) circularRunaSkeleton.SetActive(true);
+                if (diamondRunaSkeleton) diamondRunaSkeleton.SetActive(true);
+                if (triangularRunaSkeleton) triangularRunaSkeleton.SetActive(true);
+                if (sphericalRunaSkeleton) sphericalRunaSkeleton.SetActive(true);
+                break;
+            case UIState.SoulHarvest:
+                // TODO: 魂魄收取的特定UI显示
+                break;
         }
     }
 
     private IEnumerator HidePanelCoroutine(UIState panel)
     {
-
-        switch (panel)
-        {
-            case UIState.DocumentVerification:
-                // TODO: 取消文书验证面板显示逻辑
-                break;
-            case UIState.RuneInput:
-                // TODO:  取消符文输入面板显示逻辑
-                break;
-            case UIState.EventHandling:
-                // TODO: 取消事件处理面板显示逻辑
-                break;
-            case UIState.StampSelection:
-                // TODO:  取消盖章选择面板显示逻辑
-                break;
-            case UIState.SoulHarvest:
-                // TODO:  取消灵魂收取面板显示逻辑
-                break;
-            case UIState.None:
-            default:
-                break;
-        }
-
+        HidePanel(panel);
         yield return null;
     }
 

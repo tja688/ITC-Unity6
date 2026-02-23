@@ -207,7 +207,7 @@ Shader "Custom/UI/BloodAuraSpread"
 			float4 col = tex2D(_MainTex,uvTemp);
 			col=sunCol+col*(1-sunCol.a);
 						#if defined(_STRAIGHT_ALPHA_INPUT)
-						col.rgb *= texColor.a;
+						col.rgb *= col.a;
 						#endif
 				 col = (col + _TextureSampleAdd) * IN.color;
 

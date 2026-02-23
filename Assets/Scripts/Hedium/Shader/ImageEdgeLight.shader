@@ -134,7 +134,7 @@ Shader "Custom/UI/ImageEdgeLight"
 			float4 col = tex2D(_MainTex, IN.texcoord);
 			
 				#if defined(_STRAIGHT_ALPHA_INPUT)
-						col.rgb *= texColor.a;
+						col.rgb *= col.a;
 						#endif
 			 col = (col + _TextureSampleAdd) * IN.color;
 			if(_EnableHighLight)

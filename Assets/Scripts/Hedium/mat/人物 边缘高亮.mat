@@ -96,7 +96,7 @@ Material:
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
-    - _StraightAlphaInput: 0
+    - _StraightAlphaInput: 1
     - _ThresholdEnd: 0.25
     - _Transparent: 0.27
     - _UVSec: 0

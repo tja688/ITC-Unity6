@@ -156,8 +156,7 @@ Shader "Custom/UI/ShaderSkeletonEdgeLight"
 
 
 				#if defined(_STRAIGHT_ALPHA_INPUT)
-						col.rgb *= texColor.a;
-						col.a = texColor.a;
+						col.rgb *= col.a;
 				#endif
 				 col = (col + _TextureSampleAdd) * IN.color;
    				 col *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
