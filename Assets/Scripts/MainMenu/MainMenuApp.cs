@@ -1,5 +1,6 @@
 using QFramework;
 using ITC.Contracting;
+using ITC.Dialogue.Sign;
 
 public sealed class MainMenuApp : Architecture<MainMenuApp>
 {
@@ -8,5 +9,6 @@ public sealed class MainMenuApp : Architecture<MainMenuApp>
         RegisterModel(new MainMenuStateModel());
         RegisterModel(new ContractFlowStateModel());
         RegisterModel(new ContractClientConfigModel());
+        RegisterModel(new SignScrollCardRuntimeModel());
     }
 }
