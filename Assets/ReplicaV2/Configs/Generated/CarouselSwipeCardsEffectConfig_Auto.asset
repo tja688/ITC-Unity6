@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aba64da77a423c44a7cdbbfbbb43153, type: 3}
+  m_Name: CarouselSwipeCardsEffectConfig_Auto
+  m_EditorClassIdentifier: Assembly-CSharp::CarouselSwipeCardsEffectConfig
+  AutoplayDelay: 3.1
+  Autoplay: 1
+  PauseOnHover: 1
+  Loop: 1
+  DragMoveScale: 0.25
+  DragClamp: 80
+  SwipeThreshold: 80
+  StageReturnDuration: 0.18
+  CardMoveDuration: 0.45
+  CardFadeDuration: 0.35
+  FrameSize: {x: 1120, y: 680}
+  StageSize: {x: 980, y: 470}
+  StageOffset: {x: 0, y: 22}
+  CardSize: {x: 430, y: 470}
+  CardStepX: 320
+  CardStepY: 18
+  CardRotateStep: 9
+  BackdropColor: {r: 0.06, g: 0.08, b: 0.14, a: 0.9}
+  FrameColor: {r: 0.08, g: 0.1, b: 0.17, a: 0.94}
+  FrameOutlineColor: {r: 1, g: 1, b: 1, a: 0.2}

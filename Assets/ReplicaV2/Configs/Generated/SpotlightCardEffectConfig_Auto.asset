@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5596cdaa074fcc44b65b9c5d039ec14, type: 3}
+  m_Name: SpotlightCardEffectConfig_Auto
+  m_EditorClassIdentifier: Assembly-CSharp::SpotlightCardEffectConfig
+  CardSize: {x: 900, y: 500}
+  SpotlightSize: {x: 700, y: 700}
+  CardOffset: {x: 0, y: -24}
+  InnerInset: 2
+  SpotlightFollowSpeed: 6
+  SpotlightAlphaFollowSpeed: 4
+  BorderColorFollowSpeed: 4
+  HoverSpotlightAlpha: 0.6
+  BackdropColor: {r: 0.05, g: 0.07, b: 0.13, a: 0.92}
+  CardColor: {r: 0.07, g: 0.09, b: 0.16, a: 0.96}
+  BorderIdleColor: {r: 0.22, g: 0.28, b: 0.38, a: 0.7}
+  BorderHoverColor: {r: 0.44, g: 0.86, b: 1, a: 0.72}
+  InnerColor: {r: 0.05, g: 0.07, b: 0.13, a: 0.98}
+  SpotlightColor: {r: 0.48, g: 0.84, b: 1, a: 0.5}
+  HintColor: {r: 0.93, g: 0.96, b: 1, a: 0.95}
+  TitleColor: {r: 0.94, g: 0.97, b: 1, a: 0.98}
+  BodyColor: {r: 0.84, g: 0.9, b: 1, a: 0.72}
+  EnterOffset: 220
+  ExitOffset: 220

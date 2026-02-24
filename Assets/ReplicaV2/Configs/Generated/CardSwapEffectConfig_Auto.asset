@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57c76e80bab64b24abec60a32334aaf3, type: 3}
+  m_Name: CardSwapEffectConfig_Auto
+  m_EditorClassIdentifier: Assembly-CSharp::CardSwapEffectConfig
+  SurfaceSize: {x: 1320, y: 700}
+  DeckSize: {x: 840, y: 580}
+  CardSize: {x: 480, y: 340}
+  CardDistance: 72
+  VerticalDistance: 66
+  SwapDelay: 4.2
+  PauseOnHover: 1
+  OutDuration: 0.85
+  OutDistanceY: 500
+  LayoutDuration: 1.45
+  LayoutDelayStep: 0.12
+  BackdropColor: {r: 0.07, g: 0.09, b: 0.14, a: 0.86}
+  HintColor: {r: 0.93, g: 0.95, b: 1, a: 0.95}
+  SurfaceColor: {r: 0.1, g: 0.13, b: 0.21, a: 0.82}
+  OutlineColor: {r: 1, g: 1, b: 1, a: 0.6}
+  OutlineDistance: {x: 1.8, y: -1.8}
+  SurfaceShadowColor: {r: 0, g: 0, b: 0, a: 0.35}
+  SurfaceShadowDistance: {x: 0, y: -9}
+  EnterOffset: 220
+  ExitOffset: 220

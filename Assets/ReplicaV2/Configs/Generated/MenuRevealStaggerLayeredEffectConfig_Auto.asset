@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c9e7fb70de2aec4cb23669dc4ac06a5, type: 3}
+  m_Name: MenuRevealStaggerLayeredEffectConfig_Auto
+  m_EditorClassIdentifier: Assembly-CSharp::MenuRevealStaggerLayeredEffectConfig
+  PanelWidth: 470
+  PanelPaddingLeft: 38
+  PanelPaddingTop: 132
+  PanelPaddingRight: 36
+  PanelPaddingBottom: 36
+  MenuRowHeight: 72
+  MenuRowStep: 74
+  LayerStagger: 0.04
+  LayerSlideDuration: 0.35
+  PanelSlideDuration: 0.42
+  ItemSlideDuration: 0.55
+  ItemStagger: 0.06
+  SocialFadeDuration: 0.3
+  SocialLinkDuration: 0.35
+  IconRotateDurationOpen: 0.45
+  IconRotateDurationClose: 0.25
+  ToggleTextMoveDuration: 0.3
+  ToggleTextMoveCloseDuration: 0.25
+  CloseSlideDuration: 0.22
+  ItemHiddenY: -98
+  ItemHiddenRotZ: -10
+  SocialHiddenYOffset: 25
+  RootBackground: {r: 0.05, g: 0.07, b: 0.14, a: 0.92}
+  AmbientAColor: {r: 0.15, g: 0.22, b: 0.4, a: 0.52}
+  AmbientBColor: {r: 0.08, g: 0.35, b: 0.56, a: 0.42}
+  AccentColor: {r: 0.32, g: 0.15, b: 1, a: 1}
+  PanelColor: {r: 0.96, g: 0.97, b: 1, a: 0.98}
+  ToggleClosedColor: {r: 0.93, g: 0.95, b: 1, a: 1}
+  ToggleOpenColor: {r: 0.12, g: 0.14, b: 0.22, a: 1}
+  Layer0Color: {r: 0.63, g: 0.53, b: 0.95, a: 0.86}
+  Layer1Color: {r: 0.32, g: 0.15, b: 1, a: 0.72}
+  Layer2Color: {r: 0.16, g: 0.09, b: 0.55, a: 0.58}
+  MenuLabelColor: {r: 0.09, g: 0.1, b: 0.14, a: 1}
+  SocialLinkColor: {r: 0.12, g: 0.13, b: 0.2, a: 1}
+  PanelShadowColor: {r: 0, g: 0, b: 0, a: 0.28}

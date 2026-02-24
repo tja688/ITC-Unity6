@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b3ae76fe9ff4d24f9567505561fdc41, type: 3}
+  m_Name: MagnetEffectConfig_Auto
+  m_EditorClassIdentifier: Assembly-CSharp::MagnetEffectConfig
+  Prefab: {fileID: 4908549114673714198, guid: 44fa7c6a092192049815985a3a3b0de9, type: 3}
+  Padding: 100
+  MagnetStrength: 2
+  MaxOffset: 90
+  Disabled: 0
+  ActiveDuration: 0.3
+  InactiveDuration: 0.5
+  ActiveEase: 5
+  InactiveEase: 6
+  AreaSize: {x: 560, y: 300}
+  ButtonSize: {x: 320, y: 96}
+  BackgroundColor: {r: 0.1, g: 0.14, b: 0.24, a: 0.96}
+  BackgroundOutlineColor: {r: 1, g: 1, b: 1, a: 0.16}
+  ButtonColor: {r: 0.95, g: 0.97, b: 1, a: 0.96}
+  ButtonTextColor: {r: 0.08, g: 0.12, b: 0.22, a: 1}
+  HintTextColor: {r: 0.8, g: 0.88, b: 1, a: 0.92}

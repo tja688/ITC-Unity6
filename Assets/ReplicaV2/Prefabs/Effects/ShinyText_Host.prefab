@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5074817950039042719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9214273711717856131}
+  - component: {fileID: 4029021717888237335}
+  m_Layer: 5
+  m_Name: ShinyText_Host
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &9214273711717856131
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5074817950039042719}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 420, y: 320}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4029021717888237335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5074817950039042719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c9cbf100e842a846a2fe227cf9a1261, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShinyTextEffectHostBridge
+  mBackend: 0
+  mUseUnscaledTime: 1
+  mPlayInOnEnable: 1
+  mConfig: {fileID: 11400000, guid: fb3212d1d4110da40a0fcdeb04d5f178, type: 2}
+  mText: ShinyText
+  mDisabled: 0
+  mSpeed: 2
+  mColor: {r: 0.71, g: 0.71, b: 0.71, a: 1}
+  mShineColor: {r: 1, g: 1, b: 1, a: 1}
+  mSpread: 120
+  mYoyo: 0
+  mPauseOnHover: 0
+  mDirection: 0
+  mDelay: 0

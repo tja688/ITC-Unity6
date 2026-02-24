@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 053fe091c1d6bc5428a361ebeea80d23, type: 3}
+  m_Name: BounceCardsEffectConfig_Auto
+  m_EditorClassIdentifier: Assembly-CSharp::BounceCardsEffectConfig
+  StageSize: {x: 1450, y: 760}
+  ContainerSize: {x: 1200, y: 520}
+  CardSize: {x: 240, y: 240}
+  HoverPushOffset: 160
+  EntryDelay: 0.42
+  EntryStagger: 0.08
+  EntryDuration: 0.7
+  HoverDuration: 0.4
+  HoverSiblingDelayStep: 0.03
+  HoverLiftY: 18
+  HoverOvershoot: 1.4
+  BackdropColor: {r: 0.05, g: 0.08, b: 0.14, a: 0.82}
+  PlateAColor: {r: 0.11, g: 0.21, b: 0.33, a: 0.45}
+  PlateBColor: {r: 0.22, g: 0.16, b: 0.3, a: 0.4}
+  HintColor: {r: 0.9, g: 0.94, b: 1, a: 0.95}
+  OutlineColor: {r: 1, g: 1, b: 1, a: 1}
+  OutlineDistance: {x: 4, y: -4}
+  ShadowColor: {r: 0, g: 0, b: 0, a: 0.3}
+  ShadowDistance: {x: 0, y: -10}
+  EnterOffset: 220
+  ExitOffset: 220

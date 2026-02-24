@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3bda8a648fc8144686982ac288f183d, type: 3}
+  m_Name: DockMagnifyToolbarEffectConfig_Auto
+  m_EditorClassIdentifier: Assembly-CSharp::DockMagnifyToolbarEffectConfig
+  PanelSize: {x: 760, y: 96}
+  PanelBottomOffset: 82
+  ItemGap: 16
+  ItemBaseBottomPadding: 12
+  BaseItemSize: 74
+  MagnifiedItemSize: 114
+  InfluenceDistance: 260
+  SpringSpeed: 12
+  FontSizeMin: 32
+  FontSizeMax: 44
+  PanelHeightClosed: 96
+  PanelHeightOpen: 136
+  PanelHeightLerpSpeed: 8
+  LabelFadeSpeed: 8
+  LabelSize: {x: 128, y: 34}
+  LabelOffsetMin: 8
+  LabelOffsetMax: 20
+  ClickPunchScale: {x: 0.12, y: 0.12, z: 0.12}
+  ClickPunchDuration: 0.22
+  ClickPunchVibrato: 1
+  ClickPunchElasticity: 0.4
+  BackdropColor: {r: 0.05, g: 0.07, b: 0.13, a: 0.88}
+  PlateAColor: {r: 0.24, g: 0.4, b: 0.74, a: 0.24}
+  PlateBColor: {r: 0.58, g: 0.29, b: 0.72, a: 0.2}
+  PanelColor: {r: 0.04, g: 0.06, b: 0.12, a: 0.95}
+  PanelBorderColor: {r: 1, g: 1, b: 1, a: 0.28}
+  PanelShadowColor: {r: 0, g: 0, b: 0, a: 0.36}
+  ItemOutlineColor: {r: 1, g: 1, b: 1, a: 0.24}
+  LabelRootColor: {r: 0.03, g: 0.05, b: 0.1, a: 0.95}
+  LabelBorderColor: {r: 1, g: 1, b: 1, a: 0.18}
+  LabelTextColor: {r: 0.9, g: 0.95, b: 1, a: 1}

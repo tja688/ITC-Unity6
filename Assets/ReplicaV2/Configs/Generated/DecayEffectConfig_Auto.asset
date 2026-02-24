@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8588413fd1c45764e955ba1d922d1b1f, type: 3}
+  m_Name: DecayEffectConfig_Auto
+  m_EditorClassIdentifier: Assembly-CSharp::DecayEffectConfig
+  Prefab: {fileID: 2236881308506208892, guid: 96ce7a76b94020542a9f195e6a21e156, type: 3}
+  CardSize: {x: 560, y: 700}
+  MoveBound: 50
+  PositionLerp: 0.1
+  RotationLerp: 0.1
+  DistortionLerp: 0.06
+  DistortionDistanceMax: 200
+  StripCount: 28
+  StripAmplitude: 18
+  StripAmplitudeStep: 0.4
+  StripWaveSpeed: 7.2
+  StripAlphaSpeed: 11.5
+  BasePhotoColor: {r: 0.36, g: 0.39, b: 0.46, a: 1}
+  ActivePhotoColor: {r: 0.7, g: 0.72, b: 0.77, a: 1}
+  GradientAColor: {r: 0.16, g: 0.25, b: 0.52, a: 0.45}
+  GradientBColor: {r: 0.57, g: 0.25, b: 0.22, a: 0.3}
+  TitleColor: {r: 0.98, g: 0.98, b: 1, a: 0.95}
+  SubtitleColor: {r: 0.84, g: 0.9, b: 1, a: 0.86}
+  SpriteImageType: 0
+  EnterOffset: 220
+  ExitOffset: 220

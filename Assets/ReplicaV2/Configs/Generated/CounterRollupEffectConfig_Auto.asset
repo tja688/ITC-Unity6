@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26355db7bfc36f74e9927e620ae8bf70, type: 3}
+  m_Name: CounterRollupEffectConfig_Auto
+  m_EditorClassIdentifier: Assembly-CSharp::CounterRollupEffectConfig
+  PanelSize: {x: 980, y: 380}
+  PanelPosition: {x: 0, y: -20}
+  CounterSize: {x: 760, y: 180}
+  CounterPosition: {x: 0, y: 0}
+  ColumnSpacing: 12
+  DigitSize: {x: 124, y: 132}
+  NumberSize: {x: 120, y: 124}
+  NumberFontSize: 112
+  Places: 10270000e8030000640000000a00000001000000
+  TweenDuration: 1.05
+  TweenEase: 8
+  BackdropColor: {r: 0.05, g: 0.07, b: 0.12, a: 0.88}
+  HintColor: {r: 0.93, g: 0.96, b: 1, a: 0.95}
+  PanelColor: {r: 0.1, g: 0.13, b: 0.22, a: 0.94}
+  DigitBackground: {r: 0.16, g: 0.2, b: 0.3, a: 0.92}
+  FadeOverlay: {r: 0.04, g: 0.05, b: 0.1, a: 0.72}
+  EnterOffset: 160
+  ExitOffset: 160

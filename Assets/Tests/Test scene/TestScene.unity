@@ -745,7 +745,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 2
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 4788813502628642330}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -4870,7 +4870,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   skeletonDataAsset: {fileID: 11400000, guid: 315df63672ab98e42a9013ac68973ea5, type: 2}
-  initialSkinName: default
+  initialSkinName: 
   initialFlipX: 0
   initialFlipY: 0
   startingAnimation: "AA\u5F85\u673A"
@@ -9431,6 +9431,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 342f0eb52c61dfc41a5ede698abd7446, type: 3}
+--- !u!20 &4788813502628642330 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 6955089324909553195, guid: 342f0eb52c61dfc41a5ede698abd7446, type: 3}
+  m_PrefabInstance: {fileID: 4788813502628642329}
+  m_PrefabAsset: {fileID: 0}
 --- !u!212 &4804036735782760506
 SpriteRenderer:
   serializedVersion: 2
@@ -14021,24 +14026,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2945673458449381336}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8603016422891395761
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8792301471544830771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1cacaa2202581e8439a0c332c51017ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eventName: EndDragUpThePneumaticChannelSkeleton
-  HoverEffect: {fileID: 0}
-  HoverRestoreEffect: {fileID: 0}
-  error: 2
-  targetType: DocumentJudge
-  EnableScale: 1
 --- !u!212 &8604701060609004079
 SpriteRenderer:
   serializedVersion: 2
@@ -14362,10 +14349,10 @@ GameObject:
   - component: {fileID: 2126519315680142184}
   - component: {fileID: 227468848063135141}
   - component: {fileID: 1894900067686603238}
-  - component: {fileID: 8603016422891395761}
   - component: {fileID: 4602940104739138150}
   - component: {fileID: 4642244968576004396}
   - component: {fileID: 7941294202781873548}
+  - component: {fileID: 8792301471544830772}
   m_Layer: 0
   m_Name: "\u6253\u5B57\u673A"
   m_TagString: Untagged
@@ -14373,6 +14360,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8792301471544830772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8792301471544830771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f726fb798ad621458c431cb9966d91d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: spine-unity::Spine.Unity.SkeletonUtility
+  boneRoot: {fileID: 0}
+  flipBy180DegreeRotation: 0
+  skeletonRenderer: {fileID: 0}
+  skeletonGraphic: {fileID: 1894900067686603238}
 --- !u!212 &8799433065595162319
 SpriteRenderer:
   serializedVersion: 2
