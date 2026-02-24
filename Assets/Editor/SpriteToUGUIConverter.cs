@@ -8,6 +8,7 @@ public class SpriteToUGUIConverter : EditorWindow
     [MenuItem("GameObject/Convert to World Canvas", false, 10)]
     [MenuItem("GameObject/Convert to World Canvas", false, 10)]
     [MenuItem("GameObject/Convert to World Canvas", false, 10)]
+    [MenuItem("GameObject/Convert to World Canvas", false, 10)]
     public static void ConvertSelectionToWorldCanvas()
     {
         GameObject selected = Selection.activeGameObject;
@@ -24,24 +25,26 @@ public class SpriteToUGUIConverter : EditorWindow
         GameObject canvasObj = new GameObject(selected.name + "_WorldCanvas");
         Undo.RegisterCreatedObjectUndo(canvasObj, "Create World Canvas");
         
-        // The Canvas represents the spatial container (the selected object)
         canvasObj.transform.position = selected.transform.position;
         canvasObj.transform.rotation = selected.transform.rotation;
-        canvasObj.transform.localScale = selected.transform.localScale;
+        
+        // Standard World Space Canvas Scale: 0.01 (1 unit = 100 pixels)
+        canvasObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 
         Canvas canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
         
-        canvasObj.AddComponent<CanvasScaler>();
+        CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
+        scaler.referencePixelsPerUnit = 100;
         canvasObj.AddComponent<GraphicRaycaster>();
 
-        // 2. Convert all children of the selected object
+        // 2. Convert all children
         ConvertRecursive(selected.transform, canvasObj.transform);
 
         Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
         
         Selection.activeGameObject = canvasObj;
-        Debug.Log($"Successfully converted {selected.name} children to UGUI World Canvas.");
+        Debug.Log($"Successfully converted {selected.name} to UGUI World Canvas (Standard 0.01 Scale).");
     }
 
     private static void ConvertRecursive(Transform source, Transform parentInCanvas)
@@ -77,8 +80,11 @@ public class SpriteToUGUIConverter : EditorWindow
         RectTransform rectTransform = newObj.AddComponent<RectTransform>();
         newObj.transform.SetParent(parent);
         
-        // Local mapping relative to parent (which matches source's parent structure)
-        rectTransform.localPosition = source.transform.localPosition;
+        // Factors for scale adjustment: since canvas is 0.01, local units are 100x pixel units
+        float unitToPixel = 100f;
+
+        // Local mapping relative to parent
+        rectTransform.localPosition = source.transform.localPosition * unitToPixel;
         rectTransform.localRotation = source.transform.localRotation;
         rectTransform.localScale = source.transform.localScale;
 
@@ -90,8 +96,9 @@ public class SpriteToUGUIConverter : EditorWindow
             img.color = sr.color;
             img.raycastTarget = false;
 
-            float width = sr.sprite.rect.width / sr.sprite.pixelsPerUnit;
-            float height = sr.sprite.rect.height / sr.sprite.pixelsPerUnit;
+            // Size in pixels
+            float width = sr.sprite.rect.width;
+            float height = sr.sprite.rect.height;
             rectTransform.sizeDelta = new Vector2(width, height);
             
             Vector2 pivot = sr.sprite.pivot;
@@ -99,7 +106,8 @@ public class SpriteToUGUIConverter : EditorWindow
             pivot.y /= sr.sprite.rect.height;
             rectTransform.pivot = pivot;
             
-            rectTransform.localPosition = source.transform.localPosition;
+            // Recalculate localPosition because pivot change on RectTransform might shift it
+            rectTransform.localPosition = source.transform.localPosition * unitToPixel;
 
             // Handle flip
             Vector3 localScale = rectTransform.localScale;
