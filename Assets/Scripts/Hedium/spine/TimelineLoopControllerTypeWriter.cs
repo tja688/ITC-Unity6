@@ -24,37 +24,120 @@ public class TimelineLoopControllerTypeWriter : MonoBehaviour
 
     private bool isOnGameTuneEnd = false;
     private bool isLineBroken = false;
+    private bool listenersRegistered = false;
+    private SlotCenter cachedSlotCenter;
+    private Coroutine waitForSlotCenterCoroutine;
     private void Awake()
     {
         skeletonGraphic = GetComponent<SkeletonGraphic>();
         director = GetComponent<PlayableDirector>(); ;
 
     }
+    private void OnEnable()
+    {
+        TryRegisterListenersOrWait();
+    }
+
     private void Start()
     {
-        if (SlotCenter.Instance == null)
-        {
-            Debug.LogError("SlotCenter 未初始化，TypeWriter 事件注册失败。");
-            return;
-        }
-
-        SlotCenter.Instance.add_listener(HeEventNames.LetStopTypeWriter, StopLoop);
-        SlotCenter.Instance.add_listener(HeEventNames.LetStartTypeWriter, StartLoop);
-        SlotCenter.Instance.add_listener(HeEventNames.LetContinueTypeWriter, ContinueLoop);
-        SlotCenter.Instance.add_listener(HeEventNames.LetLineBreakTypeWriter, LineBreak);
-
+        TryRegisterListenersOrWait();
     }
+
+    private void OnDisable()
+    {
+        StopWaitingForSlotCenter();
+        UnregisterListeners();
+    }
+
     private void OnDestroy()
     {
-        if (SlotCenter.Instance == null)
+        StopWaitingForSlotCenter();
+        UnregisterListeners();
+    }
+
+    private void StopWaitingForSlotCenter()
+    {
+        if (waitForSlotCenterCoroutine == null)
         {
             return;
         }
 
-        SlotCenter.Instance.remove_listener(HeEventNames.LetStopTypeWriter, StopLoop);
-        SlotCenter.Instance.remove_listener(HeEventNames.LetStartTypeWriter, StartLoop);
-        SlotCenter.Instance.remove_listener(HeEventNames.LetContinueTypeWriter, ContinueLoop);
-        SlotCenter.Instance.remove_listener(HeEventNames.LetLineBreakTypeWriter, LineBreak);
+        StopCoroutine(waitForSlotCenterCoroutine);
+        waitForSlotCenterCoroutine = null;
+    }
+
+    private void TryRegisterListenersOrWait()
+    {
+        if (listenersRegistered || !isActiveAndEnabled)
+        {
+            return;
+        }
+
+        if (TryRegisterListeners())
+        {
+            return;
+        }
+
+        if (waitForSlotCenterCoroutine == null)
+        {
+            waitForSlotCenterCoroutine = StartCoroutine(WaitAndRegisterListeners());
+        }
+    }
+
+    private bool TryRegisterListeners()
+    {
+        var slotCenter = SlotCenter.Instance;
+        if (slotCenter == null)
+        {
+            return false;
+        }
+
+        cachedSlotCenter = slotCenter;
+        cachedSlotCenter.add_listener(HeEventNames.LetStopTypeWriter, StopLoop);
+        cachedSlotCenter.add_listener(HeEventNames.LetStartTypeWriter, StartLoop);
+        cachedSlotCenter.add_listener(HeEventNames.LetContinueTypeWriter, ContinueLoop);
+        cachedSlotCenter.add_listener(HeEventNames.LetLineBreakTypeWriter, LineBreak);
+        listenersRegistered = true;
+        return true;
+    }
+
+    private IEnumerator WaitAndRegisterListeners()
+    {
+        const float timeoutSeconds = 5f;
+        float elapsed = 0f;
+
+        while (elapsed < timeoutSeconds && !listenersRegistered && isActiveAndEnabled)
+        {
+            if (TryRegisterListeners())
+            {
+                waitForSlotCenterCoroutine = null;
+                yield break;
+            }
+
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        waitForSlotCenterCoroutine = null;
+        if (!listenersRegistered)
+        {
+            Debug.LogError("SlotCenter 未初始化，TypeWriter 事件注册失败。");
+        }
+    }
+
+    private void UnregisterListeners()
+    {
+        if (!listenersRegistered || cachedSlotCenter == null)
+        {
+            return;
+        }
+
+        cachedSlotCenter.remove_listener(HeEventNames.LetStopTypeWriter, StopLoop);
+        cachedSlotCenter.remove_listener(HeEventNames.LetStartTypeWriter, StartLoop);
+        cachedSlotCenter.remove_listener(HeEventNames.LetContinueTypeWriter, ContinueLoop);
+        cachedSlotCenter.remove_listener(HeEventNames.LetLineBreakTypeWriter, LineBreak);
+        listenersRegistered = false;
+        cachedSlotCenter = null;
     }
     public void OnPausePoint()
     {

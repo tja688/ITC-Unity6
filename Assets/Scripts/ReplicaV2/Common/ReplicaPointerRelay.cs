@@ -54,6 +54,15 @@ public sealed class ReplicaPointerRelay : UIBehaviour,
             return false;
         }
 
+        if (eventCamera == null)
+        {
+            var canvas = target.GetComponentInParent<Canvas>();
+            if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            {
+                eventCamera = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
+            }
+        }
+
         return RectTransformUtility.ScreenPointToLocalPointInRectangle(target, ScreenPosition, eventCamera, out localPoint);
     }
 

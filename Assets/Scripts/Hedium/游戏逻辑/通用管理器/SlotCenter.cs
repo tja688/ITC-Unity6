@@ -77,6 +77,7 @@ public static class HeEventNames
 
 public class SlotCenter : MonoBehaviour
 {
+    private static bool autoCreatedAtRuntime;
 
     [Header("选择 HeEventNames 常量触发")]
     public HeEventNamesOption selectedEvent = HeEventNamesOption.DeliverDocumentEvent;
@@ -135,15 +136,48 @@ public class SlotCenter : MonoBehaviour
 
     public static SlotCenter Instance { get; private set; }
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void EnsureRuntimeInstance()
+    {
+        if (Instance != null)
+        {
+            return;
+        }
+
+        var existing = FindFirstObjectByType<SlotCenter>();
+        if (existing != null)
+        {
+            Instance = existing;
+            return;
+        }
+
+        var slotCenterObject = new GameObject(nameof(SlotCenter));
+        slotCenterObject.AddComponent<SlotCenter>();
+        autoCreatedAtRuntime = true;
+        Debug.Log("[SlotCenter] 场景中未找到 SlotCenter，已自动创建运行时实例。");
+    }
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            if (autoCreatedAtRuntime)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
         }
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (ReferenceEquals(Instance, this))
+        {
+            Instance = null;
         }
     }
 

@@ -64,6 +64,7 @@ namespace SevenStrikeModules.XTween
         /// </summary>
         [SerializeField]
         public static TweenConfigData ConfigData;
+        private static bool warnedMissingConfig;
 
         #region ThemeColor 主题色
         public static Color Theme_Primary { get; set; } = XTween_Utilitys.ConvertHexStringToColor("#3BFE9B");
@@ -76,9 +77,7 @@ namespace SevenStrikeModules.XTween
         [DidReloadScripts]
         public static void LoadThemes()
         {
-            //获取配置文件
-            string json = AssetDatabase.LoadAssetAtPath<TextAsset>(Get_path_XTween_Config_Path() + $"XTweenConfigData.json").text;
-            ConfigData = JsonUtility.FromJson<TweenConfigData>(json);
+            ConfigData = GetXTweenConfigData();
 
             Theme_Primary = XTween_Utilitys.ConvertHexStringToColor(ConfigData.Theme_Primary);
             Theme_Group = XTween_Utilitys.ConvertHexStringToColor(ConfigData.Theme_Group);
@@ -222,24 +221,96 @@ namespace SevenStrikeModules.XTween
         #region 读取配置文件参数
         public static TweenConfigData GetXTweenConfigData()
         {
-            string json = null;
+            if (ConfigData != null)
+            {
+                return ConfigData;
+            }
+
 #if UNITY_EDITOR
             //获取配置文件
-            json = AssetDatabase.LoadAssetAtPath<TextAsset>(Get_path_XTween_Config_Path() + $"XTweenConfigData.json").text;
+            var textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(Get_path_XTween_Config_Path() + "XTweenConfigData.json");
+            if (textAsset != null && !string.IsNullOrWhiteSpace(textAsset.text))
+            {
+                ConfigData = JsonUtility.FromJson<TweenConfigData>(textAsset.text);
+            }
 #else
-            json = Resources.Load<TextAsset>($"Config/XTweenConfigData").text;            
+            var textAsset = Resources.Load<TextAsset>("Config/XTweenConfigData");
+            if (textAsset != null && !string.IsNullOrWhiteSpace(textAsset.text))
+            {
+                ConfigData = JsonUtility.FromJson<TweenConfigData>(textAsset.text);
+            }
 #endif
-            ConfigData = JsonUtility.FromJson<TweenConfigData>(json);
+
+            if (ConfigData == null)
+            {
+                ConfigData = CreateDefaultConfigData();
+#if UNITY_EDITOR
+                TryWriteDefaultConfigFileInEditor(ConfigData);
+#endif
+                if (!warnedMissingConfig)
+                {
+                    warnedMissingConfig = true;
+                    Debug.Log("[XTween] 未找到 XTweenConfigData.json，已使用默认配置。");
+                }
+            }
 
             //Debug.Log(ConfigData);
             return ConfigData;
         }
 
+        private static TweenConfigData CreateDefaultConfigData()
+        {
+            return new TweenConfigData
+            {
+                Theme_Primary = "#3BFE9B",
+                Theme_Group = "#1E1E1E",
+                Theme_SeperateLine = "#535353",
+                LiquidScanStyle = false,
+                LiquidDirty = false,
+                LiquidBlinker = 0,
+                LiquidColor_Playing = "#94AC59",
+                LiquidColor_Idle = "#778456",
+                PoolCount_Int = 64,
+                PoolCount_Float = 64,
+                PoolCount_String = 64,
+                PoolCount_Vector2 = 64,
+                PoolCount_Vector3 = 64,
+                PoolCount_Vector4 = 64,
+                PoolCount_Quaternion = 64,
+                PoolCount_Color = 64,
+                PoolRecyleAllOnSceneUnloaded = false,
+                PoolRecyleAllOnSceneLoaded = false,
+                PreviewOption_AutoKillPreviewTweens = false,
+                PreviewOption_RewindPreviewTweensWithKill = false,
+                PreviewOption_ClearPreviewTweensWithKill = false,
+            };
+        }
+
+#if UNITY_EDITOR
+        private static void TryWriteDefaultConfigFileInEditor(TweenConfigData config)
+        {
+            var configPath = Get_path_XTween_Config_Path() + "XTweenConfigData.json";
+            if (File.Exists(configPath))
+            {
+                return;
+            }
+
+            Directory.CreateDirectory(Get_path_XTween_Config_Path());
+            File.WriteAllText(configPath, JsonUtility.ToJson(config, true));
+        }
+#endif
+
         public static void SavePreviewOptionsToXTweenConfigData()
         {
 #if UNITY_EDITOR
+            if (ConfigData == null)
+            {
+                ConfigData = GetXTweenConfigData();
+            }
+
             // 保存预览选项参数
             string json = JsonUtility.ToJson(ConfigData);
+            Directory.CreateDirectory(Get_path_XTween_Config_Path());
             // 使用StreamWriter写入文件
             using (StreamWriter writer = new StreamWriter(Get_path_XTween_Config_Path() + $"XTweenConfigData.json"))
             {
@@ -296,6 +367,10 @@ namespace SevenStrikeModules.XTween
         /// <returns></returns>
         public static void Set_PreviewOption_AutoKillPreviewTweens(bool state)
         {
+            if (ConfigData == null)
+            {
+                GetXTweenConfigData();
+            }
             ConfigData.PreviewOption_AutoKillPreviewTweens = state;
         }
 
@@ -305,6 +380,10 @@ namespace SevenStrikeModules.XTween
         /// <returns></returns>
         public static void Set_PreviewOption_RewindPreviewTweensWithKill(bool state)
         {
+            if (ConfigData == null)
+            {
+                GetXTweenConfigData();
+            }
             ConfigData.PreviewOption_RewindPreviewTweensWithKill = state;
         }
 
@@ -314,6 +393,10 @@ namespace SevenStrikeModules.XTween
         /// <returns></returns>
         public static void Set_PreviewOption_ClearPreviewTweensWithKill(bool state)
         {
+            if (ConfigData == null)
+            {
+                GetXTweenConfigData();
+            }
             ConfigData.PreviewOption_ClearPreviewTweensWithKill = state;
         }
         #endregion

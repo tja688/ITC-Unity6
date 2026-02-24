@@ -22,13 +22,20 @@ public sealed class MagnetEffectHostBridge : MonoBehaviour, IReplicaShowcaseBrid
     private ReplicaPointerRelay mPointerRelay;
     private MagnetEffectController mController;
     private MagnetEffectModel mModel;
+    private MagnetEffectConfig mRuntimeConfig;
 
     private void Awake()
     {
 #if UNITY_EDITOR
-        if (mPrefabOverwrite == null)
+        // If this host is already attached to a baked view prefab (has linker),
+        // force-clear overwrite to avoid nested-host recursion.
+        if (TryGetComponent<MagnetViewLinker>(out _))
         {
-            mPrefabOverwrite = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ReplicaV2/Prefabs/Effects/MagnetEffect_Baked.prefab");
+            mPrefabOverwrite = null;
+        }
+        else if (mPrefabOverwrite == null)
+        {
+            mPrefabOverwrite = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ReplicaV2/Prefabs/Effects/Magnet_Baked.prefab");
         }
 #endif
         if (!TryGetComponent(out mRootRect))
@@ -128,11 +135,25 @@ public sealed class MagnetEffectHostBridge : MonoBehaviour, IReplicaShowcaseBrid
             mUseUnscaledTime);
 
         mController = new MagnetEffectController();
-        if (mPrefabOverwrite != null && mConfig != null)
+        var initConfig = mConfig;
+        if (mConfig != null)
         {
-            mConfig.Prefab = mPrefabOverwrite;
+            mRuntimeConfig = ScriptableObject.Instantiate(mConfig);
+            if (mPrefabOverwrite != null)
+            {
+                mRuntimeConfig.Prefab = mPrefabOverwrite;
+            }
+
+            initConfig = mRuntimeConfig;
         }
-        mController.Initialize(context, mConfig);
+        else if (mPrefabOverwrite != null)
+        {
+            mRuntimeConfig = ScriptableObject.CreateInstance<MagnetEffectConfig>();
+            mRuntimeConfig.Prefab = mPrefabOverwrite;
+            initConfig = mRuntimeConfig;
+        }
+
+        mController.Initialize(context, initConfig);
     }
 
     private void DisposeController()
@@ -144,6 +165,12 @@ public sealed class MagnetEffectHostBridge : MonoBehaviour, IReplicaShowcaseBrid
 
         mController.Dispose();
         mController = null;
+
+        if (mRuntimeConfig != null)
+        {
+            Destroy(mRuntimeConfig);
+            mRuntimeConfig = null;
+        }
     }
 
     private void EnsureModel()

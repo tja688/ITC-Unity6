@@ -1,0 +1,23 @@
+{
+    "Theme_Primary": "#3BFE9B",
+    "Theme_Group": "#1E1E1E",
+    "Theme_SeperateLine": "#535353",
+    "LiquidScanStyle": false,
+    "LiquidDirty": false,
+    "LiquidBlinker": 0,
+    "LiquidColor_Playing": "#94AC59",
+    "LiquidColor_Idle": "#778456",
+    "PoolCount_Int": 64,
+    "PoolCount_Float": 64,
+    "PoolCount_String": 64,
+    "PoolCount_Vector2": 64,
+    "PoolCount_Vector3": 64,
+    "PoolCount_Vector4": 64,
+    "PoolCount_Quaternion": 64,
+    "PoolCount_Color": 64,
+    "PoolRecyleAllOnSceneUnloaded": false,
+    "PoolRecyleAllOnSceneLoaded": false,
+    "PreviewOption_AutoKillPreviewTweens": false,
+    "PreviewOption_RewindPreviewTweensWithKill": false,
+    "PreviewOption_ClearPreviewTweensWithKill": false
+}
