@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01c99fb6f910e244c8f4841f4b5c8118, type: 3}
   m_Name: TiltedCardEffectConfig_Auto
   m_EditorClassIdentifier: Assembly-CSharp::TiltedCardEffectConfig
-  Prefab: {fileID: 5794765683326698817, guid: 2c883982436313642b3db0be082bbd49, type: 3}
+  Prefab: {fileID: 2242482696432619813, guid: 26abd9a0644462142a05020d166be88a, type: 3}
   FrameSize: {x: 560, y: 400}
   CardSize: {x: 420, y: 280}
   TooltipSize: {x: 140, y: 30}
