@@ -53,8 +53,21 @@ public static class SignUiSpineWrapperPatcher
                 continue;
             }
 
+            var localCenter = GetVisualCenterLocal(target);
+            var centerOffset = GetCenterOffsetInParentSpace(target, localCenter);
+
+            if (parent.name.EndsWith(WrapperSuffix))
+            {
+                Undo.RecordObject(parent, "Recenter Existing Spine Wrapper");
+                Undo.RecordObject(target, "Recenter Existing Spine Target");
+
+                parent.anchoredPosition3D += target.anchoredPosition3D + centerOffset;
+                target.anchoredPosition3D = -centerOffset;
+                patchedCount++;
+                continue;
+            }
+
             var wrapper = CreateWrapper(parent, target);
-            var centerOffset = GetCenterOffsetInParentSpace(target);
 
             wrapper.anchoredPosition3D = target.anchoredPosition3D + centerOffset;
 
@@ -93,11 +106,6 @@ public static class SignUiSpineWrapperPatcher
                 continue;
             }
 
-            if (rect.parent && rect.parent.name.EndsWith(WrapperSuffix))
-            {
-                continue;
-            }
-
             result.Add(rect);
         }
 
@@ -123,15 +131,95 @@ public static class SignUiSpineWrapperPatcher
         return wrapper;
     }
 
-    private static Vector3 GetCenterOffsetInParentSpace(RectTransform rectTransform)
+    private static Vector3 GetCenterOffsetInParentSpace(RectTransform rectTransform, Vector3 localCenterOffset)
     {
-        var localCenterOffset = new Vector3(
+        var scaledOffset = Vector3.Scale(localCenterOffset, rectTransform.localScale);
+        return rectTransform.localRotation * scaledOffset;
+    }
+
+    private static Vector3 GetVisualCenterLocal(RectTransform rectTransform)
+    {
+        if (TryGetVisualCenterLocal(rectTransform, out var center))
+        {
+            return center;
+        }
+
+        return new Vector3(
             (0.5f - rectTransform.pivot.x) * rectTransform.rect.width,
             (0.5f - rectTransform.pivot.y) * rectTransform.rect.height,
             0f);
+    }
 
-        var scaledOffset = Vector3.Scale(localCenterOffset, rectTransform.localScale);
-        return rectTransform.localRotation * scaledOffset;
+    private static bool TryGetVisualCenterLocal(RectTransform rectTransform, out Vector3 center)
+    {
+        center = Vector3.zero;
+
+        var skeletonGraphic = rectTransform.GetComponent<SkeletonGraphic>();
+        if (!skeletonGraphic)
+        {
+            return false;
+        }
+
+        if (!skeletonGraphic.IsValid)
+        {
+            skeletonGraphic.Initialize(false);
+        }
+
+        skeletonGraphic.UpdateMesh();
+        var mesh = skeletonGraphic.GetLastMesh();
+        if (!mesh || mesh.vertexCount == 0)
+        {
+            return false;
+        }
+
+        mesh.RecalculateBounds();
+        center = GetVisibleMeshCenter(mesh);
+        return true;
+    }
+
+    private static Vector3 GetVisibleMeshCenter(Mesh mesh)
+    {
+        var vertices = mesh.vertices;
+        if (vertices == null || vertices.Length == 0)
+        {
+            return mesh.bounds.center;
+        }
+
+        var colors = mesh.colors32;
+        var canFilterByAlpha = colors != null && colors.Length == vertices.Length;
+
+        var hasVisibleVertex = false;
+        var visibleBounds = new Bounds();
+        var visibleVertexSum = Vector3.zero;
+        var visibleVertexCount = 0;
+
+        for (var i = 0; i < vertices.Length; i++)
+        {
+            if (canFilterByAlpha && colors[i].a == 0)
+            {
+                continue;
+            }
+
+            if (!hasVisibleVertex)
+            {
+                visibleBounds = new Bounds(vertices[i], Vector3.zero);
+                hasVisibleVertex = true;
+            }
+            else
+            {
+                visibleBounds.Encapsulate(vertices[i]);
+            }
+
+            visibleVertexSum += vertices[i];
+            visibleVertexCount++;
+        }
+
+        if (visibleVertexCount > 0)
+        {
+            return visibleVertexSum / visibleVertexCount;
+        }
+
+        return hasVisibleVertex ? visibleBounds.center : mesh.bounds.center;
     }
 
     [MenuItem(ValidateMenuPath)]
@@ -167,20 +255,34 @@ public static class SignUiSpineWrapperPatcher
             }
 
             var originalScale = wrapper.localScale;
+            var originalRotation = wrapper.localRotation;
             var centerBefore = GetVisualCenterWorld(child);
 
             wrapper.localScale = Vector3.Scale(originalScale, new Vector3(1.1f, 1.1f, 1f));
-            var centerAfter = GetVisualCenterWorld(child);
+            var centerAfterScale = GetVisualCenterWorld(child);
             wrapper.localScale = originalScale;
 
-            var drift = Vector3.Distance(centerBefore, centerAfter);
-            if (drift > maxDrift)
+            wrapper.localRotation = originalRotation * Quaternion.Euler(0f, 0f, 15f);
+            var centerAfterRotate = GetVisualCenterWorld(child);
+            wrapper.localRotation = originalRotation;
+
+            var scaleDrift = Vector3.Distance(centerBefore, centerAfterScale);
+            var rotateDrift = Vector3.Distance(centerBefore, centerAfterRotate);
+            var drift = Mathf.Max(scaleDrift, rotateDrift);
+
+            if (scaleDrift > maxDrift)
             {
-                maxDrift = drift;
+                maxDrift = scaleDrift;
+            }
+
+            if (rotateDrift > maxDrift)
+            {
+                maxDrift = rotateDrift;
             }
 
             checkedCount++;
-            Debug.Log($"[SignUiSpineWrapperPatcher] Stability '{wrapper.name}': center drift={drift:F6}");
+            Debug.Log(
+                $"[SignUiSpineWrapperPatcher] Stability '{wrapper.name}': scaleDrift={scaleDrift:F6}, rotateDrift={rotateDrift:F6}, maxDrift={drift:F6}");
         }
 
         Debug.Log($"[SignUiSpineWrapperPatcher] Stability check done. checked={checkedCount}, maxDrift={maxDrift:F6}");
@@ -188,11 +290,7 @@ public static class SignUiSpineWrapperPatcher
 
     private static Vector3 GetVisualCenterWorld(RectTransform rectTransform)
     {
-        var localCenterOffset = new Vector3(
-            (0.5f - rectTransform.pivot.x) * rectTransform.rect.width,
-            (0.5f - rectTransform.pivot.y) * rectTransform.rect.height,
-            0f);
-
+        var localCenterOffset = GetVisualCenterLocal(rectTransform);
         return rectTransform.TransformPoint(localCenterOffset);
     }
 }
