@@ -133,6 +133,17 @@ namespace ITC.Dialogue
                                   signDialogueSlotRuntime.IsRoutingEnabled;
             bool suppressLegacyVisual = useSignRouting &&
                                         signDialogueSlotRuntime.ShouldSuppressLegacyPresenterVisuals;
+            bool useLegacyTextAnimator = !suppressLegacyVisual && textAnimator != null && typewriter != null;
+
+            if (textAnimator != null)
+            {
+                textAnimator.enabled = useLegacyTextAnimator;
+            }
+
+            if (typewriter != null)
+            {
+                typewriter.enabled = useLegacyTextAnimator;
+            }
 
             // 1. 处理角色名
             string characterName = line.CharacterName;
@@ -166,14 +177,22 @@ namespace ITC.Dialogue
             onTextShowComplete = () => textShowCompletionSource.TrySetResult(true);
             isSkipping = false;
 
-            // 快进优化：如果处于快进模式，禁用渐入特效，确保文字能立即被看见
-            if (DialogueContinueHandler.IsFastForwarding)
+            if (useLegacyTextAnimator)
             {
-                textAnimator.SetAppearancesActive(false);
-            }
+                // 快进优化：如果处于快进模式，禁用渐入特效，确保文字能立即被看见
+                if (DialogueContinueHandler.IsFastForwarding)
+                {
+                    textAnimator.SetAppearancesActive(false);
+                }
 
-            // 使用 TextAnimator 设置文本并启动打字机
-            textAnimator.SetText(normalizedDisplayText, true);
+                // 使用 TextAnimator 设置文本并启动打字机
+                textAnimator.SetText(normalizedDisplayText, true);
+            }
+            else
+            {
+                // SignSlot 路由下，显示逻辑由 SignDialogueSlotRuntime 托管。
+                textShowCompletionSource.TrySetResult(true);
+            }
 
             // 4. 淡入 UI
             // 快进优化：快进模式下不进行渐入动画
@@ -215,21 +234,34 @@ namespace ITC.Dialogue
             }
 
             // 5. 启动打字机
-            typewriter.StartShowingText(true);
-
-            // 5.1 边界情况：纯标签无可见文本
-            if (textAnimator.CharactersCount == 0)
+            if (useLegacyTextAnimator)
             {
-                textShowCompletionSource.TrySetResult(true);
+                typewriter.StartShowingText(true);
+
+                // 5.1 边界情况：纯标签无可见文本
+                if (textAnimator.CharactersCount == 0)
+                {
+                    textShowCompletionSource.TrySetResult(true);
+                }
             }
 
             // 6. 注册加速/跳过处理
             using var hurryUpRegistration = token.HurryUpToken.Register(() =>
             {
-                if (isShowingLine && typewriter != null)
+                if (!isShowingLine)
+                {
+                    return;
+                }
+
+                if (useLegacyTextAnimator && typewriter != null)
                 {
                     isSkipping = true;
                     typewriter.SkipTypewriter();
+                    isTextFullyShown = true;
+                    textShowCompletionSource.TrySetResult(true);
+                }
+                else
+                {
                     isTextFullyShown = true;
                     textShowCompletionSource.TrySetResult(true);
                 }
@@ -239,7 +271,10 @@ namespace ITC.Dialogue
             await textShowCompletionSource.Task;
 
             // 恢复特效状态
-            textAnimator.SetAppearancesActive(true);
+            if (useLegacyTextAnimator)
+            {
+                textAnimator.SetAppearancesActive(true);
+            }
 
             isTextFullyShown = true;
             isSkipping = false;

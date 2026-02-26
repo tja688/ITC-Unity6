@@ -58,6 +58,7 @@ namespace ITC.Dialogue
         [SerializeField] private OptionsPresenter optionsPresenter;
         [SerializeField] private RectTransform panelRect;
         [SerializeField] private RectTransform textRoot;
+        [SerializeField] private RectTransform optionsPanelRect;
 
         [Header("Startup")]
         [SerializeField] private bool autoStartDialogueIfIdle = true;
@@ -68,6 +69,7 @@ namespace ITC.Dialogue
         [SerializeField] private RectTransform npcSlot2Frame;
         [SerializeField] private RectTransform playerSlot1Frame;
         [SerializeField] private RectTransform npcHistoryScrollArea;
+        [SerializeField] private Vector2 optionsPanelPadding = new(140f, 110f);
 
         [Header("Text Template")]
         [SerializeField] private TMP_Text textTemplate;
@@ -100,6 +102,10 @@ namespace ITC.Dialogue
         [SerializeField] private float textFadeDuration = 0.18f;
         [SerializeField] private float textSlideDistance = 20f;
         [SerializeField] private Ease textEase = Ease.OutCubic;
+        [SerializeField] private bool animateFrameShells = true;
+        [SerializeField] private float frameMoveDuration = 0.24f;
+        [SerializeField] private float frameFlipAngle = 72f;
+        [SerializeField] private Ease frameShellEase = Ease.OutCubic;
 
         [Header("History Limits")]
         [SerializeField] private int maxNpcHistoryRecords = 128;
@@ -135,6 +141,20 @@ namespace ITC.Dialogue
         private CanvasGroup npcSlot1Group;
         private CanvasGroup npcSlot2Group;
         private CanvasGroup playerSlot1Group;
+        private CanvasGroup npcSlot1FrameGroup;
+        private CanvasGroup npcSlot2FrameGroup;
+        private CanvasGroup playerSlot1FrameGroup;
+
+        private bool frameDefaultsCaptured;
+        private Vector2 npcSlot1FrameDefaultAnchoredPosition;
+        private Vector2 npcSlot2FrameDefaultAnchoredPosition;
+        private Vector2 playerSlot1FrameDefaultAnchoredPosition;
+        private Vector3 npcSlot1FrameDefaultScale;
+        private Vector3 npcSlot2FrameDefaultScale;
+        private Vector3 playerSlot1FrameDefaultScale;
+        private Vector3 npcSlot1FrameDefaultEuler;
+        private Vector3 npcSlot2FrameDefaultEuler;
+        private Vector3 playerSlot1FrameDefaultEuler;
 
         public bool IsRoutingEnabled => enableSignSlotRouting;
         public bool ShouldSuppressLegacyPresenterVisuals => suppressLegacyPresenterVisuals;
@@ -146,6 +166,7 @@ namespace ITC.Dialogue
             EnsureDialogueRunnerPresenters();
             BuildPlayerSpeakerLookup();
             EnsureTextHierarchy();
+            EnsureFrameShellBindings();
             EnsureOverlayHierarchy();
             HideAllSlotsImmediately();
         }
@@ -160,6 +181,7 @@ namespace ITC.Dialogue
             TryFindSceneReferences();
             EnsureDialogueRunnerPresenters();
             RegisterCommands();
+            EnsureFrameShellBindings();
             SyncAllContainersToFrames();
             if (placeholderOverlayGroup != null)
             {
@@ -253,6 +275,10 @@ namespace ITC.Dialogue
 
             SetSlotVisible(npcSlot1Group, keepVisible);
             SetSlotVisible(npcSlot2Group, false);
+            SetShellVisible(npcSlot1FrameGroup, keepVisible);
+            SetShellVisible(npcSlot2FrameGroup, false);
+            ResetFrameShellToDefault(npcSlot1Frame, npcSlot1FrameDefaultAnchoredPosition, npcSlot1FrameDefaultScale, npcSlot1FrameDefaultEuler);
+            ResetFrameShellToDefault(npcSlot2Frame, npcSlot2FrameDefaultAnchoredPosition, npcSlot2FrameDefaultScale, npcSlot2FrameDefaultEuler);
         }
 
         public void HideNpcCycle()
@@ -265,6 +291,10 @@ namespace ITC.Dialogue
             pointerInsideHistoryArea = false;
             SetSlotVisible(npcSlot1Group, false);
             SetSlotVisible(npcSlot2Group, false);
+            SetShellVisible(npcSlot1FrameGroup, false);
+            SetShellVisible(npcSlot2FrameGroup, false);
+            ResetFrameShellToDefault(npcSlot1Frame, npcSlot1FrameDefaultAnchoredPosition, npcSlot1FrameDefaultScale, npcSlot1FrameDefaultEuler);
+            ResetFrameShellToDefault(npcSlot2Frame, npcSlot2FrameDefaultAnchoredPosition, npcSlot2FrameDefaultScale, npcSlot2FrameDefaultEuler);
         }
 
         private void TryFindSceneReferences()
@@ -287,6 +317,11 @@ namespace ITC.Dialogue
             if (optionsPresenter == null)
             {
                 optionsPresenter = GetComponentInChildren<OptionsPresenter>(true);
+            }
+
+            if (optionsPanelRect == null && optionsPresenter != null)
+            {
+                optionsPanelRect = optionsPresenter.transform as RectTransform;
             }
 
             if (textTemplate == null)
@@ -382,6 +417,11 @@ namespace ITC.Dialogue
             if (optionsPresenter != null && textRoot.GetSiblingIndex() >= optionsPresenter.transform.GetSiblingIndex())
             {
                 textRoot.SetSiblingIndex(Mathf.Max(0, optionsPresenter.transform.GetSiblingIndex() - 1));
+            }
+
+            if (optionsPanelRect == null && optionsPresenter != null)
+            {
+                optionsPanelRect = optionsPresenter.transform as RectTransform;
             }
         }
 
@@ -559,6 +599,56 @@ namespace ITC.Dialogue
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
             rect.localScale = Vector3.one;
+        }
+
+        private void EnsureFrameShellBindings()
+        {
+            npcSlot1FrameGroup = EnsureCanvasGroup(npcSlot1Frame);
+            npcSlot2FrameGroup = EnsureCanvasGroup(npcSlot2Frame);
+            playerSlot1FrameGroup = EnsureCanvasGroup(playerSlot1Frame);
+            CaptureFrameDefaults();
+        }
+
+        private void CaptureFrameDefaults()
+        {
+            if (frameDefaultsCaptured)
+            {
+                return;
+            }
+
+            CaptureFrameDefault(
+                npcSlot1Frame,
+                ref npcSlot1FrameDefaultAnchoredPosition,
+                ref npcSlot1FrameDefaultScale,
+                ref npcSlot1FrameDefaultEuler);
+            CaptureFrameDefault(
+                npcSlot2Frame,
+                ref npcSlot2FrameDefaultAnchoredPosition,
+                ref npcSlot2FrameDefaultScale,
+                ref npcSlot2FrameDefaultEuler);
+            CaptureFrameDefault(
+                playerSlot1Frame,
+                ref playerSlot1FrameDefaultAnchoredPosition,
+                ref playerSlot1FrameDefaultScale,
+                ref playerSlot1FrameDefaultEuler);
+
+            frameDefaultsCaptured = npcSlot1Frame != null || npcSlot2Frame != null || playerSlot1Frame != null;
+        }
+
+        private static void CaptureFrameDefault(
+            RectTransform frame,
+            ref Vector2 anchoredPosition,
+            ref Vector3 scale,
+            ref Vector3 euler)
+        {
+            if (frame == null)
+            {
+                return;
+            }
+
+            anchoredPosition = frame.anchoredPosition;
+            scale = frame.localScale;
+            euler = frame.localEulerAngles;
         }
 
         private void RegisterCommands()
@@ -975,6 +1065,8 @@ namespace ITC.Dialogue
 
             SetSlotVisible(npcSlot1Group, true);
             SetSlotVisible(npcSlot2Group, slot2DefaultIndex >= 0);
+            SetShellVisible(npcSlot1FrameGroup, true);
+            SetShellVisible(npcSlot2FrameGroup, slot2DefaultIndex >= 0);
             PlayNpcUpdateAnimation(hasPreviousLatest, slot2DefaultIndex >= 0);
         }
 
@@ -986,6 +1078,7 @@ namespace ITC.Dialogue
             }
 
             SetSlotVisible(playerSlot1Group, true);
+            SetShellVisible(playerSlot1FrameGroup, true);
             PlayTextTransition(playerSlot1Group, playerSlot1Text, 1f);
         }
 
@@ -1006,6 +1099,8 @@ namespace ITC.Dialogue
             {
                 PlayTextTransition(npcSlot2Group, npcSlot2Text, -1f);
             }
+
+            PlayFrameShellShiftAnimation(hasPreviousLatest, hasSlot2);
         }
 
         private void PlayTextTransition(CanvasGroup group, TMP_Text text, float direction)
@@ -1069,6 +1164,7 @@ namespace ITC.Dialogue
                         slot2BrowseIndex = nextIndex;
                         RefreshSlot2TextByIndex(slot2BrowseIndex);
                         PlayTextTransition(npcSlot2Group, npcSlot2Text, -Mathf.Sign(delta));
+                        PlayFrameShellFlipAnimation(-Mathf.Sign(delta));
                     }
                 }
             }
@@ -1081,6 +1177,7 @@ namespace ITC.Dialogue
                     slot2BrowseIndex = slot2DefaultIndex;
                     RefreshSlot2TextByIndex(slot2BrowseIndex);
                     PlayTextTransition(npcSlot2Group, npcSlot2Text, direction);
+                    PlayFrameShellFlipAnimation(direction);
                 }
             }
 
@@ -1123,6 +1220,13 @@ namespace ITC.Dialogue
             SyncContainerToFrame(npcSlot2Frame, npcSlot2Container, npcSlotPadding);
             SyncContainerToFrame(playerSlot1Frame, playerSlot1Container, playerSlotPadding);
             SyncContainerToFrame(npcSlot2Frame, npcHistoryScrollArea, Vector2.zero);
+
+            if (optionsPanelRect == null && optionsPresenter != null)
+            {
+                optionsPanelRect = optionsPresenter.transform as RectTransform;
+            }
+
+            SyncContainerToFrame(playerSlot1Frame, optionsPanelRect, optionsPanelPadding);
         }
 
         private void SyncContainerToFrame(RectTransform frame, RectTransform container, Vector2 padding)
@@ -1162,6 +1266,12 @@ namespace ITC.Dialogue
             SetSlotVisible(npcSlot1Group, false);
             SetSlotVisible(npcSlot2Group, false);
             SetSlotVisible(playerSlot1Group, false);
+            SetShellVisible(npcSlot1FrameGroup, false);
+            SetShellVisible(npcSlot2FrameGroup, false);
+            SetShellVisible(playerSlot1FrameGroup, false);
+            ResetFrameShellToDefault(npcSlot1Frame, npcSlot1FrameDefaultAnchoredPosition, npcSlot1FrameDefaultScale, npcSlot1FrameDefaultEuler);
+            ResetFrameShellToDefault(npcSlot2Frame, npcSlot2FrameDefaultAnchoredPosition, npcSlot2FrameDefaultScale, npcSlot2FrameDefaultEuler);
+            ResetFrameShellToDefault(playerSlot1Frame, playerSlot1FrameDefaultAnchoredPosition, playerSlot1FrameDefaultScale, playerSlot1FrameDefaultEuler);
         }
 
         private static void SetSlotVisible(CanvasGroup group, bool visible)
@@ -1172,6 +1282,97 @@ namespace ITC.Dialogue
             }
 
             group.alpha = visible ? 1f : 0f;
+        }
+
+        private static void SetShellVisible(CanvasGroup group, bool visible)
+        {
+            if (group == null)
+            {
+                return;
+            }
+
+            group.DOKill();
+            group.alpha = visible ? 1f : 0f;
+        }
+
+        private static void ResetFrameShellToDefault(
+            RectTransform frame,
+            Vector2 defaultAnchoredPosition,
+            Vector3 defaultScale,
+            Vector3 defaultEuler)
+        {
+            if (frame == null)
+            {
+                return;
+            }
+
+            frame.DOKill();
+            frame.anchoredPosition = defaultAnchoredPosition;
+            frame.localScale = defaultScale == Vector3.zero ? Vector3.one : defaultScale;
+            frame.localEulerAngles = defaultEuler;
+        }
+
+        private void PlayFrameShellShiftAnimation(bool hasPreviousLatest, bool hasSlot2)
+        {
+            if (!animateFrameShells || !frameDefaultsCaptured)
+            {
+                return;
+            }
+
+            if (npcSlot1Frame != null)
+            {
+                npcSlot1Frame.DOKill();
+                npcSlot1Frame.anchoredPosition = npcSlot1FrameDefaultAnchoredPosition + new Vector2(0f, -14f);
+                npcSlot1Frame.localScale = npcSlot1FrameDefaultScale * 0.95f;
+                npcSlot1Frame.localEulerAngles = npcSlot1FrameDefaultEuler;
+
+                npcSlot1Frame
+                    .DOAnchorPos(npcSlot1FrameDefaultAnchoredPosition, frameMoveDuration)
+                    .SetUpdate(true)
+                    .SetEase(frameShellEase);
+                npcSlot1Frame
+                    .DOScale(npcSlot1FrameDefaultScale, frameMoveDuration)
+                    .SetUpdate(true)
+                    .SetEase(Ease.OutBack);
+            }
+
+            if (hasPreviousLatest && hasSlot2 && npcSlot2Frame != null)
+            {
+                npcSlot2Frame.DOKill();
+                var slot2Start = npcSlot1Frame != null
+                    ? npcSlot1FrameDefaultAnchoredPosition + new Vector2(0f, -10f)
+                    : npcSlot2FrameDefaultAnchoredPosition + new Vector2(0f, -12f);
+                npcSlot2Frame.anchoredPosition = slot2Start;
+                npcSlot2Frame.localScale = npcSlot2FrameDefaultScale * 0.93f;
+                npcSlot2Frame.localEulerAngles = npcSlot2FrameDefaultEuler + new Vector3(frameFlipAngle, 0f, 0f);
+
+                var seq = DOTween.Sequence().SetUpdate(true);
+                seq.Join(npcSlot2Frame
+                    .DOAnchorPos(npcSlot2FrameDefaultAnchoredPosition, frameMoveDuration)
+                    .SetEase(frameShellEase));
+                seq.Join(npcSlot2Frame
+                    .DOScale(npcSlot2FrameDefaultScale, frameMoveDuration)
+                    .SetEase(Ease.OutBack));
+                seq.Join(npcSlot2Frame
+                    .DOLocalRotate(npcSlot2FrameDefaultEuler, frameMoveDuration)
+                    .SetEase(Ease.OutCubic));
+            }
+        }
+
+        private void PlayFrameShellFlipAnimation(float direction)
+        {
+            if (!animateFrameShells || !frameDefaultsCaptured || npcSlot2Frame == null)
+            {
+                return;
+            }
+
+            npcSlot2Frame.DOKill();
+            var signedDirection = Mathf.Abs(direction) < 0.01f ? -1f : Mathf.Sign(direction);
+            npcSlot2Frame.localEulerAngles = npcSlot2FrameDefaultEuler + new Vector3(frameFlipAngle * signedDirection, 0f, 0f);
+            npcSlot2Frame
+                .DOLocalRotate(npcSlot2FrameDefaultEuler, textFadeDuration)
+                .SetUpdate(true)
+                .SetEase(Ease.OutCubic);
         }
 
         private void AppendTrace(SignDialogueRole role, string speaker, string text)

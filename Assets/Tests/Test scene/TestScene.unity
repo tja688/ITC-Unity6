@@ -3619,6 +3619,7 @@ GameObject:
   - component: {fileID: 6171889450684896082}
   - component: {fileID: 1050335887616172676}
   - component: {fileID: 8211551196686269757}
+  - component: {fileID: 8211551196686269758}
   m_Layer: 0
   m_Name: DialogueRunner
   m_TagString: Untagged
@@ -3754,12 +3755,14 @@ MonoBehaviour:
   optionsPresenter: {fileID: 4420366758149674715}
   panelRect: {fileID: 212151767337356475}
   textRoot: {fileID: 0}
+  optionsPanelRect: {fileID: 0}
   autoStartDialogueIfIdle: 1
   startupNodeName: Start
   npcSlot1Frame: {fileID: 2046183469}
   npcSlot2Frame: {fileID: 478265753}
   playerSlot1Frame: {fileID: 128955817}
   npcHistoryScrollArea: {fileID: 0}
+  optionsPanelPadding: {x: 140, y: 110}
   textTemplate: {fileID: 2571944346029015680}
   npcSlotPadding: {x: 120, y: 72}
   playerSlotPadding: {x: 120, y: 72}
@@ -3786,7 +3789,11 @@ MonoBehaviour:
   textFadeDuration: 0.18
   textSlideDistance: 20
   textEase: 9
-  maxNpcHistoryRecords: 128
+  animateFrameShells: 1
+  frameMoveDuration: 0.24
+  frameFlipAngle: 72
+  frameShellEase: 9
+  maxNpcHistoryRecords: 0
   maxTraceRecords: 256
   verboseTraceLog: 0
   placeholderCompleteKey: 39
@@ -3932,6 +3939,25 @@ MonoBehaviour:
   _assetLocaleCode: zh
   _useFallback: 0
   _fallbackLocaleCode: zh
+--- !u!114 &8211551196686269758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6934471665127515701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0c988427655071449f24a46cedf4a0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.Testing.SignDialogueTestLoopDriver
+  dialogueRunner: {fileID: 0}
+  startNode: Start
+  initialStartDelaySeconds: 0.2
+  autoRestartOnComplete: 1
+  restartDelaySeconds: 0.6
+  allowManualRestart: 1
+  manualRestartKey: 32
 --- !u!224 &8245833741970114747
 RectTransform:
   m_ObjectHideFlags: 0
