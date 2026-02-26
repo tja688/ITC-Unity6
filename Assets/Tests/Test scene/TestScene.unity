@@ -3763,6 +3763,8 @@ MonoBehaviour:
   playerSlot1Frame: {fileID: 128955817}
   npcHistoryScrollArea: {fileID: 0}
   optionsPanelPadding: {x: 140, y: 110}
+  optionsPanelOffset: {x: 0, y: 0}
+  normalizeOptionsPanelAnchorToCenter: 1
   textTemplate: {fileID: 2571944346029015680}
   npcSlotPadding: {x: 120, y: 72}
   playerSlotPadding: {x: 120, y: 72}
@@ -3790,9 +3792,16 @@ MonoBehaviour:
   textSlideDistance: 20
   textEase: 9
   animateFrameShells: 1
-  frameMoveDuration: 0.24
-  frameFlipAngle: 72
+  frameMoveDuration: 0.52
+  frameFlipAngle: 84
   frameShellEase: 9
+  animateHistoryScrollFrameFlip: 1
+  historyScrollFlipAngle: 18
+  historyScrollFlipDuration: 0.12
+  freezeHistoryHitAreaWhileBrowsing: 1
+  npcSlot1RefreshDelayRatio: 0.5
+  slot2CarryFadeFrom: 0.45
+  slot2CarryTextNudge: 24
   maxNpcHistoryRecords: 0
   maxTraceRecords: 256
   verboseTraceLog: 0

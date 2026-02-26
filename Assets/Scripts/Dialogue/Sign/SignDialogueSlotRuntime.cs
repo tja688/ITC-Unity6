@@ -70,6 +70,8 @@ namespace ITC.Dialogue
         [SerializeField] private RectTransform playerSlot1Frame;
         [SerializeField] private RectTransform npcHistoryScrollArea;
         [SerializeField] private Vector2 optionsPanelPadding = new(140f, 110f);
+        [SerializeField] private Vector2 optionsPanelOffset = Vector2.zero;
+        [SerializeField] private bool normalizeOptionsPanelAnchorToCenter = true;
 
         [Header("Text Template")]
         [SerializeField] private TMP_Text textTemplate;
@@ -103,9 +105,16 @@ namespace ITC.Dialogue
         [SerializeField] private float textSlideDistance = 20f;
         [SerializeField] private Ease textEase = Ease.OutCubic;
         [SerializeField] private bool animateFrameShells = true;
-        [SerializeField] private float frameMoveDuration = 0.24f;
+        [SerializeField] private float frameMoveDuration = 0.46f;
         [SerializeField] private float frameFlipAngle = 72f;
         [SerializeField] private Ease frameShellEase = Ease.OutCubic;
+        [SerializeField] private bool animateHistoryScrollFrameFlip = true;
+        [SerializeField] private float historyScrollFlipAngle = 22f;
+        [SerializeField] private float historyScrollFlipDuration = 0.14f;
+        [SerializeField] private bool freezeHistoryHitAreaWhileBrowsing = true;
+        [SerializeField, Range(0f, 1f)] private float npcSlot1RefreshDelayRatio = 0.42f;
+        [SerializeField] private float slot2CarryFadeFrom = 0.55f;
+        [SerializeField] private float slot2CarryTextNudge = 16f;
 
         [Header("History Limits")]
         [SerializeField] private int maxNpcHistoryRecords = 128;
@@ -751,6 +760,11 @@ namespace ITC.Dialogue
                 mutated = true;
             }
 
+            if (TrySetRunnerOptionFallthrough(dialogueRunner, false))
+            {
+                mutated = true;
+            }
+
             if (mutated && Application.isEditor && !Application.isPlaying)
             {
                 // Keep this scene fix persisted after save.
@@ -781,6 +795,43 @@ namespace ITC.Dialogue
             }
 
             return null;
+        }
+
+        private static bool TrySetRunnerOptionFallthrough(DialogueRunner runner, bool value)
+        {
+            if (runner == null)
+            {
+                return false;
+            }
+
+            var runnerType = runner.GetType();
+            var field = runnerType.GetField("allowOptionFallthrough", RunnerBindingFlags);
+            if (field != null && field.FieldType == typeof(bool))
+            {
+                var current = (bool)field.GetValue(runner);
+                if (current == value)
+                {
+                    return false;
+                }
+
+                field.SetValue(runner, value);
+                return true;
+            }
+
+            var property = runnerType.GetProperty("AllowOptionFallthrough", RunnerBindingFlags);
+            if (property != null && property.PropertyType == typeof(bool) && property.CanRead && property.CanWrite)
+            {
+                var current = (bool)property.GetValue(runner);
+                if (current == value)
+                {
+                    return false;
+                }
+
+                property.SetValue(runner, value);
+                return true;
+            }
+
+            return false;
         }
 
         private void UnregisterCommands()
@@ -1094,16 +1145,50 @@ namespace ITC.Dialogue
 
         private void PlayNpcUpdateAnimation(bool hasPreviousLatest, bool hasSlot2)
         {
-            PlayTextTransition(npcSlot1Group, npcSlot1Text, 1f);
             if (hasPreviousLatest && hasSlot2)
             {
-                PlayTextTransition(npcSlot2Group, npcSlot2Text, -1f);
+                var slot1Delay = Mathf.Max(0f, frameMoveDuration * Mathf.Clamp01(npcSlot1RefreshDelayRatio));
+                PlaySlot2CarryOverAnimation();
+                PlayTextTransition(npcSlot1Group, npcSlot1Text, 1f, slot1Delay);
+            }
+            else
+            {
+                PlayTextTransition(npcSlot1Group, npcSlot1Text, 1f);
+                if (hasSlot2)
+                {
+                    PlayTextTransition(npcSlot2Group, npcSlot2Text, -1f);
+                }
             }
 
             PlayFrameShellShiftAnimation(hasPreviousLatest, hasSlot2);
         }
 
-        private void PlayTextTransition(CanvasGroup group, TMP_Text text, float direction)
+        private void PlaySlot2CarryOverAnimation()
+        {
+            if (npcSlot2Group == null || npcSlot2Text == null)
+            {
+                return;
+            }
+
+            npcSlot2Group.DOKill();
+            npcSlot2Text.rectTransform.DOKill();
+
+            var duration = Mathf.Max(textFadeDuration, frameMoveDuration * 0.85f);
+            npcSlot2Group.alpha = Mathf.Clamp01(slot2CarryFadeFrom);
+            npcSlot2Text.rectTransform.anchoredPosition = new Vector2(0f, -Mathf.Abs(slot2CarryTextNudge));
+
+            npcSlot2Group
+                .DOFade(1f, duration)
+                .SetUpdate(true)
+                .SetEase(Ease.OutCubic);
+
+            npcSlot2Text.rectTransform
+                .DOAnchorPos(Vector2.zero, duration)
+                .SetUpdate(true)
+                .SetEase(textEase);
+        }
+
+        private void PlayTextTransition(CanvasGroup group, TMP_Text text, float direction, float delay = 0f)
         {
             if (group == null || text == null)
             {
@@ -1113,18 +1198,36 @@ namespace ITC.Dialogue
             group.DOKill();
             text.rectTransform.DOKill();
 
-            text.rectTransform.anchoredPosition = new Vector2(0f, direction * textSlideDistance);
+            void Animate()
+            {
+                if (group == null || text == null)
+                {
+                    return;
+                }
+
+                text.rectTransform.anchoredPosition = new Vector2(0f, direction * textSlideDistance);
+                group.alpha = 0f;
+
+                group
+                    .DOFade(1f, textFadeDuration)
+                    .SetUpdate(true)
+                    .SetEase(textEase);
+
+                text.rectTransform
+                    .DOAnchorPos(Vector2.zero, textFadeDuration)
+                    .SetUpdate(true)
+                    .SetEase(textEase);
+            }
+
+            if (delay <= 0.001f)
+            {
+                Animate();
+                return;
+            }
+
             group.alpha = 0f;
-
-            group
-                .DOFade(1f, textFadeDuration)
-                .SetUpdate(true)
-                .SetEase(textEase);
-
-            text.rectTransform
-                .DOAnchorPos(Vector2.zero, textFadeDuration)
-                .SetUpdate(true)
-                .SetEase(textEase);
+            text.rectTransform.anchoredPosition = new Vector2(0f, direction * textSlideDistance);
+            DOVirtual.DelayedCall(delay, Animate, true).SetUpdate(true);
         }
 
         private void UpdateHistoryScrollInput()
@@ -1196,7 +1299,35 @@ namespace ITC.Dialogue
                 return false;
             }
 
-            if (optionsPresenter.transform.childCount <= 0)
+            var optionItems = optionsPresenter.GetComponentsInChildren<OptionItem>(true);
+            var hasActiveInteractableOption = false;
+            foreach (var item in optionItems)
+            {
+                if (item == null || !item.gameObject.activeInHierarchy)
+                {
+                    continue;
+                }
+
+                if (item.interactable)
+                {
+                    hasActiveInteractableOption = true;
+                    break;
+                }
+            }
+
+            if (!hasActiveInteractableOption)
+            {
+                for (var i = 0; i < optionsPresenter.transform.childCount; i++)
+                {
+                    if (optionsPresenter.transform.GetChild(i).gameObject.activeInHierarchy)
+                    {
+                        hasActiveInteractableOption = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!hasActiveInteractableOption)
             {
                 return false;
             }
@@ -1219,14 +1350,17 @@ namespace ITC.Dialogue
             SyncContainerToFrame(npcSlot1Frame, npcSlot1Container, npcSlotPadding);
             SyncContainerToFrame(npcSlot2Frame, npcSlot2Container, npcSlotPadding);
             SyncContainerToFrame(playerSlot1Frame, playerSlot1Container, playerSlotPadding);
-            SyncContainerToFrame(npcSlot2Frame, npcHistoryScrollArea, Vector2.zero);
+            if (!freezeHistoryHitAreaWhileBrowsing || !browsingHistory)
+            {
+                SyncContainerToFrame(npcSlot2Frame, npcHistoryScrollArea, Vector2.zero);
+            }
 
             if (optionsPanelRect == null && optionsPresenter != null)
             {
                 optionsPanelRect = optionsPresenter.transform as RectTransform;
             }
 
-            SyncContainerToFrame(playerSlot1Frame, optionsPanelRect, optionsPanelPadding);
+            SyncOptionsPanelToFrame(playerSlot1Frame, optionsPanelRect);
         }
 
         private void SyncContainerToFrame(RectTransform frame, RectTransform container, Vector2 padding)
@@ -1259,6 +1393,43 @@ namespace ITC.Dialogue
             container.sizeDelta = new Vector2(
                 Mathf.Max(16f, localWidth - padding.x),
                 Mathf.Max(16f, localHeight - padding.y));
+        }
+
+        private void SyncOptionsPanelToFrame(RectTransform frame, RectTransform optionsRect)
+        {
+            if (frame == null || optionsRect == null || panelRect == null)
+            {
+                return;
+            }
+
+            if (normalizeOptionsPanelAnchorToCenter)
+            {
+                optionsRect.anchorMin = new Vector2(0.5f, 0.5f);
+                optionsRect.anchorMax = new Vector2(0.5f, 0.5f);
+                optionsRect.pivot = new Vector2(0.5f, 0.5f);
+            }
+
+            var eventCamera = rootCanvas != null ? rootCanvas.worldCamera : null;
+            var frameCenterWorld = frame.TransformPoint(frame.rect.center);
+            var frameCenterScreen = RectTransformUtility.WorldToScreenPoint(eventCamera, frameCenterWorld);
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    panelRect,
+                    frameCenterScreen,
+                    eventCamera,
+                    out var frameCenterLocal))
+            {
+                optionsRect.anchoredPosition = frameCenterLocal + optionsPanelOffset;
+            }
+
+            frame.GetWorldCorners(frameWorldCorners);
+            var worldWidth = Vector3.Distance(frameWorldCorners[0], frameWorldCorners[3]);
+            var worldHeight = Vector3.Distance(frameWorldCorners[0], frameWorldCorners[1]);
+            var panelScale = panelRect.lossyScale;
+            var localWidth = worldWidth / Mathf.Max(0.0001f, panelScale.x);
+            var localHeight = worldHeight / Mathf.Max(0.0001f, panelScale.y);
+            optionsRect.sizeDelta = new Vector2(
+                Mathf.Max(16f, localWidth - optionsPanelPadding.x),
+                Mathf.Max(16f, localHeight - optionsPanelPadding.y));
         }
 
         private void HideAllSlotsImmediately()
@@ -1322,8 +1493,8 @@ namespace ITC.Dialogue
             if (npcSlot1Frame != null)
             {
                 npcSlot1Frame.DOKill();
-                npcSlot1Frame.anchoredPosition = npcSlot1FrameDefaultAnchoredPosition + new Vector2(0f, -14f);
-                npcSlot1Frame.localScale = npcSlot1FrameDefaultScale * 0.95f;
+                npcSlot1Frame.anchoredPosition = npcSlot1FrameDefaultAnchoredPosition + new Vector2(0f, -26f);
+                npcSlot1Frame.localScale = npcSlot1FrameDefaultScale * 0.90f;
                 npcSlot1Frame.localEulerAngles = npcSlot1FrameDefaultEuler;
 
                 npcSlot1Frame
@@ -1340,11 +1511,11 @@ namespace ITC.Dialogue
             {
                 npcSlot2Frame.DOKill();
                 var slot2Start = npcSlot1Frame != null
-                    ? npcSlot1FrameDefaultAnchoredPosition + new Vector2(0f, -10f)
+                    ? npcSlot1FrameDefaultAnchoredPosition
                     : npcSlot2FrameDefaultAnchoredPosition + new Vector2(0f, -12f);
                 npcSlot2Frame.anchoredPosition = slot2Start;
-                npcSlot2Frame.localScale = npcSlot2FrameDefaultScale * 0.93f;
-                npcSlot2Frame.localEulerAngles = npcSlot2FrameDefaultEuler + new Vector3(frameFlipAngle, 0f, 0f);
+                npcSlot2Frame.localScale = npcSlot1Frame != null ? npcSlot1FrameDefaultScale : npcSlot2FrameDefaultScale * 0.97f;
+                npcSlot2Frame.localEulerAngles = npcSlot2FrameDefaultEuler + new Vector3(frameFlipAngle * 0.65f, 0f, 0f);
 
                 var seq = DOTween.Sequence().SetUpdate(true);
                 seq.Join(npcSlot2Frame
@@ -1361,16 +1532,18 @@ namespace ITC.Dialogue
 
         private void PlayFrameShellFlipAnimation(float direction)
         {
-            if (!animateFrameShells || !frameDefaultsCaptured || npcSlot2Frame == null)
+            if (!animateFrameShells || !animateHistoryScrollFrameFlip || !frameDefaultsCaptured || npcSlot2Frame == null)
             {
                 return;
             }
 
             npcSlot2Frame.DOKill();
             var signedDirection = Mathf.Abs(direction) < 0.01f ? -1f : Mathf.Sign(direction);
-            npcSlot2Frame.localEulerAngles = npcSlot2FrameDefaultEuler + new Vector3(frameFlipAngle * signedDirection, 0f, 0f);
+            var flipAngle = Mathf.Max(0f, historyScrollFlipAngle);
+            var flipDuration = Mathf.Max(0.01f, historyScrollFlipDuration);
+            npcSlot2Frame.localEulerAngles = npcSlot2FrameDefaultEuler + new Vector3(flipAngle * signedDirection, 0f, 0f);
             npcSlot2Frame
-                .DOLocalRotate(npcSlot2FrameDefaultEuler, textFadeDuration)
+                .DOLocalRotate(npcSlot2FrameDefaultEuler, flipDuration)
                 .SetUpdate(true)
                 .SetEase(Ease.OutCubic);
         }
