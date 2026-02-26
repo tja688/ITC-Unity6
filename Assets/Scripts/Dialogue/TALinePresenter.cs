@@ -36,6 +36,10 @@ namespace ITC.Dialogue
         [Tooltip("可选：单独用于文本区域的 CanvasGroup，用于行间过渡。如果设置，行间切换只淡入淡出文本，不影响角色名和按钮")]
         [SerializeField] private CanvasGroup lineTextCanvasGroup;
 
+        [Header("Sign Scene Routing")]
+        [SerializeField] private bool routeToSignSlots = false;
+        [SerializeField] private SignDialogueSlotRuntime signDialogueSlotRuntime;
+
         [Header("显示设置")]
         [SerializeField] private bool showCharacterName = true;
         [SerializeField] private bool useFadeEffect = true;
@@ -80,6 +84,11 @@ namespace ITC.Dialogue
             if (typewriter == null)
                 typewriter = GetComponent<TypewriterComponent>();
 
+            if (signDialogueSlotRuntime == null)
+            {
+                signDialogueSlotRuntime = FindFirstObjectByType<SignDialogueSlotRuntime>();
+            }
+
             CacheBaselineEffectTags();
 
             // 初始隐藏
@@ -119,9 +128,15 @@ namespace ITC.Dialogue
             isTextFullyShown = false;
             onLineStart?.Invoke();
 
+            bool useSignRouting = routeToSignSlots &&
+                                  signDialogueSlotRuntime != null &&
+                                  signDialogueSlotRuntime.IsRoutingEnabled;
+            bool suppressLegacyVisual = useSignRouting &&
+                                        signDialogueSlotRuntime.ShouldSuppressLegacyPresenterVisuals;
+
             // 1. 处理角色名
             string characterName = line.CharacterName;
-            if (showCharacterName && characterNameText != null && !string.IsNullOrEmpty(characterName))
+            if (!suppressLegacyVisual && showCharacterName && characterNameText != null && !string.IsNullOrEmpty(characterName))
             {
                 characterNameText.text = characterName;
                 characterNameText.gameObject.SetActive(true);
@@ -139,6 +154,11 @@ namespace ITC.Dialogue
                 out var lineAppearanceTags,
                 out var lineDisappearanceTags);
             ApplyLineDefaultTags(lineAppearanceTags, lineDisappearanceTags);
+
+            if (useSignRouting)
+            {
+                signDialogueSlotRuntime.RouteLine(characterName, normalizedDisplayText);
+            }
 
             // 3. 设置文本（隐藏），避免淡入时显示上一行文字
             var textShowCompletionSource = new System.Threading.Tasks.TaskCompletionSource<bool>();
@@ -159,7 +179,19 @@ namespace ITC.Dialogue
             // 快进优化：快进模式下不进行渐入动画
             float actualFadeInDuration = DialogueContinueHandler.IsFastForwarding ? 0 : fadeInDuration;
 
-            if (useFadeEffect && canvasGroup != null)
+            if (suppressLegacyVisual)
+            {
+                if (canvasGroup != null)
+                {
+                    canvasGroup.alpha = 0f;
+                }
+
+                if (lineTextCanvasGroup != null)
+                {
+                    lineTextCanvasGroup.alpha = 0f;
+                }
+            }
+            else if (useFadeEffect && canvasGroup != null)
             {
                 if (isFirstLineOfDialogue)
                 {
@@ -230,7 +262,19 @@ namespace ITC.Dialogue
             // 快进优化：快进模式下不进行渐出动画
             float actualFadeOutDuration = DialogueContinueHandler.IsFastForwarding ? 0 : fadeOutDuration;
 
-            if (useFadeEffect && lineTextCanvasGroup != null)
+            if (suppressLegacyVisual)
+            {
+                if (canvasGroup != null)
+                {
+                    canvasGroup.alpha = 0f;
+                }
+
+                if (lineTextCanvasGroup != null)
+                {
+                    lineTextCanvasGroup.alpha = 0f;
+                }
+            }
+            else if (useFadeEffect && lineTextCanvasGroup != null)
             {
                 await FadeAlphaAsync(lineTextCanvasGroup, 1, 0, actualFadeOutDuration, token.HurryUpToken);
             }

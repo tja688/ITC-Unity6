@@ -181,4 +181,28 @@ Authoring Rules:
 Validation:
 - Confirmed both paths exist in workspace; set `.agent` as canonical for this skill update.
 
+#### UPD-20260225-03: Add sign-scene dialogue routing test commands
+Why:
+- Sign-scene acceptance now needs explicit NPC/player routing and a placeholder minigame gate directly from Yarn, without invoking legacy minigame implementations.
+
+Source Files:
+- `Assets/Scripts/Dialogue/Sign/SignDialogueSlotRuntime.cs`
+- `Assets/Tests/Test dialogue/TestMinigames.yarn`
+
+Added/Changed Contract:
+- New Yarn commands registered by sign-scene runtime:
+  - `<<itc_sign_npc_enter npcId>>`: reset current NPC cycle/history and enter a new NPC phase.
+  - `<<itc_sign_npc_exit>>`: hide NPC cycle display and clear current NPC history.
+  - `<<itc_sign_role role>>`: set line role override (`npc | player | thought | auto`).
+  - `<<itc_sign_minigame token>>`: show placeholder overlay minigame and wait for completion key before continuing.
+
+Authoring Rules:
+- For sign-scene test scripts, use `itc_sign_npc_enter` when switching active NPC so Slot2 history scope resets deterministically.
+- Use `itc_sign_role player/thought` before player/inner-monologue lines and return with `itc_sign_role auto` afterward.
+- Use `itc_sign_minigame <token>` for blocking-flow placeholder verification instead of legacy gameplay commands during test-stage acceptance.
+
+Validation:
+- Updated and linted `Assets/Tests/Test dialogue/TestMinigames.yarn` via:
+  - `.\.agent\skills\itc-yarn-authoring\scripts\check_yarn.ps1 -Path "Assets/Tests/Test dialogue/TestMinigames.yarn"`
+
 <!-- ITC-YARN-AUTHORING:UPDATE-END -->

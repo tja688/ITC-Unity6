@@ -18,6 +18,7 @@ namespace ITC.Dialogue
         [Header("对话系统")]
         [SerializeField] private DialogueRunner dialogueRunner;
         [SerializeField] private TALinePresenter linePresenter;
+        [SerializeField] private SignDialogueSlotRuntime signDialogueSlotRuntime;
 
         [Header("输入设置")]
         [SerializeField] private bool useMouseClick = true;
@@ -64,6 +65,11 @@ namespace ITC.Dialogue
                 linePresenter = FindFirstObjectByType<TALinePresenter>();
             }
 
+            if (signDialogueSlotRuntime == null)
+            {
+                signDialogueSlotRuntime = FindFirstObjectByType<SignDialogueSlotRuntime>();
+            }
+
             // 绑定按钮事件
             if (continueButton != null)
             {
@@ -90,8 +96,18 @@ namespace ITC.Dialogue
 
             if (IsFastForwarding)
             {
+                if (IsContinueBlocked())
+                {
+                    return;
+                }
+
                 HandleFastForwardRhythm();
                 return; // 快进时跳过其他常规输入检测
+            }
+
+            if (IsContinueBlocked())
+            {
+                return;
             }
 
             // 重置状态计时
@@ -204,6 +220,11 @@ namespace ITC.Dialogue
 
         private void RequestContinueOrNext()
         {
+            if (IsContinueBlocked())
+            {
+                return;
+            }
+
             if (linePresenter != null && linePresenter.IsShowingLine)
             {
                 if (!linePresenter.IsTextFullyShown)
@@ -230,6 +251,7 @@ namespace ITC.Dialogue
         public void RequestContinue()
         {
             if (dialogueRunner == null) return;
+            if (IsContinueBlocked()) return;
 
             if (linePresenter != null && linePresenter.IsShowingLine)
             {
@@ -246,7 +268,13 @@ namespace ITC.Dialogue
         public void RequestSkip()
         {
             if (dialogueRunner == null) return;
+            if (IsContinueBlocked()) return;
             dialogueRunner.RequestHurryUpLine();
+        }
+
+        private bool IsContinueBlocked()
+        {
+            return signDialogueSlotRuntime != null && signDialogueSlotRuntime.IsContinueInputBlocked;
         }
     }
 }
