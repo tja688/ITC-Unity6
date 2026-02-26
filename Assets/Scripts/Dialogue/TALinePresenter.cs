@@ -93,7 +93,14 @@ namespace ITC.Dialogue
 
             // 初始隐藏
             if (canvasGroup != null)
-                canvasGroup.alpha = 0;
+            {
+                canvasGroup.alpha = IsSignLegacyVisualSuppressed() ? 1f : 0f;
+            }
+
+            if (lineTextCanvasGroup != null && IsSignLegacyVisualSuppressed())
+            {
+                lineTextCanvasGroup.alpha = 0f;
+            }
         }
 
         private void OnEnable()
@@ -202,7 +209,8 @@ namespace ITC.Dialogue
             {
                 if (canvasGroup != null)
                 {
-                    canvasGroup.alpha = 0f;
+                    // SignSlot 路由模式下只隐藏 legacy 文本层，不能隐藏整个 Panel。
+                    canvasGroup.alpha = 1f;
                 }
 
                 if (lineTextCanvasGroup != null)
@@ -301,7 +309,8 @@ namespace ITC.Dialogue
             {
                 if (canvasGroup != null)
                 {
-                    canvasGroup.alpha = 0f;
+                    // SignSlot 路由模式下保持整体可见，只关闭 legacy 文本层。
+                    canvasGroup.alpha = 1f;
                 }
 
                 if (lineTextCanvasGroup != null)
@@ -332,14 +341,33 @@ namespace ITC.Dialogue
         {
             // 对话开始时重置状态
             isFirstLineOfDialogue = true;
+            if (IsSignLegacyVisualSuppressed())
+            {
+                if (canvasGroup != null)
+                    canvasGroup.alpha = 1f;
+
+                if (lineTextCanvasGroup != null)
+                    lineTextCanvasGroup.alpha = 0f;
+            }
+
             return YarnTask.CompletedTask;
         }
 
         public override YarnTask OnDialogueCompleteAsync()
         {
             // 对话结束时隐藏 UI
-            if (canvasGroup != null)
+            if (IsSignLegacyVisualSuppressed())
+            {
+                if (canvasGroup != null)
+                    canvasGroup.alpha = 1f;
+
+                if (lineTextCanvasGroup != null)
+                    lineTextCanvasGroup.alpha = 0f;
+            }
+            else if (canvasGroup != null)
+            {
                 canvasGroup.alpha = 0;
+            }
 
             return YarnTask.CompletedTask;
         }
@@ -431,6 +459,14 @@ namespace ITC.Dialogue
             }
 
             return text.Substring(contentStart);
+        }
+
+        private bool IsSignLegacyVisualSuppressed()
+        {
+            return routeToSignSlots &&
+                   signDialogueSlotRuntime != null &&
+                   signDialogueSlotRuntime.IsRoutingEnabled &&
+                   signDialogueSlotRuntime.ShouldSuppressLegacyPresenterVisuals;
         }
 
         private static bool TryParseLeadingPipeTags(string text, out List<PipeOpeningTag> openingTags, out int contentStart)
