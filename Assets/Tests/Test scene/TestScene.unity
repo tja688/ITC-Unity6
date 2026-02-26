@@ -1982,10 +1982,7 @@ GameObject:
   - component: {fileID: 1593323585586432516}
   - component: {fileID: 8450659397483903890}
   - component: {fileID: 8979594802013904366}
-  - component: {fileID: 2089912283000329353}
   - component: {fileID: 5387868830014753354}
-  - component: {fileID: 6397004131870886758}
-  - component: {fileID: 4818196138726371937}
   m_Layer: 0
   m_Name: "\u5951\u7EA6\u7BA1\u9053"
   m_TagString: Untagged
@@ -2345,20 +2342,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &2089912283000329353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 935503772878587114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45c9cf5dc5bfc3044bbae59369411525, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HoverEffect: {fileID: 0}
-  HoverEffectRestore: {fileID: 0}
 --- !u!224 &2126519315680142184
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2750,7 +2733,6 @@ GameObject:
   - component: {fileID: 6796253962251831146}
   - component: {fileID: 3824619086011131720}
   - component: {fileID: 1094243865809624465}
-  - component: {fileID: 7089889928890032966}
   m_Layer: 0
   m_Name: "\u5706\u5F62\u5370\u7AE0"
   m_TagString: Untagged
@@ -2758,24 +2740,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &3737413370770533293
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4315622304699833350}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a12f572049a617044bc57f0feeeaa89a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animationNameClick: "\u4E09\u89D2\u5370\u7AE0\u4E0B"
-  animationNameRelease: "\u4E09\u89D2\u5370\u7AE0\u5F39\u51FA"
-  enableOnceClick: 1
-  clickMMf: {fileID: 0}
-  clickMMfRestore: {fileID: 0}
-  IsStamp: 0
 --- !u!222 &3824619086011131720
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2958,7 +2922,6 @@ GameObject:
   - component: {fileID: 4326426038121771107}
   - component: {fileID: 7587646116187892740}
   - component: {fileID: 4188228452569265192}
-  - component: {fileID: 3737413370770533293}
   m_Layer: 0
   m_Name: "\u4E09\u89D2\u5370\u7AE0"
   m_TagString: Untagged
@@ -3028,64 +2991,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &4567961694474801562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4978437403701233426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a12f572049a617044bc57f0feeeaa89a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animationNameClick: "\u7403\u5F62\u5370\u7AE0\u4E0B"
-  animationNameRelease: "\u7403\u5F62\u5370\u7AE0\u5F39\u51FA"
-  enableOnceClick: 1
-  clickMMf: {fileID: 0}
-  clickMMfRestore: {fileID: 0}
-  IsStamp: 0
---- !u!320 &4602940104739138150
-PlayableDirector:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8792301471544830771}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: c8d399390ba167e409034962c8a2efd7, type: 2}
-  m_InitialState: 0
-  m_WrapMode: 2
-  m_DirectorUpdateMode: 1
-  m_InitialTime: 0
-  m_SceneBindings:
-  - key: {fileID: 4359072538833811627, guid: c8d399390ba167e409034962c8a2efd7, type: 2}
-    value: {fileID: 1894900067686603238}
-  - key: {fileID: 3925641877041614144, guid: c8d399390ba167e409034962c8a2efd7, type: 2}
-    value: {fileID: 7941294202781873548}
-  m_ExposedReferences:
-    m_References:
-    - ec694206e5e8a1d4fa7b31ceed053b95: {fileID: 0}
---- !u!114 &4642244968576004396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8792301471544830771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 411074e8fdeb23145b36609f331404b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  EndAnimation: {fileID: 11400000, guid: fb0c51d86120158429410a2f43a35001, type: 2}
-  loop: 1
-  loopPoint: 4.0333
-  thisTurnIsNotBlock: 0
-  LineBreakPoint: 5.133333
-  enablePause: 1
 --- !u!1 &4656246919996578030
 GameObject:
   m_ObjectHideFlags: 0
@@ -3181,24 +3086,6 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 6955089324909553195, guid: 342f0eb52c61dfc41a5ede698abd7446, type: 3}
   m_PrefabInstance: {fileID: 4788813502628642329}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4818196138726371937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 935503772878587114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a12f572049a617044bc57f0feeeaa89a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animationNameClick: 
-  animationNameRelease: 
-  enableOnceClick: 1
-  clickMMf: {fileID: 0}
-  clickMMfRestore: {fileID: 0}
-  IsStamp: 0
 --- !u!1 &4978437403701233426
 GameObject:
   m_ObjectHideFlags: 0
@@ -3210,7 +3097,6 @@ GameObject:
   - component: {fileID: 2444415455478596162}
   - component: {fileID: 8629019300900576094}
   - component: {fileID: 8296341324621916856}
-  - component: {fileID: 4567961694474801562}
   m_Layer: 0
   m_Name: "\u7403\u5F62\u5370\u7AE0"
   m_TagString: Untagged
@@ -3362,7 +3248,6 @@ GameObject:
   - component: {fileID: 5935664401981408461}
   - component: {fileID: 211102787267430932}
   - component: {fileID: 2823818390072743212}
-  - component: {fileID: 7041146870317896955}
   - component: {fileID: 1792420132992470953}
   m_Layer: 0
   m_Name: "\u83F1\u5F62\u5370\u7AE0"
@@ -3529,21 +3414,6 @@ MonoBehaviour:
   onUnhandledCommand:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &6397004131870886758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 935503772878587114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 839e69ec9bf96ea4f9602523066d4e38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sk: {fileID: 0}
-  image: {fileID: 0}
-  rectTrans: {fileID: 1593323585586432516}
 --- !u!1 &6490465840378260106
 GameObject:
   m_ObjectHideFlags: 0
@@ -3627,42 +3497,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &7041146870317896955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5230307415062569865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a12f572049a617044bc57f0feeeaa89a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animationNameClick: "\u83F1\u5F62\u5370\u7AE0\u4E0B"
-  animationNameRelease: "\u83F1\u5F62\u5370\u7AE0\u5F39\u51FA"
-  enableOnceClick: 1
-  clickMMf: {fileID: 0}
-  clickMMfRestore: {fileID: 0}
-  IsStamp: 0
---- !u!114 &7089889928890032966
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3388519577916573456}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a12f572049a617044bc57f0feeeaa89a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animationNameClick: "\u5706\u5F62\u5370\u7AE0\u4E0B"
-  animationNameRelease: "\u5706\u5F62\u5370\u7AE0\u5F39\u51FA"
-  enableOnceClick: 1
-  clickMMf: {fileID: 0}
-  clickMMfRestore: {fileID: 0}
-  IsStamp: 0
 --- !u!224 &7328856722880627896
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3857,81 +3691,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &7941294202781873548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8792301471544830771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Events:
-    m_Signals:
-    - {fileID: 11400000, guid: 041d9a917ad2d234ba83a0a61a95fc84, type: 2}
-    - {fileID: 11400000, guid: e8e6add4742fd2241b868c68167b3a86, type: 2}
-    - {fileID: 11400000, guid: 08a1f2742a0c93344bcefa8e91fdb565, type: 2}
-    - {fileID: 11400000, guid: baae11cdfc648484ab72c152eb16cc62, type: 2}
-    m_Events:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 4642244968576004396}
-          m_TargetAssemblyTypeName: TimelineLoopControllerTypeWriter, Assembly-CSharp
-          m_MethodName: OnCycleEndSignal
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 4642244968576004396}
-          m_TargetAssemblyTypeName: TimelineLoopControllerTypeWriter, Assembly-CSharp
-          m_MethodName: EmitIsReadyTypeWriter
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 4642244968576004396}
-          m_TargetAssemblyTypeName: TimelineLoopControllerTypeWriter, Assembly-CSharp
-          m_MethodName: OnPausePoint
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 4642244968576004396}
-          m_TargetAssemblyTypeName: TimelineLoopControllerTypeWriter, Assembly-CSharp
-          m_MethodName: OnReadyForBreakLine
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!114 &8211551196686269757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4142,10 +3901,6 @@ GameObject:
   - component: {fileID: 2126519315680142184}
   - component: {fileID: 227468848063135141}
   - component: {fileID: 1894900067686603238}
-  - component: {fileID: 4602940104739138150}
-  - component: {fileID: 4642244968576004396}
-  - component: {fileID: 7941294202781873548}
-  - component: {fileID: 8792301471544830772}
   m_Layer: 0
   m_Name: "\u6253\u5B57\u673A"
   m_TagString: Untagged
@@ -4153,22 +3908,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &8792301471544830772
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8792301471544830771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f726fb798ad621458c431cb9966d91d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: spine-unity::Spine.Unity.SkeletonUtility
-  boneRoot: {fileID: 0}
-  flipBy180DegreeRotation: 0
-  skeletonRenderer: {fileID: 0}
-  skeletonGraphic: {fileID: 1894900067686603238}
 --- !u!222 &8928598541990386173
 CanvasRenderer:
   m_ObjectHideFlags: 0
