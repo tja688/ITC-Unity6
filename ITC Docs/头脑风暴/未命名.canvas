@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"37e06b43f9b453ef","x":-161,"y":-133,"width":341,"height":60,"type":"text","text":"签约场景NPC对话框表现设计"},
+		{"id":"9e00d7292c77ad30","x":-165,"y":151,"width":250,"height":60,"type":"text","text":"正常状态"}
+	],
+	"edges":[
+		{"id":"6a36b7ea70458dc7","fromNode":"37e06b43f9b453ef","fromSide":"bottom","toNode":"9e00d7292c77ad30","toSide":"top"}
+	]
+}
