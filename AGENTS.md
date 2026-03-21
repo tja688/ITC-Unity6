@@ -1,78 +1,104 @@
-# AGENTS.md — Unity Base (Safe-API-first)
+# AGENTS.md — Unity 基础规范（Safe-API-first）
 
-## 0. Scope
+## 0. 适用范围
 
-A compact operating guide for an AI agent working in a Unity project.
-Goals: **safe changes, visual/functional verification, runnable project**.
+这是一份面向 Unity 项目中 AI 代理的简明操作指南。
+目标是：**安全修改、可视化/功能验证、项目保持可运行**。
 
-Core philosophy: **Operate strictly through Unity APIs to maintain project integrity.**
-
----
-
-## 1. Core Rules
-
-* Prefer **small, reversible** changes.
-* **Show evidence** whenever anything is ambiguous: Console Logs / Screenshots (where allowed) / Status.
-* Do not claim actions you did not actually perform.
-* If in doubt, **skip and report** rather than force-resolve.
+核心原则：**严格通过 Unity API 操作，以维护项目完整性。**
 
 ---
 
-## 2. Unity Modification Constraints
+## 1. 核心规则
 
-* **Strict "No External Writing"**: AI/Automation MUST NOT directly write to `Assets/*.unity`, `.prefab`, `.asset`, or `.meta` files using file-write tools.
-* **API-Only Modification**: All "Scene/Prefab/Asset" changes MUST be performed through the Unity API via MCP commands (e.g., `create_gameobject`, `add_component`, `set_property`, `manage_prefabs`, etc.).
-* **YAML Modification Exception**: Direct text-based editing of YAML files (.unity, .prefab, etc.) is ONLY permitted if:
-  1. The user explicitly requests it.
-  2. The Unity Editor is closed OR the target scene/asset is NOT currently open.
-  3. After modification, Unity must be allowed to re-import the asset before it is accessed again.
-* **MCP Resilience & Blocking Dialogs**: If MCP hangs, loses connection, or fails to drive Unity (e.g., infinite waiting), investigate for blocking modal dialogs in the Editor. If the blockage coincides with a direct file modification attempt:
-  - **Immediately pause the task.**
-  - **Do not continue** with repeated automated attempts.
-  - **Throw a request** to the user and wait for manual intervention.
+* 优先采用**小而可回滚**的修改。
+* 只要存在歧义，就必须**提供证据**：控制台日志 / 截图（在允许时）/ 状态信息。
+* 不要声称自己做过实际上并未执行的操作。
+* 如果不确定，**跳过并报告**，不要强行解决。
 
 ---
 
-## 3. Unity Workflow
+## 2. AI 人机协作法则
 
-### 3.1 Code vs Editor Changes
-
-* **Code-only tasks**: Edit scripts using file manipulation tools.
-* **Scene/Prefab/Asset wiring**:
-  1. **Mandatory**: Use **Unity MCP** commands (`manage_gameobject`, `manage_components`, etc.).
-  2. If MCP tools are insufficient: Create a **Unity Editor script/tool** to perform the action via `UnityEditor` API.
-  3. Last resort: Provide **human steps** for the user to follow in the UI.
-
-### 3.2 Safety Defaults
-
-* Avoid mass reimports / GUID churn.
-* Don't rename/move assets unless required.
-* Prefer additive changes over destructive ones.
+* 运用**第一性原理**思考，拒绝经验主义和路径盲从。
+* 不要假设用户完全清楚目标；保持审慎，始终从原始需求和问题出发。
+* 如果目标模糊，**先停下并与用户讨论**，不要擅自推进。
+* 如果目标清晰，但当前路径不是最优，**直接建议更短、更低成本的办法**。
+* 所有回答必须分为两个部分：
+  * **直接执行**：按照用户当前的要求和逻辑，直接给出任务结果。
+  * **深度交互**：基于底层逻辑，对用户的原始需求进行审慎挑战。
+    这些挑战包括但不限于：质疑用户的动机是否偏离目标（XY 问题）、分析当前路径的弊端，并给出更优雅的替代方案。
 
 ---
 
-## 4. QFramework Governance (Mandatory in This Project)
+## 3. Git 协作约束
 
-### 4.1 Scripts Business Code Must Use QF Architecture
-
-* All business code development under `Assets/Scripts/**` must follow QFramework architecture.
-* For implementation details, always read and follow: `.agent/skills/qframework-architecture/SKILL.md`
-
-### 4.2 Three Key Scenarios Must Use Corresponding QF Skills
-
-* `res` scenario -> `.agent/skills/qframework-reskit/SKILL.md`
-* `audio` scenario -> `.agent/skills/qframework-audiokit/SKILL.md`
-* `ui` scenario -> `.agent/skills/qframework-uikit/SKILL.md`
+* **开始工作前必须同步最新分支**：在正式修改前，必须先拉取当前分支的最新更新并完成合并；如出现冲突，立即停止并汇报。
+* **冲突汇报要求**：发生冲突时，只需给出粗略的冲突定位与简要说明，例如受影响的文件名、冲突片段或大致行号范围；不要深入分析冲突来源。
+* **未追踪文件默认忽略**：开始工作时，如工作区存在未追踪的改动文件，默认忽略这些文件，继续完成自己的工作，不要因此中断任务。
+* **完成后必须提交**：完成自己的工作后，必须提交自己改动的所有相关文件，并为提交撰写详细说明。
+* **完成后必须推送**：在提交完成后，必须将对应提交 push 到当前分支的远端；如 push 失败，立即停止并汇报原因。
+* **意外未追踪文件的处理**：
+  * 当未追踪改动与自己负责的文件无关时：忽略这些文件，继续提交自己的改动，不必汇报。
+  * 当未追踪改动涉及自己负责的文件时：将这些文件单独排除，交由用户手动合并；其余文件正常提交，并在提交说明与任务总结中明确提及此情况。
 
 ---
 
-## 5. Parallel Development Constraints
+## 4. Unity 修改约束
 
-* **Multi-AI Parallel Development**: When the user specifies that multiple AI agents are developing in parallel, **prohibit** the use of MCP runtime/monitoring tools that interact with the active Unity "Play" or "Editor" state (e.g., screenshots or frequent scene polling) to prevent undefined errors or crashes caused by background script compilation and hot-reloading during code modifications.
+* **严格禁止外部写入**：AI/自动化**不得**直接使用文件写入工具修改 `Assets/*.unity`、`.prefab`、`.asset` 或 `.meta` 文件。
+* **仅通过 API 修改**：所有“场景 / Prefab / Asset”变更**必须**通过 Unity API，经由 MCP 命令完成，例如 `create_gameobject`、`add_component`、`set_property`、`manage_prefabs` 等。
+* **YAML 修改例外**：只有在以下条件同时满足时，才允许直接以文本方式编辑 YAML 文件（`.unity`、`.prefab` 等）：
+  1. 用户明确要求这样做。
+  2. Unity Editor 已关闭，或者目标场景 / 资源当前没有打开。
+  3. 修改完成后，必须允许 Unity 重新导入该资源，之后才能再次访问它。
+* **MCP 稳定性与阻塞弹窗**：如果 MCP 卡住、失去连接，或无法驱动 Unity（例如无限等待），应检查 Editor 中是否存在阻塞性的模态对话框。如果阻塞与一次直接文件修改尝试同时发生：
+  * **立即暂停任务。**
+  * **不要继续**重复自动重试。
+  * **向用户发起请求**，等待人工处理。
 
 ---
 
-## 6. Verification & Reporting
+## 5. Unity 工作流程
 
-* **Verification**: Use `read_console` to verify that no errors related to your changes appear in the Unity console.
-* **Reporting**: When finished, provide a clear summary of changes including modified assets and any manual steps required.
+### 5.1 代码修改 vs 编辑器修改
+
+* **纯代码任务**：使用文件操作工具编辑脚本。
+* **场景 / Prefab / Asset 绑定**：
+  1. **强制要求**：使用 **Unity MCP** 命令（`manage_gameobject`、`manage_components` 等）。
+  2. 如果 MCP 工具不足：创建一个 **Unity Editor 脚本 / 工具**，通过 `UnityEditor` API 执行该操作。
+  3. 最后手段：提供**人工操作步骤**，让用户在 UI 中完成。
+
+### 5.2 安全默认值
+
+* 避免大规模重新导入 / GUID 变动。
+* 除非必要，不要重命名 / 移动资源。
+* 优先采用增量修改，不要采用破坏性修改。
+
+---
+
+## 6. QFramework 治理规范（本项目强制）
+
+### 6.1 Scripts 业务代码必须使用 QF 架构
+
+* `Assets/Scripts/**` 下的所有业务代码开发都必须遵循 QFramework 架构。
+* 关于实现细节，请始终阅读并遵守：`.agent/skills/qframework-architecture/SKILL.md`
+
+### 6.2 三个关键场景必须使用对应的 QF 技能
+
+* `res` 场景 -> `.agent/skills/qframework-reskit/SKILL.md`
+* `audio` 场景 -> `.agent/skills/qframework-audiokit/SKILL.md`
+* `ui` 场景 -> `.agent/skills/qframework-uikit/SKILL.md`
+
+---
+
+## 7. 并行开发约束
+
+* **多 AI 并行开发**：当用户明确指定多个 AI 代理并行开发时，**禁止**使用与当前 Unity “Play” 或 “Editor” 状态交互的 MCP 运行时 / 监控工具（例如截图、频繁轮询场景等），以避免脚本编译和热重载期间因后台修改导致未定义错误或崩溃。
+
+---
+
+## 8. 验证与报告
+
+* **验证**：使用 `read_console` 检查 Unity 控制台中是否出现与本次修改相关的错误。
+* **报告**：完成后，提供清晰的变更总结，包括修改了哪些资源，以及是否需要人工步骤。

@@ -177,6 +177,7 @@ namespace ITC.Dialogue
             EnsureTextHierarchy();
             EnsureFrameShellBindings();
             EnsureOverlayHierarchy();
+            HidePlaceholderImmediately();
             HideAllSlotsImmediately();
         }
 
@@ -231,6 +232,20 @@ namespace ITC.Dialogue
             placeholderRunning = false;
             HidePlaceholderImmediately();
         }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (Application.isPlaying)
+            {
+                return;
+            }
+
+            TryFindSceneReferences();
+            TryBindExistingPlaceholderOverlay();
+            HidePlaceholderImmediately();
+        }
+#endif
 
         public void RouteLine(string speaker, string content)
         {
@@ -441,6 +456,8 @@ namespace ITC.Dialogue
                 return;
             }
 
+            TryBindExistingPlaceholderOverlay();
+
             if (placeholderOverlayGroup == null)
             {
                 var existing = panelRect.Find("SignPlaceholderMinigameOverlay") as RectTransform;
@@ -489,6 +506,41 @@ namespace ITC.Dialogue
                     placeholderOverlayText.rectTransform.anchoredPosition = Vector2.zero;
                 }
             }
+        }
+
+        private bool TryBindExistingPlaceholderOverlay()
+        {
+            if (placeholderOverlayGroup != null || panelRect == null)
+            {
+                return placeholderOverlayGroup != null;
+            }
+
+            var existing = panelRect.Find("SignPlaceholderMinigameOverlay") as RectTransform;
+            if (existing == null)
+            {
+                return false;
+            }
+
+            if (existing.TryGetComponent(out CanvasGroup group))
+            {
+                placeholderOverlayGroup = group;
+            }
+
+            if (existing.TryGetComponent(out Image image))
+            {
+                placeholderOverlayImage = image;
+            }
+
+            if (placeholderOverlayText == null)
+            {
+                var label = existing.Find("Label");
+                if (label != null && label.TryGetComponent(out TMP_Text text))
+                {
+                    placeholderOverlayText = text;
+                }
+            }
+
+            return placeholderOverlayGroup != null;
         }
 
         private RectTransform EnsureContainer(RectTransform container, string objectName)
@@ -1604,3 +1656,4 @@ namespace ITC.Dialogue
         }
     }
 }
+
