@@ -719,7 +719,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 552309500}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -2.76}
   m_LocalScale: {x: 0.14000113, y: 0.6293944, z: 1}
   m_ConstrainProportionsScale: 0
@@ -728,7 +728,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.09440008, y: -4.168602}
+  m_AnchoredPosition: {x: 0.09440008, y: -242.37483}
   m_SizeDelta: {x: 6.25, y: 5.01}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &552309502
@@ -1530,48 +1530,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 963283862}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39adc522de61ec143a038441180e76c0, type: 3}
+  m_Script: {fileID: 11500000, guid: b54b0df09d1e41c381d5127647f912c9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.Testing.SignDialogueCardTransitionPrototype
-  dialogueSlot0Marker: {fileID: 552309501}
-  dialogueSlot1Template: {fileID: 2046183469}
-  dialogueSlot2Template: {fileID: 478265753}
-  latestRuntimeParent: {fileID: 2075112532}
-  historyRuntimeParent: {fileID: 963283863}
-  textStyleTemplate: {fileID: 2571944346029015680}
-  legacyDialogueSystemRoot: {fileID: 4662445094895145051}
-  allowMouseClick: 1
-  allowKeyboardTrigger: 1
-  advanceKey: 1
-  disableLegacyDialogueSystemWhilePlaying: 1
-  latestEntryDelay: 0
-  historyEntryDelay: 0
-  entryDuration: 0.24
-  settleDuration: 0.16
-  entryMoveEase: 27
-  entryScaleEase: 27
-  exitDuration: 0.24
-  historyExitTriggerNormalized: 0
-  historyExitDelay: 0
-  exitRotationX: -90
-  exitEase: 5
-  entryStartScaleMultiplier: {x: 0.92, y: 0.84, z: 1}
-  settlePunchDistance: 18
-  settlePunchRotationZ: 2
-  settlePunchVibrato: 9
-  settlePunchElasticity: 0.45
-  latestAlphaOnEntry: 1
-  historyAlphaOnEntry: 0.88
-  latestTextPadding: {x: 96, y: 50, z: -110, w: -68}
-  historyTextPadding: {x: 104, y: 44, z: -112, w: -54}
-  latestTextLocalEuler: {x: 0, y: 0, z: 0}
-  historyTextLocalEuler: {x: 0, y: 0, z: 0}
-  sampleNpcLines:
-  - "\u8FD9\u662F\u6700\u65B0\u7684\u4E00\u53E5\u53F0\u8BCD\uFF0C\u5B83\u4F1A\u5148\u843D\u5728\u4E0B\u9762\u7684\u5BF9\u8BDD\u68461\u53F7\u3002"
-  - "\u518D\u70B9\u51FB\u4E00\u6B21\uFF0C\u4E0A\u4E00\u53E5\u4F1A\u88AB\u63A8\u9001\u5230\u4E0A\u65B9\u7684\u5BF9\u8BDD\u68462\u53F7\u3002"
-  - "\u8FD9\u4E00\u7248\u5148\u628A\u8282\u594F\u8DD1\u901A\uFF0C\u7B49\u4F60\u8BD5\u542C\u624B\u611F\u540E\u6211\u4EEC\u518D\u7EC6\u8C03\u9519\u843D\u65F6\u673A\u3002"
-  - "\u5982\u679C\u4F60\u559C\u6B22\uFF0C\u6211\u4EEC\u4E0B\u4E00\u8F6E\u5C31\u53EF\u4EE5\u628A\u8FD9\u5957\u539F\u578B\u63A5\u8FDB\u771F\u5B9E\u7684
-    Yarn \u6587\u672C\u6D41\u3002"
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.Tests.SignPanel.SignPanelCardFeelPrototype
+  cardRoot: {fileID: 2046183469}
+  hiddenAnchor: {fileID: 552309501}
+  cardCanvasGroup: {fileID: 2046183472}
+  allowMouseInput: 1
+  startHidden: 1
+  enterMoveDuration: 0.18
+  enterMoveEase: 9
+  enterFadeDuration: 0.12
+  enterScaleMultiplier: 0.965
+  enterShakeDuration: 0.14
+  enterShakeAngleZ: 2.2
+  enterShakeVibrato: 2
+  enterShakeElasticity: 0.5
+  fallDuration: 0.18
+  fallEase: 5
+  fallenXAngle: -90
+  returnOvershootDuration: 0.14
+  returnOvershootEase: 9
+  returnOvershootXAngle: 8
+  returnSettleDuration: 0.1
+  returnSettleEase: 3
+  exitDuration: 0.18
+  exitEase: 8
+  exitFadeDuration: 0.12
+  hiddenFallbackOffsetY: -240
 --- !u!1 &1021319885
 GameObject:
   m_ObjectHideFlags: 0
@@ -3641,6 +3627,7 @@ GameObject:
   - component: {fileID: 2046183469}
   - component: {fileID: 2046183471}
   - component: {fileID: 2046183470}
+  - component: {fileID: 2046183472}
   m_Layer: 0
   m_Name: "\u5BF9\u8BDD\u68461\u53F7"
   m_TagString: Untagged
@@ -3705,6 +3692,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2046183468}
   m_CullTransparentMesh: 1
+--- !u!225 &2046183472
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046183468}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2075112531
 GameObject:
   m_ObjectHideFlags: 0
@@ -4971,7 +4970,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1001 &4788813502628642329
 PrefabInstance:
   m_ObjectHideFlags: 0
