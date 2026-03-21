@@ -102,6 +102,8 @@ public static class SignDialogueSceneDeployer
         scrollAreaImage.color = new Color(0f, 0f, 0f, 0f);
         scrollAreaImage.raycastTarget = false;
 
+        EnsurePlaceholderOverlay(panel);
+
         var slotRuntime = panel.GetComponent<SignDialogueSlotRuntime>();
         if (!slotRuntime)
         {
@@ -168,6 +170,34 @@ public static class SignDialogueSceneDeployer
         rect.SetParent(parent, false);
         rect.localScale = Vector3.one;
         return rect;
+    }
+
+    private static RectTransform EnsurePlaceholderOverlay(RectTransform panel)
+    {
+        var overlay = EnsureRectChild(panel, "SignPlaceholderMinigameOverlay");
+        StretchToParent(overlay);
+
+        var group = overlay.GetComponent<CanvasGroup>();
+        if (!group)
+        {
+            group = overlay.gameObject.AddComponent<CanvasGroup>();
+        }
+
+        group.alpha = 0f;
+        group.blocksRaycasts = false;
+        group.interactable = false;
+
+        var image = overlay.GetComponent<UnityEngine.UI.Image>();
+        if (!image)
+        {
+            image = overlay.gameObject.AddComponent<UnityEngine.UI.Image>();
+        }
+
+        image.color = new Color(0.12f, 0.18f, 0.24f, 0.86f);
+        image.raycastTarget = true;
+        overlay.gameObject.SetActive(false);
+        overlay.SetAsLastSibling();
+        return overlay;
     }
 
     private static void StretchToParent(RectTransform rect)
@@ -302,3 +332,4 @@ public static class SignDialogueSceneDeployer
         }
     }
 }
+

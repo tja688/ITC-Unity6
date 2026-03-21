@@ -177,6 +177,7 @@ namespace ITC.Dialogue
             EnsureTextHierarchy();
             EnsureFrameShellBindings();
             EnsureOverlayHierarchy();
+            HidePlaceholderImmediately();
             HideAllSlotsImmediately();
         }
 
@@ -1604,3 +1605,4 @@ namespace ITC.Dialogue
         }
     }
 }
+
