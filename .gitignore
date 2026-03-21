@@ -85,6 +85,9 @@ crashlytics-build.properties
 .idea/
 *.iml
 
+# Obsidian vault settings
+.obsidian/
+
 # VS Code
 .vscode/
 *.code-workspace
