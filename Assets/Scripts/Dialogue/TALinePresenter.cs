@@ -38,6 +38,7 @@ namespace ITC.Dialogue
 
         [Header("Sign Scene Routing")]
         [SerializeField] private bool routeToSignSlots = false;
+        [SerializeField] private SignDialogueRuntimeFacade signDialogueRuntimeFacade;
         [SerializeField] private SignDialogueSlotRuntime signDialogueSlotRuntime;
 
         [Header("显示设置")]
@@ -84,10 +85,7 @@ namespace ITC.Dialogue
             if (typewriter == null)
                 typewriter = GetComponent<TypewriterComponent>();
 
-            if (signDialogueSlotRuntime == null)
-            {
-                signDialogueSlotRuntime = FindFirstObjectByType<SignDialogueSlotRuntime>();
-            }
+            ResolveSignRuntimeReferences();
 
             CacheBaselineEffectTags();
 
@@ -135,11 +133,19 @@ namespace ITC.Dialogue
             isTextFullyShown = false;
             onLineStart?.Invoke();
 
-            bool useSignRouting = routeToSignSlots &&
-                                  signDialogueSlotRuntime != null &&
-                                  signDialogueSlotRuntime.IsRoutingEnabled;
-            bool suppressLegacyVisual = useSignRouting &&
-                                        signDialogueSlotRuntime.ShouldSuppressLegacyPresenterVisuals;
+            ResolveSignRuntimeReferences();
+
+            bool useFacadeRouting = routeToSignSlots &&
+                                    signDialogueRuntimeFacade != null &&
+                                    signDialogueRuntimeFacade.IsRoutingEnabled;
+            bool useLegacySlotRouting = !useFacadeRouting &&
+                                        routeToSignSlots &&
+                                        signDialogueSlotRuntime != null &&
+                                        signDialogueSlotRuntime.IsRoutingEnabled;
+            bool useSignRouting = useFacadeRouting || useLegacySlotRouting;
+            bool suppressLegacyVisual = useFacadeRouting
+                ? signDialogueRuntimeFacade.ShouldSuppressLegacyPresenterVisuals
+                : useLegacySlotRouting && signDialogueSlotRuntime.ShouldSuppressLegacyPresenterVisuals;
             bool useLegacyTextAnimator = !suppressLegacyVisual && textAnimator != null && typewriter != null;
 
             if (textAnimator != null)
@@ -173,7 +179,11 @@ namespace ITC.Dialogue
                 out var lineDisappearanceTags);
             ApplyLineDefaultTags(lineAppearanceTags, lineDisappearanceTags);
 
-            if (useSignRouting)
+            if (useFacadeRouting)
+            {
+                signDialogueRuntimeFacade.RouteLine(characterName, normalizedDisplayText);
+            }
+            else if (useLegacySlotRouting)
             {
                 signDialogueSlotRuntime.RouteLine(characterName, normalizedDisplayText);
             }
@@ -463,10 +473,32 @@ namespace ITC.Dialogue
 
         private bool IsSignLegacyVisualSuppressed()
         {
+            ResolveSignRuntimeReferences();
+
+            if (routeToSignSlots &&
+                signDialogueRuntimeFacade != null &&
+                signDialogueRuntimeFacade.IsRoutingEnabled)
+            {
+                return signDialogueRuntimeFacade.ShouldSuppressLegacyPresenterVisuals;
+            }
+
             return routeToSignSlots &&
                    signDialogueSlotRuntime != null &&
                    signDialogueSlotRuntime.IsRoutingEnabled &&
                    signDialogueSlotRuntime.ShouldSuppressLegacyPresenterVisuals;
+        }
+
+        private void ResolveSignRuntimeReferences()
+        {
+            if (signDialogueRuntimeFacade == null)
+            {
+                signDialogueRuntimeFacade = FindFirstObjectByType<SignDialogueRuntimeFacade>();
+            }
+
+            if (signDialogueSlotRuntime == null)
+            {
+                signDialogueSlotRuntime = FindFirstObjectByType<SignDialogueSlotRuntime>();
+            }
         }
 
         private static bool TryParseLeadingPipeTags(string text, out List<PipeOpeningTag> openingTags, out int contentStart)

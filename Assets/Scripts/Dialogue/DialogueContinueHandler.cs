@@ -18,6 +18,7 @@ namespace ITC.Dialogue
         [Header("对话系统")]
         [SerializeField] private DialogueRunner dialogueRunner;
         [SerializeField] private TALinePresenter linePresenter;
+        [SerializeField] private SignDialogueRuntimeFacade signDialogueRuntimeFacade;
         [SerializeField] private SignDialogueSlotRuntime signDialogueSlotRuntime;
 
         [Header("输入设置")]
@@ -65,10 +66,7 @@ namespace ITC.Dialogue
                 linePresenter = FindFirstObjectByType<TALinePresenter>();
             }
 
-            if (signDialogueSlotRuntime == null)
-            {
-                signDialogueSlotRuntime = FindFirstObjectByType<SignDialogueSlotRuntime>();
-            }
+            ResolveSignRuntimeReferences();
 
             // 绑定按钮事件
             if (continueButton != null)
@@ -274,7 +272,27 @@ namespace ITC.Dialogue
 
         private bool IsContinueBlocked()
         {
+            ResolveSignRuntimeReferences();
+
+            if (signDialogueRuntimeFacade != null && signDialogueRuntimeFacade.IsRoutingEnabled)
+            {
+                return signDialogueRuntimeFacade.IsContinueInputBlocked;
+            }
+
             return signDialogueSlotRuntime != null && signDialogueSlotRuntime.IsContinueInputBlocked;
+        }
+
+        private void ResolveSignRuntimeReferences()
+        {
+            if (signDialogueRuntimeFacade == null)
+            {
+                signDialogueRuntimeFacade = FindFirstObjectByType<SignDialogueRuntimeFacade>();
+            }
+
+            if (signDialogueSlotRuntime == null)
+            {
+                signDialogueSlotRuntime = FindFirstObjectByType<SignDialogueSlotRuntime>();
+            }
         }
     }
 }
