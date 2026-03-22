@@ -68,6 +68,7 @@
   1. **强制要求**：使用 **Unity MCP** 命令（`manage_gameobject`、`manage_components` 等）。
   2. 如果 MCP 工具不足：创建一个 **Unity Editor 脚本 / 工具**，通过 `UnityEditor` API 执行该操作。
   3. 最后手段：提供**人工操作步骤**，让用户在 UI 中完成。
+* **开始使用 Unity MCP 前，必须先发现并了解 `unity-mcp-orchestrator` skill。**
 
 ### 5.2 安全默认值
 
