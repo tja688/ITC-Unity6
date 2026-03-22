@@ -19,6 +19,11 @@ namespace ITC.Dialogue
 
     public sealed class ITCDialoguePanel : UIPanel, IController
     {
+        private const string DialogueCanvasPath = "DialogueCanvas";
+        private const string DialoguePanelPath = "DialogueCanvas/DialoguePanel";
+        private const string RuntimeVisualRootName = "RuntimeDialogueVisualRoot";
+        private const string RuntimeNpcPortraitName = "NPC main portrait";
+
         [Header("Dialogue References")]
         [SerializeField] private DialogueRunner dialogueRunner;
         [SerializeField] private Image backgroundImage;
@@ -48,6 +53,7 @@ namespace ITC.Dialogue
         private void Awake()
         {
             BootstrapRuntimeBindings();
+            ApplyInitialPortraitState();
         }
 
         protected override void OnInit(IUIData uiData = null)
@@ -60,9 +66,7 @@ namespace ITC.Dialogue
                 dialogueRunner.autoStart = false;
             }
 
-            HideImage(npcPortraitImage);
-            HideImage(npcAvatarImage);
-            HideImage(pcPortraitImage);
+            ApplyInitialPortraitState();
         }
 
         private void BootstrapRuntimeBindings()
@@ -100,7 +104,7 @@ namespace ITC.Dialogue
                 dialogueRunner = transform.Find("DialogueRunner")?.GetComponent<DialogueRunner>();
             }
 
-            var panelRoot = transform.Find("DialogueCanvas/DialoguePanel");
+            var panelRoot = transform.Find(DialoguePanelPath);
             if (panelRoot == null)
             {
                 return;
@@ -125,6 +129,76 @@ namespace ITC.Dialogue
             {
                 pcPortraitImage = panelRoot.Find("Avatarillustration_PC")?.GetComponent<Image>();
             }
+
+            EnsureRuntimePortraitFallback();
+        }
+
+        private void EnsureRuntimePortraitFallback()
+        {
+            if (npcPortraitImage != null)
+            {
+                return;
+            }
+
+            var dialogueCanvas = transform.Find(DialogueCanvasPath) as RectTransform;
+            if (dialogueCanvas == null)
+            {
+                return;
+            }
+
+            var runtimeVisualRoot = dialogueCanvas.Find(RuntimeVisualRootName) as RectTransform;
+            if (runtimeVisualRoot == null)
+            {
+                var rootObject = new GameObject(RuntimeVisualRootName, typeof(RectTransform));
+                runtimeVisualRoot = rootObject.GetComponent<RectTransform>();
+                runtimeVisualRoot.SetParent(dialogueCanvas, false);
+                runtimeVisualRoot.anchorMin = Vector2.zero;
+                runtimeVisualRoot.anchorMax = Vector2.one;
+                runtimeVisualRoot.offsetMin = Vector2.zero;
+                runtimeVisualRoot.offsetMax = Vector2.zero;
+            }
+
+            var dialoguePanel = transform.Find(DialoguePanelPath);
+            if (dialoguePanel != null)
+            {
+                runtimeVisualRoot.SetSiblingIndex(dialoguePanel.GetSiblingIndex());
+            }
+            else
+            {
+                runtimeVisualRoot.SetAsFirstSibling();
+            }
+
+            npcPortraitImage = EnsureRuntimePortraitImage(runtimeVisualRoot, RuntimeNpcPortraitName);
+        }
+
+        private static Image EnsureRuntimePortraitImage(RectTransform parent, string objectName)
+        {
+            var portraitTransform = parent.Find(objectName) as RectTransform;
+            if (portraitTransform == null)
+            {
+                var portraitObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                portraitTransform = portraitObject.GetComponent<RectTransform>();
+                portraitTransform.SetParent(parent, false);
+            }
+
+            portraitTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            portraitTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            portraitTransform.pivot = new Vector2(0.5f, 0.5f);
+            portraitTransform.anchoredPosition = new Vector2(0f, 40f);
+            portraitTransform.sizeDelta = new Vector2(760f, 1040f);
+
+            var portraitImage = portraitTransform.GetComponent<Image>();
+            portraitImage.raycastTarget = false;
+            portraitImage.preserveAspect = true;
+            portraitImage.color = Color.white;
+            return portraitImage;
+        }
+
+        private void ApplyInitialPortraitState()
+        {
+            HideImage(npcPortraitImage);
+            HideImage(npcAvatarImage);
+            HideImage(pcPortraitImage);
         }
 
         private void EnsureCatalog()

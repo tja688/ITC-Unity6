@@ -368,6 +368,12 @@ namespace Febucci.TextAnimatorForUnity
 
             //called here as well since this method be called from outside
             TryInitializingOnce();
+            if (_wrapper == null)
+            {
+                initialized = false;
+                TryInitializingOnce();
+                if (_wrapper == null) return;
+            }
 
             _wrapper.Animate(deltaTime);
         }
@@ -394,6 +400,14 @@ namespace Febucci.TextAnimatorForUnity
 
         protected virtual void OnEnable() // things might have changed when disabled, e.g. autoSize etc.
         {
+            TryInitializingOnce();
+            if (_wrapper == null)
+            {
+                initialized = false;
+                TryInitializingOnce();
+                if (_wrapper == null) return;
+            }
+
             Wrapper.RequiresMeshUpdate = true;
             Animate(0);
         }

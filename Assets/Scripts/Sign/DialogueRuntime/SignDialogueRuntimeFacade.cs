@@ -1,4 +1,6 @@
 using System;
+using ITC.SignMiniGame;
+using QFramework;
 using UnityEngine;
 using Yarn.Unity;
 
@@ -31,21 +33,27 @@ namespace ITC.Dialogue
             "mind"
         };
 
+        private static readonly string[] BuiltInPlayerSpeakerKeywords =
+        {
+            "barks",
+            "巴克斯"
+        };
+
         private DialogueRunner dialogueRunner;
         private Canvas rootCanvas;
         private SignDialogueNpcTrack npcTrack;
         private SignDialoguePlayerTrack playerTrack;
         private SignDialogueHistoryBrowser historyBrowser;
-        private SignDialoguePlaceholderMinigameBridge placeholderBridge;
         private SignDialogueCommandBridge commandBridge;
         private SignDialogueOptionsPresenter optionsPresenter;
+        private SignMiniGameFlowStateModel flowStateModel;
         private SignDialogueRole roleOverride = SignDialogueRole.Auto;
         private bool isConfigured;
 
         public bool IsRoutingEnabled => enableSignRouting && isConfigured;
         public bool ShouldSuppressLegacyPresenterVisuals => suppressLegacyPresenterVisuals;
         public bool IsContinueInputBlocked =>
-            (placeholderBridge?.IsRunning ?? false) ||
+            IsAnyMiniGameRunning() ||
             (optionsPresenter != null && optionsPresenter.HasActiveOptions);
 
         public void Configure(
@@ -53,18 +61,17 @@ namespace ITC.Dialogue
             Canvas canvas,
             SignDialoguePanelFactory factory,
             RectTransform historyBrowseRect,
-            SignDialogueOptionsPresenter presenter,
-            SignDialoguePlaceholderMinigameBridge placeholder)
+            SignDialogueOptionsPresenter presenter)
         {
             dialogueRunner = runner;
             rootCanvas = canvas;
             optionsPresenter = presenter;
-            placeholderBridge = placeholder;
+            flowStateModel ??= MainMenuApp.Interface.GetModel<SignMiniGameFlowStateModel>();
 
             npcTrack ??= new SignDialogueNpcTrack(factory);
             playerTrack ??= new SignDialoguePlayerTrack(factory);
             historyBrowser ??= new SignDialogueHistoryBrowser();
-            commandBridge ??= new SignDialogueCommandBridge(this, placeholderBridge);
+            commandBridge ??= new SignDialogueCommandBridge(this);
 
             npcTrack.SetHistoryBrowseRect(historyBrowseRect);
             historyBrowser.Configure(npcTrack, rootCanvas);
@@ -89,7 +96,6 @@ namespace ITC.Dialogue
         private void OnDisable()
         {
             commandBridge?.Unregister();
-            placeholderBridge?.HideImmediately();
         }
 
         private void Update()
@@ -188,12 +194,34 @@ namespace ITC.Dialogue
                     return SignDialogueRole.Player;
                 }
 
+                if (ContainsKeyword(speaker, BuiltInPlayerSpeakerKeywords))
+                {
+                    return SignDialogueRole.Player;
+                }
+
                 return SignDialogueRole.Npc;
             }
 
             return ContainsKeyword(content, thoughtKeywords)
                 ? SignDialogueRole.Thought
                 : SignDialogueRole.Player;
+        }
+
+        private bool IsAnyMiniGameRunning()
+        {
+            flowStateModel ??= MainMenuApp.Interface.GetModel<SignMiniGameFlowStateModel>();
+            if (flowStateModel == null)
+            {
+                return false;
+            }
+
+            return flowStateModel.DocumentReviewRunning.Value ||
+                   flowStateModel.RuneTypingRunning.Value ||
+                   flowStateModel.RuneVerifyRunning.Value ||
+                   flowStateModel.StampRunning.Value ||
+                   flowStateModel.SoulCollectRunning.Value ||
+                   flowStateModel.BeanSellRunning.Value ||
+                   flowStateModel.SettlementRunning.Value;
         }
 
         private static bool ContainsKeyword(string source, string[] keywords)

@@ -1,6 +1,14 @@
 title: Start
 ---
+<<set $DAY = 1>>
+<<set $money = 0>>
+<<set $Nmber_of_sign_mistake = 0>>
+<<set $Global_sign_mistake = 0>>
+<<set $Route_CurrentClient = 1>>
+<<set $Sign_mistake = 0>>
+<<set $satisfaction = 3>>
 <<itc_sign_npc_enter 审核员A>>
+<<itc_npc_main emmett_default>>
 审核员A: 欢迎来到签约对话流程联调测试。
 审核员A: 先确认 NPC 双槽显示，请滚轮查看我之前的历史句子。
 
@@ -10,18 +18,24 @@ title: Start
 主角内心: （心理活动）这句话也应该走玩家框展示。
 <<itc_sign_role auto>>
 
-审核员A: 下面触发占位小游戏，屏幕会出现遮挡色块并拦截点击。
-<<itc_sign_minigame doc_review>>
-审核员A: 占位小游戏完成后，对话恢复推进。
+审核员A: 下面触发真实文件审核小游戏，结束后继续后续签约。
+<<itc_doc_review 1>>
+审核员A: 文件审核完成，继续测试打字、校验、盖章和取魂链路。
+<<itc_rune_typing 1 4>>
+<<itc_rune_verify 1>>
+<<itc_stamp_select 1>>
+<<itc_soul_collect 1 40>>
+<<itc_settlement 1>>
 
 测试提示: 下面进入选项态，点击选项外区域不应推进。
 -> 继续主流程
     主角: 我选择继续主流程。
--> 再测一次占位小游戏
-    <<itc_sign_minigame rune>>
-    主角: 二次占位小游戏完成，继续主流程。
+-> 再测一次文件审核
+    <<itc_doc_review 1>>
+    主角: 二次文件审核完成，继续主流程。
 
 <<itc_sign_npc_enter 审核员B>>
+<<itc_npc_main thomas_default>>
 审核员B: NPC 已切换，Slot2 历史应从我开始重新累计。
 审核员B: 这是第二句，用于验证 Slot1 到 Slot2 的同步更新。
 审核员B: 这是第三句，请再次滚轮查看历史并移出区域确认自动回归。

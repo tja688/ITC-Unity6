@@ -44,7 +44,6 @@ namespace ITC.Dialogue
         private const string NpcEnterCommand = "itc_sign_npc_enter";
         private const string NpcExitCommand = "itc_sign_npc_exit";
         private const string RoleCommand = "itc_sign_role";
-        private const string PlaceholderMinigameCommand = "itc_sign_minigame";
 
         private static readonly Regex AngleTagRegex = new("<.*?>", RegexOptions.Compiled);
 
@@ -121,13 +120,6 @@ namespace ITC.Dialogue
         [SerializeField] private int maxTraceRecords = 256;
         [SerializeField] private bool verboseTraceLog = false;
 
-        [Header("Placeholder Minigame")]
-        [SerializeField] private Key placeholderCompleteKey = Key.Y;
-        [SerializeField] private float placeholderFadeDuration = 0.18f;
-        [SerializeField] private CanvasGroup placeholderOverlayGroup;
-        [SerializeField] private Image placeholderOverlayImage;
-        [SerializeField] private TMP_Text placeholderOverlayText;
-
         [Header("Trace Preview (Debug)")]
         [SerializeField, TextArea(3, 10)] private string latestTracePreview;
 
@@ -141,10 +133,10 @@ namespace ITC.Dialogue
         private bool commandsRegistered;
         private bool pointerInsideHistoryArea;
         private bool browsingHistory;
-        private bool placeholderRunning;
         private int slot2DefaultIndex = -1;
         private int slot2BrowseIndex = -1;
         private string activeNpcId = string.Empty;
+        private bool activeNpcCyclePinned;
         private SignDialogueRole roleOverride = SignDialogueRole.Auto;
 
         private CanvasGroup npcSlot1Group;
@@ -167,7 +159,7 @@ namespace ITC.Dialogue
 
         public bool IsRoutingEnabled => enableSignSlotRouting;
         public bool ShouldSuppressLegacyPresenterVisuals => suppressLegacyPresenterVisuals;
-        public bool IsContinueInputBlocked => placeholderRunning || IsOptionsBlockingContinue();
+        public bool IsContinueInputBlocked => IsOptionsBlockingContinue();
 
         private void Awake()
         {
@@ -176,8 +168,6 @@ namespace ITC.Dialogue
             BuildPlayerSpeakerLookup();
             EnsureTextHierarchy();
             EnsureFrameShellBindings();
-            EnsureOverlayHierarchy();
-            HidePlaceholderImmediately();
             HideAllSlotsImmediately();
         }
 
@@ -193,11 +183,6 @@ namespace ITC.Dialogue
             RegisterCommands();
             EnsureFrameShellBindings();
             SyncAllContainersToFrames();
-            if (placeholderOverlayGroup != null)
-            {
-                placeholderOverlayGroup.alpha = 0f;
-                placeholderOverlayGroup.gameObject.SetActive(false);
-            }
 
             if (Application.isPlaying && autoStartDialogueIfIdle)
             {
@@ -213,7 +198,6 @@ namespace ITC.Dialogue
             }
 
             UpdateHistoryScrollInput();
-            UpdatePlaceholderCompletionInput();
         }
 
         private void LateUpdate()
@@ -229,8 +213,6 @@ namespace ITC.Dialogue
         private void OnDisable()
         {
             UnregisterCommands();
-            placeholderRunning = false;
-            HidePlaceholderImmediately();
         }
 
 #if UNITY_EDITOR
@@ -242,8 +224,6 @@ namespace ITC.Dialogue
             }
 
             TryFindSceneReferences();
-            TryBindExistingPlaceholderOverlay();
-            HidePlaceholderImmediately();
         }
 #endif
 
@@ -280,7 +260,8 @@ namespace ITC.Dialogue
 
         public void ResetNpcCycle(string npcId, bool keepVisible)
         {
-            activeNpcId = string.IsNullOrWhiteSpace(npcId) ? string.Empty : npcId.Trim();
+            activeNpcCyclePinned = !string.IsNullOrWhiteSpace(npcId);
+            activeNpcId = activeNpcCyclePinned ? npcId.Trim() : string.Empty;
             npcHistory.Clear();
             slot2DefaultIndex = -1;
             slot2BrowseIndex = -1;
@@ -307,6 +288,7 @@ namespace ITC.Dialogue
 
         public void HideNpcCycle()
         {
+            activeNpcCyclePinned = false;
             activeNpcId = string.Empty;
             npcHistory.Clear();
             slot2DefaultIndex = -1;
@@ -392,6 +374,9 @@ namespace ITC.Dialogue
                     playerSpeakerSet.Add(keyword.Trim());
                 }
             }
+
+            playerSpeakerSet.Add("Barks");
+            playerSpeakerSet.Add("巴克斯");
         }
 
         private void EnsureTextHierarchy()
@@ -447,100 +432,6 @@ namespace ITC.Dialogue
             {
                 optionsPanelRect = optionsPresenter.transform as RectTransform;
             }
-        }
-
-        private void EnsureOverlayHierarchy()
-        {
-            if (panelRect == null)
-            {
-                return;
-            }
-
-            TryBindExistingPlaceholderOverlay();
-
-            if (placeholderOverlayGroup == null)
-            {
-                var existing = panelRect.Find("SignPlaceholderMinigameOverlay") as RectTransform;
-                if (existing == null)
-                {
-                    var overlayObject = new GameObject(
-                        "SignPlaceholderMinigameOverlay",
-                        typeof(RectTransform),
-                        typeof(CanvasGroup),
-                        typeof(Image));
-                    existing = overlayObject.GetComponent<RectTransform>();
-                    existing.SetParent(panelRect, false);
-                }
-
-                placeholderOverlayGroup = existing.GetComponent<CanvasGroup>();
-                placeholderOverlayImage = existing.GetComponent<Image>();
-            }
-
-            var overlayRect = placeholderOverlayGroup.transform as RectTransform;
-            ConfigureStretchRect(overlayRect);
-            overlayRect.SetAsLastSibling();
-
-            if (placeholderOverlayImage != null)
-            {
-                placeholderOverlayImage.raycastTarget = true;
-                placeholderOverlayImage.color = new Color(0.12f, 0.18f, 0.24f, 0.86f);
-            }
-
-            if (placeholderOverlayText == null)
-            {
-                placeholderOverlayText = overlayRect.Find("Label")?.GetComponent<TMP_Text>();
-                if (placeholderOverlayText == null)
-                {
-                    placeholderOverlayText = CreateTextClone(overlayRect, "Label");
-                }
-
-                if (placeholderOverlayText != null)
-                {
-                    placeholderOverlayText.alignment = TextAlignmentOptions.Center;
-                    placeholderOverlayText.textWrappingMode = TextWrappingModes.Normal;
-                    placeholderOverlayText.raycastTarget = false;
-                    placeholderOverlayText.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-                    placeholderOverlayText.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                    placeholderOverlayText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                    placeholderOverlayText.rectTransform.sizeDelta = new Vector2(900f, 320f);
-                    placeholderOverlayText.rectTransform.anchoredPosition = Vector2.zero;
-                }
-            }
-        }
-
-        private bool TryBindExistingPlaceholderOverlay()
-        {
-            if (placeholderOverlayGroup != null || panelRect == null)
-            {
-                return placeholderOverlayGroup != null;
-            }
-
-            var existing = panelRect.Find("SignPlaceholderMinigameOverlay") as RectTransform;
-            if (existing == null)
-            {
-                return false;
-            }
-
-            if (existing.TryGetComponent(out CanvasGroup group))
-            {
-                placeholderOverlayGroup = group;
-            }
-
-            if (existing.TryGetComponent(out Image image))
-            {
-                placeholderOverlayImage = image;
-            }
-
-            if (placeholderOverlayText == null)
-            {
-                var label = existing.Find("Label");
-                if (label != null && label.TryGetComponent(out TMP_Text text))
-                {
-                    placeholderOverlayText = text;
-                }
-            }
-
-            return placeholderOverlayGroup != null;
         }
 
         private RectTransform EnsureContainer(RectTransform container, string objectName)
@@ -732,7 +623,6 @@ namespace ITC.Dialogue
             dialogueRunner.AddCommandHandler<string>(NpcEnterCommand, HandleNpcEnterCommand);
             dialogueRunner.AddCommandHandler(NpcExitCommand, HandleNpcExitCommand);
             dialogueRunner.AddCommandHandler<string>(RoleCommand, HandleRoleCommand);
-            dialogueRunner.AddCommandHandler<string>(PlaceholderMinigameCommand, RunPlaceholderMinigameCommand);
 
             commandRunner = dialogueRunner;
             commandsRegistered = true;
@@ -896,7 +786,6 @@ namespace ITC.Dialogue
             commandRunner.RemoveCommandHandler(NpcEnterCommand);
             commandRunner.RemoveCommandHandler(NpcExitCommand);
             commandRunner.RemoveCommandHandler(RoleCommand);
-            commandRunner.RemoveCommandHandler(PlaceholderMinigameCommand);
             commandRunner = null;
             commandsRegistered = false;
         }
@@ -914,115 +803,6 @@ namespace ITC.Dialogue
         private void HandleRoleCommand(string roleToken)
         {
             roleOverride = ParseRoleToken(roleToken);
-        }
-
-        private IEnumerator RunPlaceholderMinigameCommand(string token)
-        {
-            yield return ShowPlaceholderMinigame(token);
-        }
-
-        private IEnumerator ShowPlaceholderMinigame(string token)
-        {
-            EnsureOverlayHierarchy();
-
-            if (placeholderOverlayGroup == null || placeholderOverlayImage == null)
-            {
-                yield break;
-            }
-
-            if (placeholderRunning)
-            {
-                while (placeholderRunning)
-                {
-                    yield return null;
-                }
-
-                yield break;
-            }
-
-            placeholderRunning = true;
-            placeholderOverlayGroup.gameObject.SetActive(true);
-            placeholderOverlayGroup.blocksRaycasts = true;
-            placeholderOverlayGroup.interactable = true;
-            placeholderOverlayImage.color = ResolvePlaceholderColor(token);
-            if (placeholderOverlayText != null)
-            {
-                placeholderOverlayText.text = BuildPlaceholderText(token);
-            }
-
-            placeholderOverlayGroup.DOKill();
-            placeholderOverlayGroup.alpha = 0f;
-            placeholderOverlayGroup
-                .DOFade(1f, placeholderFadeDuration)
-                .SetUpdate(true)
-                .SetEase(Ease.OutCubic);
-
-            while (placeholderRunning)
-            {
-                yield return null;
-            }
-
-            placeholderOverlayGroup.DOKill();
-            yield return placeholderOverlayGroup
-                .DOFade(0f, placeholderFadeDuration)
-                .SetUpdate(true)
-                .SetEase(Ease.InCubic)
-                .WaitForCompletion();
-
-            placeholderOverlayGroup.blocksRaycasts = false;
-            placeholderOverlayGroup.interactable = false;
-            placeholderOverlayGroup.gameObject.SetActive(false);
-        }
-
-        private void HidePlaceholderImmediately()
-        {
-            if (placeholderOverlayGroup == null)
-            {
-                return;
-            }
-
-            placeholderOverlayGroup.DOKill();
-            placeholderOverlayGroup.alpha = 0f;
-            placeholderOverlayGroup.blocksRaycasts = false;
-            placeholderOverlayGroup.interactable = false;
-            placeholderOverlayGroup.gameObject.SetActive(false);
-        }
-
-        private static Color ResolvePlaceholderColor(string token)
-        {
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                return new Color(0.12f, 0.18f, 0.24f, 0.86f);
-            }
-
-            var normalized = token.Trim().ToLowerInvariant();
-            return normalized switch
-            {
-                "doc" or "document" or "review" => new Color(0.11f, 0.25f, 0.35f, 0.88f),
-                "rune" or "typing" => new Color(0.32f, 0.18f, 0.08f, 0.88f),
-                "stamp" => new Color(0.31f, 0.13f, 0.13f, 0.88f),
-                "soul" => new Color(0.12f, 0.30f, 0.24f, 0.88f),
-                _ => new Color(0.16f, 0.20f, 0.26f, 0.88f)
-            };
-        }
-
-        private string BuildPlaceholderText(string token)
-        {
-            var label = string.IsNullOrWhiteSpace(token) ? "placeholder_minigame" : token.Trim();
-            return $"占位小游戏: {label}\n按 {placeholderCompleteKey} 键完成";
-        }
-
-        private void UpdatePlaceholderCompletionInput()
-        {
-            if (!placeholderRunning || Keyboard.current == null)
-            {
-                return;
-            }
-
-            if (Keyboard.current[placeholderCompleteKey].wasPressedThisFrame)
-            {
-                placeholderRunning = false;
-            }
         }
 
         private SignDialogueRole ParseRoleToken(string roleToken)
@@ -1107,16 +887,17 @@ namespace ITC.Dialogue
 
         private void PresentNpcLine(string speaker, string text)
         {
-            var npcId = string.IsNullOrWhiteSpace(speaker) ? activeNpcId : speaker.Trim();
+            var npcId = ResolveNpcId(speaker);
             if (string.IsNullOrWhiteSpace(npcId))
             {
                 npcId = "NPC";
             }
 
-            if (!string.IsNullOrWhiteSpace(activeNpcId) &&
+            if (!activeNpcCyclePinned &&
+                !string.IsNullOrWhiteSpace(activeNpcId) &&
                 !string.Equals(activeNpcId, npcId, StringComparison.OrdinalIgnoreCase))
             {
-                ResetNpcCycle(npcId, false);
+                ResetAutoDetectedNpcCycle(npcId);
             }
             else if (string.IsNullOrWhiteSpace(activeNpcId))
             {
@@ -1580,6 +1361,44 @@ namespace ITC.Dialogue
                     .DOLocalRotate(npcSlot2FrameDefaultEuler, frameMoveDuration)
                     .SetEase(Ease.OutCubic));
             }
+        }
+
+        private string ResolveNpcId(string speaker)
+        {
+            if (activeNpcCyclePinned && !string.IsNullOrWhiteSpace(activeNpcId))
+            {
+                return activeNpcId;
+            }
+
+            return string.IsNullOrWhiteSpace(speaker) ? activeNpcId : speaker.Trim();
+        }
+
+        private void ResetAutoDetectedNpcCycle(string npcId)
+        {
+            activeNpcCyclePinned = false;
+            activeNpcId = string.IsNullOrWhiteSpace(npcId) ? string.Empty : npcId.Trim();
+            npcHistory.Clear();
+            slot2DefaultIndex = -1;
+            slot2BrowseIndex = -1;
+            browsingHistory = false;
+            pointerInsideHistoryArea = false;
+
+            if (npcSlot1Text != null)
+            {
+                npcSlot1Text.text = string.Empty;
+            }
+
+            if (npcSlot2Text != null)
+            {
+                npcSlot2Text.text = string.Empty;
+            }
+
+            SetSlotVisible(npcSlot1Group, false);
+            SetSlotVisible(npcSlot2Group, false);
+            SetShellVisible(npcSlot1FrameGroup, false);
+            SetShellVisible(npcSlot2FrameGroup, false);
+            ResetFrameShellToDefault(npcSlot1Frame, npcSlot1FrameDefaultAnchoredPosition, npcSlot1FrameDefaultScale, npcSlot1FrameDefaultEuler);
+            ResetFrameShellToDefault(npcSlot2Frame, npcSlot2FrameDefaultAnchoredPosition, npcSlot2FrameDefaultScale, npcSlot2FrameDefaultEuler);
         }
 
         private void PlayFrameShellFlipAnimation(float direction)

@@ -1,30 +1,41 @@
 title: Sign_Day1_Start
 ---
+<<set $DAY = 1>>
+<<set $money = 0>>
+<<set $Nmber_of_sign_mistake = 0>>
+<<set $Global_sign_mistake = 0>>
+<<set $Route_BeanSoldCount = 0>>
+<<set $Route_CurrentClient = 1>>
+<<set $Sign_mistake = 0>>
+<<set $satisfaction = 3>>
 <<itc_bg window13>>
-<<itc_pc_avatar barks_default>>
+<<itc_pc_avatar_hide>>
+<<itc_npc_avatar_hide>>
+<<itc_npc_main_hide>>
+<<itc_sign_npc_enter emmett>>
+<<itc_npc_main emmett_default>>
 
 Barks: 欢迎来到ITC，请问有什么能帮到您？
-<<itc_npc_main emmett_default>>
-<<itc_npc_avatar emmett_default>>
 ？: （满脸通红、衣衫不整）
 ？: （终于跌跌撞撞地走到窗口前，浑身散发着浓烈的酒味。）
-？: （打嗝）嘿,小妞!听说你们能让人一直喝酒?我要这个!
-Barks: 先生，您是想......千杯不醉吗?
-埃米特·多伊尔: （大笑）不喝醉?不,我要永远有喝不完的酒!想想看,我可以喝遍全城的酒馆!
+？: （打嗝）嘿，小妞！听说你们能让人一直喝酒？我要这个！
+Barks: 先生，您是想......千杯不醉吗？
+埃米特·多伊尔: （大笑）不喝醉？不，我要永远有喝不完的酒！想想看，我可以喝遍全城的酒馆！
 Barks: （为难）这...可能不太健康...
-埃米特·多伊尔: （摆手）健康?那玩意儿早跟我说再见啦!来吧,给我签个最烈的契约!
-
-Narrator: |typewriter|（此处应该弹出客户文件审核小游戏环节，暂用占位跳过）
--> 告诉他文件有问题
-    <<jump Emmett_File_Issue>>
--> 直接盖章通过
+埃米特·多伊尔: （摆手）健康？那玩意儿早跟我说再见啦！来吧，给我签个最烈的契约！
+Narrator: |typewriter|气动管道吐出了多伊尔先生的申请文件，先完成文件审核。
+<<itc_doc_review 1>>
+<<if $Route_DocReviewResult == "passed">>
     <<jump Emmett_Sign_Pass>>
+<<else>>
+    <<jump Emmett_File_Issue>>
+<<endif>>
 ===
 
 title: Emmett_File_Issue
 ---
-Barks: （皱了皱眉）多伊尔先生，我注意到您的契约申请是'想要永远喝不完的酒'，但您刚才似乎提到的是'不酒醉'？
-埃米特·多伊尔: （猛拍桌子）快点,丫头!再磨蹭我就要醒酒了!
+Barks: （皱了皱眉）多伊尔先生，我注意到您的契约申请是“想要永远喝不完的酒”，但您刚才似乎提到的是“不酒醉”？
+埃米特·多伊尔: （猛拍桌子）快点，丫头！再磨蹭我就要醒酒了！
 Barks: （汗颜）是我眼花了，十分抱歉。
 埃米特·多伊尔: 警告你们，别给老子耍花样......
 <<jump Emmett_Sign_Pass>>
@@ -32,42 +43,65 @@ Barks: （汗颜）是我眼花了，十分抱歉。
 
 title: Emmett_Sign_Pass
 ---
-Narrator: |typewriter|（此处应该弹出盖章及收取灵魂小游戏环节，暂用占位跳过）
+Narrator: |typewriter|契约文书从打字机里缓缓吐出，先把誊写流程完成。
+<<itc_rune_typing 1 4>>
+<<if $Route_QTEErrorCount >= 3>>
+    埃米特·多伊尔: 你们这窗口的机器可真够磨蹭的！
+<<elseif $Route_QTEErrorCount == 2>>
+    埃米特·多伊尔: 哈，看来这份契约比我想的难写。
+<<endif>>
+<<itc_rune_verify 1>>
+Narrator: |typewriter|确认文字无误后，在契约上盖下对应印章。
+<<itc_stamp_select 1>>
 Barks: 先生，签约完成了，现在需要收取您四成的灵魂。
-埃米特·多伊尔: 嗯... 嗝。来...来吧。
-Narrator: |typewriter|（灵魂分割器操作环节占位）
+埃米特·多伊尔: 嗯...嗝。来...来吧。
+Narrator: |typewriter|调节灵魂分割器，把份额稳定在四成。
+<<itc_soul_collect 1 40>>
+<<itc_settlement 1>>
 埃米特·多伊尔: （潦草地收起文件）
 <<itc_npc_main_hide>>
+<<itc_sign_npc_exit>>
 Narrator: |typewriter|（多伊尔迫不及待地冲出门外）
 <<jump PhoneCall_After_Emmett>>
 ===
 
 title: PhoneCall_After_Emmett
 ---
+<<itc_sign_npc_enter henet>>
+<<itc_npc_main henet_default>>
 Narrator: |typewriter|（来电铃声响起。玩家接起电话）
-<<itc_npc_avatar henet_default>>
-Henet: （带着愉快的语气）不错啊~看来你的第一份契约处理的还算顺利。
-Barks: 内心独白 - 哈，那看来我们的Receptionist小姐每天会收到很多的小费。
-Barks: （放下电话叹了口气，准备迎接下一位客户。）
+Henet: （带着愉快的语气）不错啊，看来你的第一份契约处理得还算顺利。
+Henet: 不过别急着松气，13号窗口可不会只接待一个客户。
+-> 我会更仔细地检查下一份文件
+    Barks: 是，Henet女士。我会更仔细地检查下一份文件。
+-> 我先稳住情绪，继续工作
+    Barks: 明白。我先把情绪压下去，再继续接待下一位客户。
+Henet: 很好。第二位客户已经在路上了，别让窗口空着。
+<<itc_npc_main_hide>>
+<<itc_sign_npc_exit>>
 <<jump Sign_Customer2>>
 ===
 
 title: Sign_Customer2
 ---
+<<set $Route_CurrentClient = 2>>
+<<set $Sign_mistake = 0>>
+<<set $satisfaction = 3>>
+<<itc_sign_npc_enter thomas>>
 <<itc_npc_main thomas_default>>
-<<itc_npc_avatar thomas_default>>
 Barks: 欢迎来到ITC，请问有什么能帮到您？
 ？: 咳咳，咳咳。
 ？: 咳咳——抱歉，（用手帕捂住嘴，努力控制着咳嗽）
 托马斯·芬奇: 我是托马斯·芬奇，从圣卡特迩医院来的。医生说我的肺病已经到了晚期。
 托马斯·芬奇: 哎...咳咳。开始签约吧，小姐。
 Barks: （惋惜地点点头，按下桌上的气动通道按钮）
-
-Narrator: |typewriter|（客户文件接收与审核小游戏环节占位）
--> 质疑职业与申请契约的矛盾
-    <<jump Thomas_File_Issue>>
--> 直接盖章通过
+Narrator: |typewriter|窗口收到芬奇先生的申请资料，先完成文件审核。
+<<itc_doc_review 2>>
+<<if $Route_DocReviewResult == "passed">>
     <<jump Thomas_Sign_Pass>>
+<<else>>
+    <<jump Thomas_File_Issue>>
+<<endif>>
 ===
 
 title: Thomas_File_Issue
@@ -81,39 +115,49 @@ Barks: 对不起，芬奇先生，我理解错了。请原谅，我会立即取�
 
 title: Thomas_Sign_Pass
 ---
-Narrator: |typewriter|（盖章环节占位）
-Barks: 我们可以提供'肺部重生'契约，但需要收取您五成的灵魂作为代价。
+Narrator: |typewriter|把契约内容输入打字机，完成正式誊写。
+<<itc_rune_typing 2 4>>
+<<itc_rune_verify 2>>
+Narrator: |typewriter|契约条文校对完毕后，为它盖上执行印章。
+<<itc_stamp_select 2>>
+Barks: 我们可以提供“肺部重生”契约，但需要收取您五成的灵魂作为代价。
 Barks: 这意味着您可能会失去一部分情感体验的能力，比如对美的欣赏、深度的快乐等。
 Barks: 您确定要继续吗？
-托马斯·芬奇: 我想，当你每天都在与死亡赛跑的时候，这些所谓的'情感体验'已经不重要了。
+托马斯·芬奇: 我想，当你每天都在与死亡赛跑的时候，这些所谓的“情感体验”已经不重要了。
 托马斯·芬奇: 我只想能够呼吸，能够工作，能够养活我的家人。
-
-Narrator: |typewriter|（收取灵魂操作环节占位）
+Narrator: |typewriter|调节灵魂分割器，把份额稳定在五成。
+<<itc_soul_collect 2 50>>
+<<itc_settlement 2>>
 Barks: 芬奇先生，您的契约已经完成。您的肺病将在24小时内完全痊愈。
 托马斯·芬奇: （深吸一口气，似乎已经感觉到了些许变化。）
 托马斯·芬奇: 小姐，感谢您的服务，您工作非常认真。
-Narrator: |typewriter|（客户留下小费并离开）
 <<itc_npc_main_hide>>
+<<itc_sign_npc_exit>>
+Narrator: |typewriter|（客户留下小费并离开）
 <<jump Sign_Customer3>>
 ===
 
 title: Sign_Customer3
 ---
+<<set $Route_CurrentClient = 3>>
+<<set $Sign_mistake = 0>>
+<<set $satisfaction = 3>>
+<<itc_sign_npc_enter sullivan>>
 <<itc_npc_main sullivan_default>>
-<<itc_npc_avatar sullivan_default>>
 ？: 下午好，小姐。（男子微笑着，声音低沉而圆润）
 Barks: 欢迎来到ITC，请问有什么能帮到您？
-巴塞洛缪·沙利文: 我是巴塞洛缪·沙利文，不过大家都叫我'巴蒂'。我是牡蛎酒馆的酒保。
+巴塞洛缪·沙利文: 我是巴塞洛缪·沙利文，不过大家都叫我“巴蒂”。我是牡蛎酒馆的酒保。
 Barks: 沙利文先生，很高兴见到您。
 巴塞洛缪·沙利文: （点点头）我想要一份能让我调制出完美鸡尾酒的契约。你知道的，在这个城市，酒馆的竞争很激烈。
 巴塞洛缪·沙利文: 如果我能成为镇上最好的调酒师，牡蛎酒馆的生意会好很多，我的小费也会增加。
 Barks: 好的，我现在会查看您的文件。
-
-Narrator: |typewriter|（客户文件接收与审核小游戏环节占位，此处有照片与本人不符的逻辑）
--> 指出照片不符
+Narrator: |typewriter|申请资料已经送达窗口，请完成文件审核。
+<<itc_doc_review 3>>
+<<if $Route_DocReviewResult == "rejected_correct">>
     <<jump Sullivan_File_Issue>>
--> 不指出，直接通过
+<<else>>
     <<jump Sullivan_Sign_Pass>>
+<<endif>>
 ===
 
 title: Sullivan_File_Issue
@@ -132,50 +176,72 @@ Barks: 我...我理解您的处境，但我必须遵守公司规定。您可以�
 巴塞洛缪·沙利文: 那个真正的巴蒂已经离开城市了，他不需要这份契约！而我需要！
 Barks: 抱歉，先生，我不能进行这项签约。
 <<itc_npc_main_hide>>
+<<itc_sign_npc_exit>>
 Narrator: |typewriter|（沙利文沮丧地离开窗口）
 <<jump PhoneCall_After_Sullivan>>
 ===
 
 title: Sullivan_Sign_Pass
 ---
-Narrator: |typewriter|（如果你没发现文件破绽，将直接导致违规签约。）
+Narrator: |typewriter|你放过了文件里的破绽，违规签约流程已经开始。
+<<itc_rune_typing 3 4>>
+<<itc_rune_verify 3>>
+Narrator: |typewriter|在违规文件上盖章前，机器依旧要求完整执行流程。
+<<itc_stamp_select 3>>
 Barks: 契约已经生效。
-Narrator: |typewriter|（收取灵魂环节占位）
+Narrator: |typewriter|灵魂提取器启动，把份额稳定在五成。
+<<itc_soul_collect 3 50>>
+<<itc_settlement 3>>
 <<itc_npc_main_hide>>
+<<itc_sign_npc_exit>>
 Narrator: |typewriter|（沙利文留下了小费，匆忙跑离窗口）
 <<jump PhoneCall_After_Sullivan>>
 ===
 
 title: PhoneCall_After_Sullivan
 ---
-Narrator: |typewriter|（来电铃声响起开，接起电话）
-<<itc_npc_avatar henet_default>>
-Henet: （冰冷的声音）Barks。
-Henet: 照片和本人明显不符，你没有发现吗？
-Henet: 他盗用了真正巴蒂·沙利文的身份。
-Barks: （感到一阵冷汗从背后渗出）
-Barks: （声音发颤）我...我很抱歉，Henet女士。我应该更仔细地检查的。
-Henet: 在ITC，我们不容许这样的疏忽。如果你签约失误了三次，你知道后果的。
-Henet: 现在，把这次失误记录在你的报告上，然后继续工作。
-Barks: （低声承诺）不会再发生了，Henet女士。
+<<itc_sign_npc_enter henet>>
+<<itc_npc_main henet_default>>
+Narrator: |typewriter|（来电铃声再度响起，接通后立刻传来冰冷的声音）
+<<if $Route_DocReviewResult == "rejected_correct">>
+    Henet: Barks。
+    Henet: 至少这次，你看出了最明显的问题。
+    Henet: 13号窗口不需要英雄，但需要一个能把错误挡在门外的人。
+    Barks: 我明白了，Henet女士。我会继续保持警惕。
+<<else>>
+    Henet: Barks。
+    Henet: 照片和本人明显不符，你没有发现吗？
+    Henet: 他盗用了真正巴蒂·沙利文的身份。
+    Barks: （感到一阵冷汗从背后渗出）
+    Barks: （声音发颤）我...我很抱歉，Henet女士。我应该更仔细地检查的。
+    Henet: 在ITC，我们不容许这样的疏忽。如果你签约失误了三次，你知道后果的。
+    Henet: 现在，把这次失误记录在你的报告上，然后继续工作。
+    Barks: （低声承诺）不会再发生了，Henet女士。
+<<endif>>
+<<itc_npc_main_hide>>
+<<itc_sign_npc_exit>>
 <<jump Sign_Customer4>>
 ===
 
 title: Sign_Customer4
 ---
+<<set $Route_CurrentClient = 4>>
+<<set $Sign_mistake = 0>>
+<<set $satisfaction = 3>>
+<<itc_sign_npc_enter reggie>>
 <<itc_npc_main reggie_default>>
-<<itc_npc_avatar reggie_default>>
 Narrator: |typewriter|（一个瘦小的男子悄无声息地出现在窗口前。）
 ？: （往前倾身，压低声音）听说你们能提供特殊服务。我需要帮助。
 Barks: 是的，先生。我们提供灵魂契约服务。请问您的名字是？
 瑞吉·威克斯: 你看文件吧。（他迅速回答，目光仍然不停地扫视四周）
 Barks: 好的，我现在会查看您的文件。
-
-Narrator: |typewriter|（客户文件接收与审核小游戏环节占位）
--> 质疑文件真假
-    <<jump Reggie_File_Issue>>
--> 直接通过
+Narrator: |typewriter|窗口收到威克斯先生的资料，请完成文件审核。
+<<itc_doc_review 4>>
+<<if $Route_DocReviewResult == "passed">>
     <<jump Reggie_Sign_Pass>>
+<<else>>
+    <<jump Reggie_File_Issue>>
+<<endif>>
 ===
 
 title: Reggie_File_Issue
@@ -191,28 +257,36 @@ Barks: （紧张）等等，威克斯先生！我看错了一项规定。您的�
 
 title: Reggie_Sign_Pass
 ---
-Narrator: |typewriter|（签署弹道计算能力的危险契约小游戏环节占位）
+Narrator: |typewriter|先把危险契约的条文录入打字机，再完成校验。
+<<itc_rune_typing 4 5>>
+<<itc_rune_verify 4>>
+Narrator: |typewriter|为这份高风险契约盖上执行印章。
+<<itc_stamp_select 4>>
 Barks: （谨慎问道）威克斯先生，能否告诉我您打算如何使用这项能力？公司要求我们进行风险评估。
 瑞吉·威克斯: 我不是要杀人。我是帮派的武器专家，我设计和改良武器。这项能力会让我的作品更加精准，仅此而已。
-Narrator: |typewriter|（收取灵魂环节占位）
+Narrator: |typewriter|灵魂提取器已经启动，把份额稳定在四成五。
+<<itc_soul_collect 4 45>>
+<<itc_settlement 4>>
 瑞吉·威克斯: （冷冷地抬头看了一眼，在桌上放上了1元小费。）
-瑞吉·威克斯: （嘲笑的口吻）小姐，我的建议是，你也签一个跟这一样的契约。当然，这是因为考虑到你们公司员工的“专业水准”….
+瑞吉·威克斯: （嘲笑的口吻）小姐，我的建议是，你也签一个跟这一样的契约。当然，这是因为考虑到你们公司员工的“专业水准”......
 <<itc_npc_main_hide>>
+<<itc_sign_npc_exit>>
 Narrator: |typewriter|（瑞吉快步离开窗口）
-
+<<itc_sign_npc_enter oldtom>>
+<<itc_npc_main oldtom_default>>
 Narrator: |typewriter|（旁边传来一个温和的声音）
-<<itc_npc_avatar oldtom_default>>
 Old Tom: （停下来问道）那个客户看起来很紧张，一切都好吗？
 Barks: 哎......真不知道他会用这种能力做什么。
 Old Tom: （笑了笑）别担心，孩子。我们只是提供服务，不做判断。
+<<itc_npc_main_hide>>
+<<itc_sign_npc_exit>>
 Narrator: |typewriter|（第一天签约环节的剧情到此告一段落。）
 <<jump Sign_Day1_End>>
 ===
 
 title: Sign_Day1_End
 ---
-Narrator: |typewriter|（测试脚本到达尾声。准备跳转到结局章剧情节点）
-// Jumping to end
+Narrator: |typewriter|（第一天的签约工作结束了，后续下班与结局章节待补充。）
 <<jump Ending_Placeholder>>
 ===
 

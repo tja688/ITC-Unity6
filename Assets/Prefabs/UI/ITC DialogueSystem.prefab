@@ -1505,7 +1505,6 @@ GameObject:
   - component: {fileID: 552632879314735534}
   - component: {fileID: 742242325984032687}
   - component: {fileID: 6645889228318463938}
-  - component: {fileID: 8820663147662347363}
   m_Layer: 0
   m_Name: DialoguePanel
   m_TagString: Untagged
@@ -1573,8 +1572,7 @@ MonoBehaviour:
   characterNameText: {fileID: 3225022719342729928}
   canvasGroup: {fileID: 552632879314735534}
   lineTextCanvasGroup: {fileID: 1012536377031838912}
-  routeToSignSlots: 1
-  signDialogueSlotRuntime: {fileID: 8820663147662347363}
+  routeToSignSlots: 0
   showCharacterName: 1
   useFadeEffect: 1
   fadeInDuration: 0.25
@@ -1604,7 +1602,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.DialogueContinueHandler
   dialogueRunner: {fileID: 5501917324134188776}
   linePresenter: {fileID: 742242325984032687}
-  signDialogueSlotRuntime: {fileID: 8820663147662347363}
   useMouseClick: 1
   useKeyboard: 1
   continueKey: 1
@@ -1616,66 +1613,6 @@ MonoBehaviour:
   ffNextLineDelay: 0.05
   continueButton: {fileID: 0}
   skipButton: {fileID: 0}
---- !u!114 &8820663147662347363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8145080564333027901}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 494303e8568845189243d82ba9b266a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.SignDialogueSlotRuntime
-  enableSignSlotRouting: 1
-  suppressLegacyPresenterVisuals: 1
-  dialogueRunner: {fileID: 5501917324134188776}
-  rootCanvas: {fileID: 158646636453792877}
-  optionsPresenter: {fileID: 2640239970743157601}
-  panelRect: {fileID: 1949494100617500929}
-  textRoot: {fileID: 0}
-  autoStartDialogueIfIdle: 0
-  startupNodeName: Start
-  npcSlot1Frame: {fileID: 2672710697208034966}
-  npcSlot2Frame: {fileID: 7879418690280527542}
-  playerSlot1Frame: {fileID: 4149938456898744744}
-  npcHistoryScrollArea: {fileID: 4731664038972847411}
-  textTemplate: {fileID: 4201059825493841722}
-  npcSlotPadding: {x: 120, y: 72}
-  playerSlotPadding: {x: 120, y: 72}
-  npcSlot1Container: {fileID: 0}
-  npcSlot2Container: {fileID: 0}
-  playerSlot1Container: {fileID: 0}
-  npcSlot1Text: {fileID: 0}
-  npcSlot2Text: {fileID: 0}
-  playerSlot1Text: {fileID: 0}
-  forceResetSlot2WhenNewNpcLineArrives: 1
-  playerSpeakerKeywords:
-  - "\u73A9\u5BB6"
-  - "\u4E3B\u89D2"
-  - "\u6211"
-  - "\u5185\u5FC3"
-  - "\u5FC3\u58F0"
-  - player
-  - narrator
-  thoughtKeywords:
-  - "\u5185\u5FC3"
-  - "\u5FC3\u58F0"
-  - thought
-  - mind
-  textFadeDuration: 0.18
-  textSlideDistance: 20
-  textEase: 9
-  maxNpcHistoryRecords: 128
-  maxTraceRecords: 256
-  verboseTraceLog: 0
-  placeholderCompleteKey: 39
-  placeholderFadeDuration: 0.18
-  placeholderOverlayGroup: {fileID: 0}
-  placeholderOverlayImage: {fileID: 0}
-  placeholderOverlayText: {fileID: 0}
-  latestTracePreview: 
 --- !u!1 &8184059936714535682
 GameObject:
   m_ObjectHideFlags: 0

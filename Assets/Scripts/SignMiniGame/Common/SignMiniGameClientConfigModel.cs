@@ -89,6 +89,28 @@ namespace ITC.SignMiniGame
                 CorrectDecision = DocumentReviewDecision.Pass
             };
 
+            documentReviewClientConfigs[3] = new DocumentReviewClientConfig
+            {
+                ClientId = 3,
+                ClientDisplayName = "Bartholomew",
+                DateDisplayText = "Day 1 / Window 13",
+                InkType = "Red",
+                SealIntegrity = true,
+                PhotoMatchesClient = false,
+                CorrectDecision = DocumentReviewDecision.Reject
+            };
+
+            documentReviewClientConfigs[4] = new DocumentReviewClientConfig
+            {
+                ClientId = 4,
+                ClientDisplayName = "Reggie",
+                DateDisplayText = "Day 1 / Window 13",
+                InkType = "Black",
+                SealIntegrity = true,
+                PhotoMatchesClient = true,
+                CorrectDecision = DocumentReviewDecision.Pass
+            };
+
             stampClientConfigs[1] = new StampClientConfig
             {
                 ClientId = 1,
@@ -103,13 +125,27 @@ namespace ITC.SignMiniGame
                 CorrectStampType = StampType.Skill
             };
 
+            stampClientConfigs[3] = new StampClientConfig
+            {
+                ClientId = 3,
+                ClientDisplayName = "Bartholomew",
+                CorrectStampType = StampType.Skill
+            };
+
+            stampClientConfigs[4] = new StampClientConfig
+            {
+                ClientId = 4,
+                ClientDisplayName = "Reggie",
+                CorrectStampType = StampType.Event
+            };
+
             soulCollectClientConfigs[1] = new SoulCollectClientConfig
             {
                 ClientId = 1,
                 ClientDisplayName = "Emmett",
                 MinPercent = 40,
-                MaxPercent = 50,
-                DefaultTargetPercent = 45,
+                MaxPercent = 40,
+                DefaultTargetPercent = 40,
                 SoulColor = new Color(0.47f, 0.84f, 1f, 1f),
                 RevealFxKey = "vfx.contract.soul.transfer",
                 VoiceReactionKey = "voice.contract.soul.emmett"
@@ -119,12 +155,36 @@ namespace ITC.SignMiniGame
             {
                 ClientId = 2,
                 ClientDisplayName = "Thomas",
-                MinPercent = 60,
-                MaxPercent = 60,
-                DefaultTargetPercent = 60,
+                MinPercent = 50,
+                MaxPercent = 50,
+                DefaultTargetPercent = 50,
                 SoulColor = new Color(0.76f, 0.88f, 1f, 1f),
                 RevealFxKey = "vfx.contract.soul.transfer",
                 VoiceReactionKey = "voice.contract.soul.thomas"
+            };
+
+            soulCollectClientConfigs[3] = new SoulCollectClientConfig
+            {
+                ClientId = 3,
+                ClientDisplayName = "Bartholomew",
+                MinPercent = 50,
+                MaxPercent = 50,
+                DefaultTargetPercent = 50,
+                SoulColor = new Color(0.85f, 0.82f, 1f, 1f),
+                RevealFxKey = "vfx.contract.soul.transfer",
+                VoiceReactionKey = "voice.contract.soul.sullivan"
+            };
+
+            soulCollectClientConfigs[4] = new SoulCollectClientConfig
+            {
+                ClientId = 4,
+                ClientDisplayName = "Reggie",
+                MinPercent = 45,
+                MaxPercent = 45,
+                DefaultTargetPercent = 45,
+                SoulColor = new Color(0.82f, 0.91f, 1f, 1f),
+                RevealFxKey = "vfx.contract.soul.transfer",
+                VoiceReactionKey = "voice.contract.soul.reggie"
             };
 
             beanSellClientConfigs[1] = new BeanSellClientConfig
@@ -172,7 +232,14 @@ namespace ITC.SignMiniGame
             {
                 ClientId = 3,
                 ClientDisplayName = "Bartholomew",
-                SocialClass = SignMiniGameSocialClass.Bourgeois
+                SocialClass = SignMiniGameSocialClass.Worker
+            };
+
+            settlementClientConfigs[4] = new SettlementClientConfig
+            {
+                ClientId = 4,
+                ClientDisplayName = "Reggie",
+                SocialClass = SignMiniGameSocialClass.Poor
             };
 
             runeTypingClientConfigs[1] = new RuneTypingRoundConfig
@@ -198,6 +265,33 @@ namespace ITC.SignMiniGame
                     RuneInputDirection.Up,
                     RuneInputDirection.Right,
                     RuneInputDirection.Down,
+                    RuneInputDirection.Right
+                }
+            };
+
+            runeTypingClientConfigs[3] = new RuneTypingRoundConfig
+            {
+                ClientId = 3,
+                GridSize = 4,
+                TargetSequence = new List<RuneInputDirection>
+                {
+                    RuneInputDirection.Up,
+                    RuneInputDirection.Up,
+                    RuneInputDirection.Right,
+                    RuneInputDirection.Down
+                }
+            };
+
+            runeTypingClientConfigs[4] = new RuneTypingRoundConfig
+            {
+                ClientId = 4,
+                GridSize = 5,
+                TargetSequence = new List<RuneInputDirection>
+                {
+                    RuneInputDirection.Right,
+                    RuneInputDirection.Down,
+                    RuneInputDirection.Left,
+                    RuneInputDirection.Up,
                     RuneInputDirection.Right
                 }
             };

@@ -14,6 +14,7 @@ namespace ITC.Dialogue
         private RectTransform historyBrowseRect;
         private int currentHistoryIndex = -1;
         private string currentNpcId = string.Empty;
+        private bool hasPinnedNpcCycle;
 
         public SignDialogueNpcTrack(SignDialoguePanelFactory panelFactory)
         {
@@ -31,28 +32,31 @@ namespace ITC.Dialogue
 
         public void ResetForNpc(string npcId)
         {
-            currentNpcId = string.IsNullOrWhiteSpace(npcId) ? string.Empty : npcId.Trim();
+            hasPinnedNpcCycle = !string.IsNullOrWhiteSpace(npcId);
+            currentNpcId = hasPinnedNpcCycle ? npcId.Trim() : string.Empty;
             ClearAllPanels();
         }
 
         public void HideAll()
         {
+            hasPinnedNpcCycle = false;
             currentNpcId = string.Empty;
             ClearAllPanels();
         }
 
         public void PresentNpcLine(string speaker, string text)
         {
-            var npcId = string.IsNullOrWhiteSpace(speaker) ? currentNpcId : speaker.Trim();
+            var npcId = ResolveNpcId(speaker);
             if (string.IsNullOrWhiteSpace(npcId))
             {
                 npcId = "NPC";
             }
 
-            if (!string.IsNullOrWhiteSpace(currentNpcId) &&
+            if (!hasPinnedNpcCycle &&
+                !string.IsNullOrWhiteSpace(currentNpcId) &&
                 !string.Equals(currentNpcId, npcId, StringComparison.OrdinalIgnoreCase))
             {
-                ResetForNpc(npcId);
+                ResetForAutoDetectedNpc(npcId);
             }
             else if (string.IsNullOrWhiteSpace(currentNpcId))
             {
@@ -122,6 +126,25 @@ namespace ITC.Dialogue
             currentVisibleHistoryPanel = nextPanel;
             currentHistoryIndex = index;
             currentVisibleHistoryPanel.ShowRetained(animate);
+        }
+
+        private string ResolveNpcId(string speaker)
+        {
+            if (hasPinnedNpcCycle && !string.IsNullOrWhiteSpace(currentNpcId))
+            {
+                return currentNpcId;
+            }
+
+            return string.IsNullOrWhiteSpace(speaker)
+                ? currentNpcId
+                : speaker.Trim();
+        }
+
+        private void ResetForAutoDetectedNpc(string npcId)
+        {
+            hasPinnedNpcCycle = false;
+            currentNpcId = string.IsNullOrWhiteSpace(npcId) ? string.Empty : npcId.Trim();
+            ClearAllPanels();
         }
 
         private void ClearAllPanels()

@@ -13,8 +13,11 @@ namespace ITC.Sign
         [SerializeField] private bool autoStartOnEnable = true;
         [SerializeField] private float startupDelaySeconds = 0.2f;
         [SerializeField] private string startNode = "Sign_Day1_Start";
+        [SerializeField] private float startupRetryWindowSeconds = 5f;
 
         private bool startupRequestedThisSession;
+        private float sessionStartRealtime;
+        private Coroutine startupRoutine;
 
         public void Configure(DialogueRunner runner, YarnProject project, bool autoStart, float delaySeconds, string nodeName)
         {
@@ -38,6 +41,24 @@ namespace ITC.Sign
             }
         }
 
+        private void OnEnable()
+        {
+            startupRequestedThisSession = false;
+            sessionStartRealtime = Time.realtimeSinceStartup;
+        }
+
+        private void OnDisable()
+        {
+            startupRequestedThisSession = false;
+            sessionStartRealtime = 0f;
+
+            if (startupRoutine != null)
+            {
+                StopCoroutine(startupRoutine);
+                startupRoutine = null;
+            }
+        }
+
         private IEnumerator Start()
         {
             if (!autoStartOnEnable)
@@ -45,8 +66,12 @@ namespace ITC.Sign
                 yield break;
             }
 
-            startupRequestedThisSession = true;
-            yield return StartDialogueRoutine();
+            if (startupRoutine == null)
+            {
+                startupRoutine = StartCoroutine(StartDialogueRoutine());
+            }
+
+            yield return startupRoutine;
         }
 
         private void Update()
@@ -61,22 +86,47 @@ namespace ITC.Sign
             if (Time.frameCount <= 1)
             {
                 startupRequestedThisSession = false;
+                sessionStartRealtime = Time.realtimeSinceStartup;
             }
 
-            if (startupRequestedThisSession || Time.frameCount > 10)
+            if (dialogueRunner == null || dialogueRunner.IsDialogueRunning)
             {
                 return;
             }
 
-            startupRequestedThisSession = true;
-            StartCoroutine(StartDialogueRoutine());
+            if (startupRoutine != null)
+            {
+                return;
+            }
+
+            if (Time.realtimeSinceStartup - sessionStartRealtime > startupRetryWindowSeconds)
+            {
+                return;
+            }
+
+            if (!startupRequestedThisSession || Time.frameCount <= 10)
+            {
+                startupRoutine = StartCoroutine(StartDialogueRoutine());
+            }
         }
 
         public IEnumerator StartDialogueRoutine()
         {
+            startupRequestedThisSession = true;
+
             if (dialogueRunner == null)
             {
                 LogKit.E("[SignSceneDialogueLauncher] DialogueRunner is missing.");
+                startupRoutine = null;
+                yield break;
+            }
+
+            UIKit.Config = new MainMenuUIKitConfig();
+            yield return ResKit.InitAsync();
+
+            if (dialogueRunner.IsDialogueRunning)
+            {
+                startupRoutine = null;
                 yield break;
             }
 
@@ -99,7 +149,15 @@ namespace ITC.Sign
             if (!dialogueRunner.IsDialogueRunning)
             {
                 _ = dialogueRunner.StartDialogue(dialogueRunner.startNode);
+                yield return null;
             }
+
+            if (!dialogueRunner.IsDialogueRunning)
+            {
+                startupRequestedThisSession = false;
+            }
+
+            startupRoutine = null;
         }
     }
 }

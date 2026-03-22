@@ -221,6 +221,6 @@ OldTom: |typewriter|没关系，不用太紧张。
 <<itc_npc_avatar_hide>>
 Narrator: |fade|Old Tom把另外两人遣走，留下Barks独自面对即将到来的客户
 Barks: |typewriter|好吧，看来这工作比我想象的...惊险多了。
-Narrator: |typewriter|（此处应有准备接客的小游戏展示占位提示等）
-<<jump Sign_Day1_Start>>
+Narrator: |typewriter|13号窗口的气动管道发出一声闷响，第一位客户的申请文件已经送到了窗口。
+<<itc_load_scene SignScene>>
 ===

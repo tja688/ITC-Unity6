@@ -710,7 +710,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 240f39b1c17af064f836b12ced72db89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.SignDialogueSceneBootstrap
-  ensureDialogueStarts: 0
+  ensureDialogueStarts: 1
   startKickDelaySeconds: 0.35
   fallbackStartNode: Sign_Day1_Start
 --- !u!114 &1053856072

@@ -34,7 +34,7 @@ public static class YarnTestCatalogGenerator
                 startNode = "ITC_BeforeWork_Scene1_Day1Transition",
                 endNode = "ITC_BeforeWork_Scene22_AtDesk",
                 description = "第一天报到：进入大楼大厅，到6楼面见Henet分配到13号窗口，接受骷髅教学，认识Old Tom和Veer。",
-                commandsUsed = "itc_bg, itc_npc_main, itc_npc_avatar, itc_pc_avatar",
+                commandsUsed = "itc_bg, itc_npc_main, itc_npc_avatar, itc_pc_avatar, itc_load_scene",
                 variableNodes = new List<string>()
             },
             new YarnTestFileInfo
@@ -43,8 +43,29 @@ public static class YarnTestCatalogGenerator
                 startNode = "Sign_Day1_Start",
                 endNode = "Ending_Placeholder",
                 description = "第一天签约小游戏环节：接待4个客户（醉汉、生病矿工、假酒保、武器专家），审核契约并通过小游戏验证盖章和取魂，期间有上司Henet的电话监测考核。",
-                commandsUsed = "itc_bg, itc_npc_main, itc_npc_avatar, itc_pc_avatar, jump",
-                variableNodes = new List<string>()
+                commandsUsed = "itc_bg, itc_npc_main, itc_npc_main_hide, itc_pc_avatar_hide, itc_npc_avatar_hide, itc_sign_npc_enter, itc_sign_npc_exit, itc_doc_review, itc_rune_typing, itc_rune_verify, itc_stamp_select, itc_soul_collect, itc_settlement, jump",
+                variableNodes = new List<string>
+                {
+                    "$DAY",
+                    "$money",
+                    "$Nmber_of_sign_mistake",
+                    "$Global_sign_mistake",
+                    "$Route_CurrentClient",
+                    "$Sign_mistake",
+                    "$satisfaction",
+                    "$Route_DocReviewResult",
+                    "$Route_QTEErrorCount",
+                    "$Route_RuneVerifyResult",
+                    "$Route_RuneVerifyDebuff",
+                    "$Route_StampType",
+                    "$Route_StampTimingResult",
+                    "$Route_SoulCollectPercent",
+                    "$Route_SoulMin",
+                    "$Route_SoulMax",
+                    "$Route_SettlementTip",
+                    "$Route_SettlementTier",
+                    "$Route_SettlementFinalSatisfaction"
+                }
             }
         };
 

@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using Febucci.TextAnimatorForUnity;
+using Febucci.TextAnimatorForUnity.TextMeshPro;
 using QFramework;
-using TMPro;
 using UnityEngine;
 using Yarn.Unity;
 
@@ -90,24 +91,33 @@ namespace ITC.Dialogue
                 legacyOptionsPresenter.enabled = false;
             }
 
+            // SignScene routes dialogue into the sign runtime slots, so the scene-local legacy
+            // Text Animator stack should stay disabled from the first frame. Leaving it enabled
+            // lets the hidden fallback text object tick independently and pollute both runtime
+            // behavior and editor validation with irrelevant exceptions.
+            var legacyTextAnimator = dialoguePanel.GetComponentInChildren<TextAnimator_TMP>(true);
+            if (legacyTextAnimator != null)
+            {
+                legacyTextAnimator.enabled = false;
+            }
+
+            var legacyTypewriter = dialoguePanel.GetComponentInChildren<TypewriterComponent>(true);
+            if (legacyTypewriter != null)
+            {
+                legacyTypewriter.enabled = false;
+            }
+
             ConfigureDialogueRunner(dialogueRunner, linePresenter, newOptionsPresenter);
             SetAllowOptionFallthrough(dialogueRunner, false);
 
             var panelFactory = new SignDialoguePanelFactory(frontTemplate, backTemplate, playerTemplate);
-            var overlayParent = dialoguePanel as RectTransform;
-            var textTemplate = dialoguePanel.GetComponentInChildren<TMP_Text>(true);
-            var docReviewTarget = FindByName(transform, "契约管道_Ctrl") as RectTransform;
-            var runeTarget = FindByName(transform, "打字机_Ctrl") as RectTransform;
-            var placeholderBridge = new SignDialoguePlaceholderMinigameBridge(overlayParent, textTemplate, docReviewTarget, runeTarget);
-
             var rootCanvas = GetComponent<Canvas>();
             runtimeFacade.Configure(
                 dialogueRunner,
                 rootCanvas,
                 panelFactory,
                 backMask,
-                newOptionsPresenter,
-                placeholderBridge);
+                newOptionsPresenter);
 
             if (Application.isPlaying && ensureDialogueStarts)
             {
