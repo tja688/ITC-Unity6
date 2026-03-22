@@ -55,6 +55,11 @@ namespace ITC.Dialogue
                 rectTransform = transform as RectTransform;
             }
 
+            if (optionContainer == null)
+            {
+                optionContainer = FindOptionContainer();
+            }
+
             if (popupAnimation == null || shrinkAnimation == null)
             {
                 var animations = GetComponentsInChildren<DOTweenAnimation>(true);
@@ -210,6 +215,7 @@ namespace ITC.Dialogue
         {
             if (optionContainer != null)
             {
+                EnsureOptionContainerLayout(optionContainer.gameObject);
                 return optionContainer;
             }
 
@@ -229,7 +235,18 @@ namespace ITC.Dialogue
             optionContainer.offsetMax = new Vector2(-optionPadding.y, -optionPadding.z);
             optionContainer.SetAsLastSibling();
 
+            EnsureOptionContainerLayout(containerObject);
+            return optionContainer;
+        }
+
+        private void EnsureOptionContainerLayout(GameObject containerObject)
+        {
             var layout = containerObject.GetComponent<VerticalLayoutGroup>();
+            if (layout == null)
+            {
+                layout = containerObject.AddComponent<VerticalLayoutGroup>();
+            }
+
             layout.childAlignment = TextAnchor.MiddleCenter;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
@@ -238,10 +255,13 @@ namespace ITC.Dialogue
             layout.spacing = optionSpacing;
 
             var fitter = containerObject.GetComponent<ContentSizeFitter>();
+            if (fitter == null)
+            {
+                fitter = containerObject.AddComponent<ContentSizeFitter>();
+            }
+
             fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            return optionContainer;
         }
 
         private static void ClearOptionContainer(RectTransform container)
@@ -295,6 +315,24 @@ namespace ITC.Dialogue
             }
 
             Destroy(gameObject);
+        }
+
+        private RectTransform FindOptionContainer()
+        {
+            foreach (Transform child in transform)
+            {
+                if (child == null)
+                {
+                    continue;
+                }
+
+                if (child.name == "玩家框选项" || child.name == "OptionsContainer")
+                {
+                    return child as RectTransform;
+                }
+            }
+
+            return null;
         }
     }
 }
