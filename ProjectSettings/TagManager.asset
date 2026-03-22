@@ -42,5 +42,23 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BackGround
+    uniqueID: 4186775205
+    locked: 0
+  - name: "阴影（临时）"
+    uniqueID: 3183711827
+    locked: 0
+  - name: Item
+    uniqueID: 980785323
+    locked: 0
+  - name: Actor
+    uniqueID: 3848593157
+    locked: 0
+  - name: UI
+    uniqueID: 2698357951
+    locked: 0
+  - name: "无论如何就是最上面"
+    uniqueID: 3734016477
+    locked: 0
   m_RenderingLayers:
   - Default

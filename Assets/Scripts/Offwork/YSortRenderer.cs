@@ -17,6 +17,13 @@ public class YSortRenderer : MonoBehaviour
         RendererBoundsBottom
     }
 
+    public enum SortSpaceMode
+    {
+        World,
+        Parent,
+        CustomRoot
+    }
+
     public enum UpdateMode
     {
         Always,
@@ -39,6 +46,13 @@ public class YSortRenderer : MonoBehaviour
 
     [Tooltip("当没有 SortingGroup 时，是否包含自身的 SpriteRenderer。")]
     public bool includeSelfRenderer = true;
+
+    [Header("排序空间")]
+    [Tooltip("World 使用世界坐标；Parent 使用父节点局部坐标；CustomRoot 使用指定根节点局部坐标。地图包整体位移时推荐 Parent 或 CustomRoot。")]
+    public SortSpaceMode sortSpaceMode = SortSpaceMode.World;
+
+    [Tooltip("当排序空间为 CustomRoot 时，使用该节点作为排序参考空间。")]
+    public Transform sortSpaceRoot;
 
     [Header("排序参数")]
     [Tooltip("可选：强制覆盖 Sorting Layer 名称，为空则沿用原设置。")]
@@ -160,18 +174,37 @@ public class YSortRenderer : MonoBehaviour
         {
             case ReferenceMode.CustomPivot:
                 if (customPivot != null)
-                    return customPivot.position.y;
+                    return ConvertWorldPointToSortY(customPivot.position);
                 break;
             case ReferenceMode.RendererBoundsBottom:
                 if (TryGetRendererBounds(out var bounds))
-                    return bounds.min.y;
+                    return ConvertWorldPointToSortY(new Vector3(bounds.center.x, bounds.min.y, bounds.center.z));
                 break;
         }
 
         var target = customPivot != null && referenceMode == ReferenceMode.CustomPivot
             ? customPivot
             : transform;
-        return target.position.y;
+        return ConvertWorldPointToSortY(target.position);
+    }
+
+    float ConvertWorldPointToSortY(Vector3 worldPoint)
+    {
+        var sortRoot = GetSortSpaceTransform();
+        return sortRoot != null ? sortRoot.InverseTransformPoint(worldPoint).y : worldPoint.y;
+    }
+
+    Transform GetSortSpaceTransform()
+    {
+        switch (sortSpaceMode)
+        {
+            case SortSpaceMode.Parent:
+                return transform.parent;
+            case SortSpaceMode.CustomRoot:
+                return sortSpaceRoot;
+            default:
+                return null;
+        }
     }
 
     bool TryGetRendererBounds(out Bounds result)
