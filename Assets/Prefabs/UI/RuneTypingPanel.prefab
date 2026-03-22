@@ -7764,7 +7764,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16618fa480d7b4e418886d6d4606ea8a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.RuneTypingPanel
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.RuneTypingPanel
   panelRoot: {fileID: 0}
   gameRoot: {fileID: 0}
   targetSequenceRoot: {fileID: 0}
@@ -8377,7 +8377,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6154d00fc8e1924db7dafe7a41c4fd3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.RuneTypingGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.RuneTypingGuideTag
 --- !u!1 &7254835814078429596
 GameObject:
   m_ObjectHideFlags: 0

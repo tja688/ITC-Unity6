@@ -14,8 +14,8 @@
 
 ### 1.2 QFramework 责任边界
 - **Model**
-  - `ContractFlowStateModel`：记录本轮客户、满意度、失误标记、中间判定缓存。
-  - `ContractClientConfigModel`：客户配置读取与缓存。
+  - `SignMiniGameFlowStateModel`：记录本轮客户、满意度、失误标记、中间判定缓存。
+  - `SignMiniGameClientConfigModel`：客户配置读取与缓存。
 - **Command**
   - `StartMiniGame` 系命令：统一开局，暂停 Yarn。
   - `SubmitMiniGameResult` 系命令：统一收口，写 Model + 写 Yarn 变量，关闭面板并恢复对话。
@@ -47,62 +47,62 @@
 ### 2.1 文书审核 (DocumentReview)
 - **定位**：客户入场后首环节。检查封蜡、墨水、日期、身份。
 - **关键脚本**：
-  - `Assets/Scripts/Contracting/DocumentReview/DocumentReviewPanel.cs`
-  - `Assets/Scripts/Contracting/DocumentReview/DocumentReviewGuideTag.cs`
-  - `Assets/Scripts/Contracting/DocumentReview/DocumentReviewQuickTestLauncher.cs`
+  - `Assets/Scripts/SignMiniGame/DocumentReview/DocumentReviewPanel.cs`
+  - `Assets/Scripts/SignMiniGame/DocumentReview/DocumentReviewGuideTag.cs`
+  - `Assets/Scripts/SignMiniGame/DocumentReview/DocumentReviewQuickTestLauncher.cs`
 - **核心判定**：通过 (Pass) 或 退回 (Reject)。
 - **变量回写**：`$Route_DocReviewResult` (passed/rejected_correct/rejected_wrong)。
 
 ### 2.2 符文控制板 QTE (RuneTyping)
 - **定位**：文书审核后的 WASD QTE。按序输入符文序列。
 - **关键脚本**：
-  - `Assets/Scripts/Contracting/RuneTyping/RuneTypingPanel.cs`
-  - `Assets/Scripts/Contracting/RuneTyping/RuneTypingGuideTag.cs`
-  - `Assets/Scripts/Contracting/RuneTyping/RuneTypingQuickTestLauncher.cs`
+  - `Assets/Scripts/SignMiniGame/RuneTyping/RuneTypingPanel.cs`
+  - `Assets/Scripts/SignMiniGame/RuneTyping/RuneTypingGuideTag.cs`
+  - `Assets/Scripts/SignMiniGame/RuneTyping/RuneTypingQuickTestLauncher.cs`
 - **输入通道**：WASD + Confirm (Space/Enter)；保留屏幕按钮作为 WebGL 兜底。
 - **变量回写**：`$Route_QTEErrorCount`。
 
 ### 2.3 符文核验找茬 (RuneVerify)
 - **定位**：RuneTyping 后的 30% 概率插入环节。限时 5s 找茬。
 - **关键脚本**：
-  - `Assets/Scripts/Contracting/RuneVerify/RuneVerifyPanel.cs`
-  - `Assets/Scripts/Contracting/RuneVerify/RuneVerifyGuideTag.cs`
-  - `Assets/Scripts/Contracting/RuneVerify/RuneVerifyQuickTestLauncher.cs`
+  - `Assets/Scripts/SignMiniGame/RuneVerify/RuneVerifyPanel.cs`
+  - `Assets/Scripts/SignMiniGame/RuneVerify/RuneVerifyGuideTag.cs`
+  - `Assets/Scripts/SignMiniGame/RuneVerify/RuneVerifyQuickTestLauncher.cs`
 - **失败惩罚**：若失败，后续盖印环节 (Stamp) 会出现屏幕晃动干扰。
 - **变量回写**：`$Route_RuneVerifyResult` (skipped/success/failed)。
 
 ### 2.4 印章选择与盖印 (Stamp)
 - **定位**：知识判断（四选一） + 手感判定（蓄力蓄能）。
 - **关键脚本**：
-  - `Assets/Scripts/Contracting/Stamp/StampPanel.cs`
-  - `Assets/Scripts/Contracting/Stamp/StampGuideTag.cs`
-  - `Assets/Scripts/Contracting/Stamp/StampQuickTestLauncher.cs`
+  - `Assets/Scripts/SignMiniGame/Stamp/StampPanel.cs`
+  - `Assets/Scripts/SignMiniGame/Stamp/StampGuideTag.cs`
+  - `Assets/Scripts/SignMiniGame/Stamp/StampQuickTestLauncher.cs`
 - **判定区间**：完美窗、普通窗、失败窗；错选类型直接计失误。
 - **变量回写**：`$Route_StampType`, `$Route_StampTimingResult` (perfect/normal/failed)。
 
 ### 2.5 灵魂收取分割 (SoulCollect)
 - **定位**：分灵刀分割灵魂光球。
 - **关键脚本**：
-  - `Assets/Scripts/Contracting/SoulCollect/SoulCollectPanel.cs`
-  - `Assets/Scripts/Contracting/SoulCollect/SoulCollectGuideTag.cs`
-  - `Assets/Scripts/Contracting/SoulCollect/SoulCollectQuickTestLauncher.cs`
+  - `Assets/Scripts/SignMiniGame/SoulCollect/SoulCollectPanel.cs`
+  - `Assets/Scripts/SignMiniGame/SoulCollect/SoulCollectGuideTag.cs`
+  - `Assets/Scripts/SignMiniGame/SoulCollect/SoulCollectQuickTestLauncher.cs`
 - **规则**：收取过多 (-满意度)，收取过少 (+失误)。
 - **变量回写**：`$Route_SoulCollectPercent`。
 
 ### 2.6 豆罐头推销 (BeanSell)
 - **定位**：Day2+ 触发的选择题环节。
 - **关键脚本**：
-  - `Assets/Scripts/Contracting/BeanSell/BeanSellPanel.cs`
-  - `Assets/Scripts/Contracting/BeanSell/BeanSellGuideTag.cs`
-  - `Assets/Scripts/Contracting/BeanSell/BeanSellQuickTestLauncher.cs`
+  - `Assets/Scripts/SignMiniGame/BeanSell/BeanSellPanel.cs`
+  - `Assets/Scripts/SignMiniGame/BeanSell/BeanSellGuideTag.cs`
+  - `Assets/Scripts/SignMiniGame/BeanSell/BeanSellQuickTestLauncher.cs`
 - **变量回写**：`$Route_BeanSellResult`, `$Route_BeanSoldCount`。
 
 ### 2.7 满意度结算 (Settlement)
 - **定位**：单客户签约链路尾部。聚合结果，计算小费。
 - **关键脚本**：
-  - `Assets/Scripts/Contracting/Settlement/SettlementPanel.cs`
-  - `Assets/Scripts/Contracting/Settlement/SettlementGuideTag.cs`
-  - `Assets/Scripts/Contracting/Settlement/SettlementQuickTestLauncher.cs`
+  - `Assets/Scripts/SignMiniGame/Settlement/SettlementPanel.cs`
+  - `Assets/Scripts/SignMiniGame/Settlement/SettlementGuideTag.cs`
+  - `Assets/Scripts/SignMiniGame/Settlement/SettlementQuickTestLauncher.cs`
 - **核心逻辑**：满意度等级判定（Henet 反馈依赖项），小费按阶层发放。
 
 ---
@@ -119,12 +119,12 @@
 ## 4. 关键文件路径一览 (Script Paths)
 
 ### 4.1 公共底层 (`Common/`)
-- `Assets/Scripts/Contracting/Common/ContractingTypes.cs`
-- `Assets/Scripts/Contracting/Common/ContractFlowStateModel.cs`
-- `Assets/Scripts/Contracting/Common/ContractClientConfigModel.cs`
-- `Assets/Scripts/Contracting/Common/ContractCommands.cs`
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameTypes.cs`
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameFlowStateModel.cs`
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameClientConfigModel.cs`
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameCommands.cs`
 
-### 4.2 编辑器工具 (`Assets/Editor/Contracting/`)
+### 4.2 编辑器工具 (`Assets/Editor/SignMiniGame/`)
 - `DocumentReviewPanelPrefabBuilder.cs`
 - `DocumentReviewQuickTestTools.cs`
 - `RuneTypingPanelPrefabBuilder.cs`

@@ -1,0 +1,560 @@
+using System;
+using System.Collections.Generic;
+using QFramework;
+using UnityEngine;
+
+namespace ITC.SignMiniGame
+{
+    public enum DocumentReviewDecision
+    {
+        Pass = 0,
+        Reject = 1
+    }
+
+    public enum DocumentReviewRejectReason
+    {
+        None = 0,
+        ImageMismatch = 1,
+        DateMismatch = 2,
+        ApplicationMismatch = 3,
+        PaperForgery = 4,
+        PaperDamage = 5
+    }
+
+    [Serializable]
+    public sealed class DocumentReviewHotspotConfig
+    {
+        public string Id = string.Empty;
+        public string DisplayName = string.Empty;
+    }
+
+    [Serializable]
+    public sealed class DocumentReviewConfig
+    {
+        public int MinInspectCount = 2;
+        public Vector2 ZoomRange = new(1f, 1.5f);
+        public int HoverExpandPx = 10;
+        public int SubmitDebounceMs = 300;
+        public int WrongPenaltySatisfaction = 1;
+        public bool WrongPenaltyMistakeFlag = true;
+        public bool TutorialForceAllHotspots = true;
+        public List<DocumentReviewHotspotConfig> Hotspots = new()
+        {
+            new DocumentReviewHotspotConfig { Id = "seal", DisplayName = "Seal" },
+            new DocumentReviewHotspotConfig { Id = "ink", DisplayName = "Ink" },
+            new DocumentReviewHotspotConfig { Id = "date", DisplayName = "Date" },
+            new DocumentReviewHotspotConfig { Id = "content", DisplayName = "Content" }
+        };
+    }
+
+    [Serializable]
+    public sealed class DocumentReviewClientConfig
+    {
+        public int ClientId;
+        public string ClientDisplayName = string.Empty;
+        public string DateDisplayText = string.Empty;
+        public string InkType = string.Empty;
+        public bool SealIntegrity = true;
+        public bool PhotoMatchesClient = true;
+        public DocumentReviewDecision CorrectDecision = DocumentReviewDecision.Pass;
+        public string[] AllowedRejectReasons =
+        {
+            "ImageMismatch",
+            "DateMismatch",
+            "ApplicationMismatch",
+            "PaperForgery",
+            "PaperDamage"
+        };
+    }
+
+    public struct DocumentReviewResultPayload
+    {
+        public int ClientId;
+        public DocumentReviewDecision FinalAction;
+        public DocumentReviewRejectReason RejectReason;
+        public int InspectedHotspotCount;
+        public bool TutorialMode;
+        public bool ForceConfirmed;
+        public bool WasFallback;
+    }
+
+    public enum RuneVerifyResultType
+    {
+        Skipped = 0,
+        Success = 1,
+        Failed = 2
+    }
+
+    [Serializable]
+    public sealed class RuneVerifyConfig
+    {
+        [Range(0f, 1f)] public float TriggerProbability = 0.3f;
+        [Range(2, 8)] public int GridWidth = 4;
+        [Range(2, 8)] public int GridHeight = 5;
+        [Range(1, 10)] public int DistortedCount = 3;
+        [Range(1f, 15f)] public float TimeLimitSeconds = 5f;
+        [Range(0.05f, 1f)] public float FinalSecondPulseRate = 0.25f;
+        public bool MisclickPenaltyVisualOnly = true;
+        [Range(0f, 2f)] public float StampDebuffShakeAmp = 0.35f;
+        public int FixedRandomSeed = -1;
+        [Range(0f, 2f)] public float CountdownLeadSeconds = 0.45f;
+
+        public RuneVerifyConfig Clone()
+        {
+            return new RuneVerifyConfig
+            {
+                TriggerProbability = TriggerProbability,
+                GridWidth = GridWidth,
+                GridHeight = GridHeight,
+                DistortedCount = DistortedCount,
+                TimeLimitSeconds = TimeLimitSeconds,
+                FinalSecondPulseRate = FinalSecondPulseRate,
+                MisclickPenaltyVisualOnly = MisclickPenaltyVisualOnly,
+                StampDebuffShakeAmp = StampDebuffShakeAmp,
+                FixedRandomSeed = FixedRandomSeed,
+                CountdownLeadSeconds = CountdownLeadSeconds
+            };
+        }
+    }
+
+    public struct RuneVerifyResultPayload
+    {
+        public int ClientId;
+        public RuneVerifyResultType Result;
+        public int FoundCount;
+        public int DistortedCount;
+        public bool Triggered;
+        public bool WasTimeoutFallback;
+        public int RandomSeed;
+    }
+
+    [Serializable]
+    public sealed class DocumentReviewPanelData : UIPanelData
+    {
+        public int ClientId;
+        public bool TutorialMode;
+        public DocumentReviewDecision ExpectedAction;
+        public DocumentReviewConfig RuntimeConfig;
+        public DocumentReviewClientConfig ClientConfig;
+        public string[] AllowedRejectReasons;
+
+        [NonSerialized] public Action<DocumentReviewResultPayload> OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
+    public enum StampType
+    {
+        Money = 0,
+        Fame = 1,
+        Skill = 2,
+        Event = 3
+    }
+
+    public enum StampTimingResult
+    {
+        Perfect = 0,
+        Normal = 1,
+        Failed = 2
+    }
+
+    [Serializable]
+    public sealed class StampConfig
+    {
+        public StampType CorrectStampType = StampType.Event;
+        public float ChargeDuration = 1.6f;
+        public float PerfectWindowStart = 0.72f;
+        public float PerfectWindowEnd = 0.84f;
+        public float NormalWindowPadding = 0.12f;
+        public float VerifyDebuffShakeAmp = 12f;
+        public int VerifyDebuffShakeCount = 3;
+        public int TimingFailPenalty = 1;
+    }
+
+    [Serializable]
+    public sealed class StampClientConfig
+    {
+        public int ClientId;
+        public string ClientDisplayName = string.Empty;
+        public StampType CorrectStampType = StampType.Event;
+    }
+
+    public struct StampResultPayload
+    {
+        public int ClientId;
+        public StampType SelectedStampType;
+        public StampTimingResult TimingResult;
+        public float HitNormalizedTime;
+        public bool TypeCorrect;
+        public bool HasVerifyDebuff;
+        public bool WasFallback;
+    }
+
+    [Serializable]
+    public sealed class StampPanelData : UIPanelData
+    {
+        public int ClientId;
+        public bool TutorialMode;
+        public bool HasVerifyDebuff;
+        public StampConfig RuntimeConfig;
+        public StampClientConfig ClientConfig;
+
+        [NonSerialized] public Action<StampResultPayload> OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
+    public enum SoulCollectResolveType
+    {
+        Normal = 0,
+        TooLow = 1,
+        TooHigh = 2
+    }
+
+    [Serializable]
+    public sealed class SoulCollectConfig
+    {
+        [Range(0, 100)] public int TargetPercent = 45;
+        [Range(0, 100)] public int MinPercent = 40;
+        [Range(0, 100)] public int MaxPercent = 50;
+        [Range(0f, 20f)] public float AimAssistRadius = 4f;
+        [Range(0.01f, 0.5f)] public float DragDamping = 0.1f;
+        [Range(0.1f, 1.5f)] public float SplitAnimDuration = 0.45f;
+        public bool TooLowAsMistake = true;
+        [Range(0, 3)] public int TooHighSatisfactionPenalty = 1;
+        public bool ShowTargetHintInTutorial = true;
+        [Range(5f, 60f)] public float PreviewRefreshRateHz = 20f;
+        [Range(0.1f, 2f)] public float ResultStaySeconds = 0.6f;
+        [Range(0.05f, 1f)] public float KeyboardAdjustPerSecond = 0.45f;
+
+        public SoulCollectConfig Clone()
+        {
+            return new SoulCollectConfig
+            {
+                TargetPercent = TargetPercent,
+                MinPercent = MinPercent,
+                MaxPercent = MaxPercent,
+                AimAssistRadius = AimAssistRadius,
+                DragDamping = DragDamping,
+                SplitAnimDuration = SplitAnimDuration,
+                TooLowAsMistake = TooLowAsMistake,
+                TooHighSatisfactionPenalty = TooHighSatisfactionPenalty,
+                ShowTargetHintInTutorial = ShowTargetHintInTutorial,
+                PreviewRefreshRateHz = PreviewRefreshRateHz,
+                ResultStaySeconds = ResultStaySeconds,
+                KeyboardAdjustPerSecond = KeyboardAdjustPerSecond
+            };
+        }
+    }
+
+    [Serializable]
+    public sealed class SoulCollectClientConfig
+    {
+        public int ClientId;
+        public string ClientDisplayName = string.Empty;
+        [Range(0, 100)] public int MinPercent = 40;
+        [Range(0, 100)] public int MaxPercent = 50;
+        [Range(0, 100)] public int DefaultTargetPercent = 45;
+        public Color SoulColor = new(0.49f, 0.83f, 1f, 1f);
+        public string RevealFxKey = "vfx.contract.soul.transfer";
+        public string VoiceReactionKey = "voice.contract.soul.neutral";
+    }
+
+    public struct SoulCollectResultPayload
+    {
+        public int ClientId;
+        public int TargetPercent;
+        public int MinPercent;
+        public int MaxPercent;
+        public int ActualPercent;
+        public float ActualRawFloat;
+        public SoulCollectResolveType ResolveType;
+        public bool WasFallback;
+    }
+
+    [Serializable]
+    public sealed class SoulCollectPanelData : UIPanelData
+    {
+        public int ClientId;
+        public bool TutorialMode;
+        public SoulCollectConfig RuntimeConfig;
+        public SoulCollectClientConfig ClientConfig;
+
+        [NonSerialized] public Action<SoulCollectResultPayload> OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
+    public enum BeanPitchType
+    {
+        StrongPush = 0,
+        Empathy = 1,
+        Benefit = 2
+    }
+
+    [Serializable]
+    public sealed class BeanSellPitchWeights
+    {
+        [Range(-2, 4)] public int StrongPush = 0;
+        [Range(-2, 4)] public int Empathy = 0;
+        [Range(-2, 4)] public int Benefit = 0;
+    }
+
+    [Serializable]
+    public sealed class BeanSellConfig
+    {
+        [Range(1, 30)] public int EnabledFromDay = 2;
+        public bool DailyResetOnDayChange = true;
+        [Range(-10, 20)] public int SuccessThreshold = 3;
+        public BeanSellPitchWeights PitchTypeWeights = new();
+        [Range(0, 3)] public int FailSatisfactionPenalty = 1;
+        [Range(0.1f, 2f)] public float ResolveStaySeconds = 0.75f;
+        public bool ShowPreferenceHint = true;
+
+        public BeanSellConfig Clone()
+        {
+            return new BeanSellConfig
+            {
+                EnabledFromDay = EnabledFromDay,
+                DailyResetOnDayChange = DailyResetOnDayChange,
+                SuccessThreshold = SuccessThreshold,
+                PitchTypeWeights = new BeanSellPitchWeights
+                {
+                    StrongPush = PitchTypeWeights != null ? PitchTypeWeights.StrongPush : 0,
+                    Empathy = PitchTypeWeights != null ? PitchTypeWeights.Empathy : 0,
+                    Benefit = PitchTypeWeights != null ? PitchTypeWeights.Benefit : 0
+                },
+                FailSatisfactionPenalty = FailSatisfactionPenalty,
+                ResolveStaySeconds = ResolveStaySeconds,
+                ShowPreferenceHint = ShowPreferenceHint
+            };
+        }
+
+        public int ResolvePitchWeight(BeanPitchType pitchType)
+        {
+            var weights = PitchTypeWeights ?? new BeanSellPitchWeights();
+            return pitchType switch
+            {
+                BeanPitchType.StrongPush => weights.StrongPush,
+                BeanPitchType.Empathy => weights.Empathy,
+                BeanPitchType.Benefit => weights.Benefit,
+                _ => 0
+            };
+        }
+    }
+
+    [Serializable]
+    public sealed class BeanSellClientConfig
+    {
+        public int ClientId;
+        public string ClientDisplayName = string.Empty;
+        [Range(-10, 20)] public int BuyWillingness = 2;
+        public BeanPitchType PreferredPitch = BeanPitchType.Benefit;
+        [Range(-5, 5)] public int SituationalModifier = 0;
+        public string[] RefuseKeywords = Array.Empty<string>();
+    }
+
+    public struct BeanSellResultPayload
+    {
+        public int ClientId;
+        public int Day;
+        public BeanPitchType PitchType;
+        public int FinalScore;
+        public int SuccessThreshold;
+        public bool IsSuccess;
+        public bool IsSkipped;
+        public bool WasFallback;
+    }
+
+    [Serializable]
+    public sealed class BeanSellPanelData : UIPanelData
+    {
+        public int ClientId;
+        public int Day;
+        public BeanSellConfig RuntimeConfig;
+        public BeanSellClientConfig ClientConfig;
+
+        [NonSerialized] public Action<BeanSellResultPayload> OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
+    public enum SignMiniGameSocialClass
+    {
+        Poor = 0,
+        Worker = 1,
+        Bourgeois = 2
+    }
+
+    public enum SettlementTier
+    {
+        Good = 0,
+        Neutral = 1,
+        Bad = 2
+    }
+
+    [Serializable]
+    public sealed class SettlementTipRange
+    {
+        [Range(0, 20)] public int Min = 0;
+        [Range(0, 20)] public int Max = 1;
+    }
+
+    [Serializable]
+    public sealed class SignMiniGameSettlementConfig
+    {
+        [Range(0, 5)] public int SatisfactionTipThreshold = 3;
+        [Range(0, 5)] public int SatisfactionClampMin = 0;
+        [Range(0, 5)] public int SatisfactionClampMax = 5;
+        public SettlementTipRange PoorTipRange = new() { Min = 0, Max = 1 };
+        public SettlementTipRange WorkerTipRange = new() { Min = 1, Max = 3 };
+        public SettlementTipRange BourgeoisTipRange = new() { Min = 3, Max = 5 };
+        [Range(0.1f, 2f)] public float FeedbackDuration = 1.4f;
+
+        public SignMiniGameSettlementConfig Clone()
+        {
+            return new SignMiniGameSettlementConfig
+            {
+                SatisfactionTipThreshold = SatisfactionTipThreshold,
+                SatisfactionClampMin = SatisfactionClampMin,
+                SatisfactionClampMax = SatisfactionClampMax,
+                PoorTipRange = new SettlementTipRange { Min = PoorTipRange.Min, Max = PoorTipRange.Max },
+                WorkerTipRange = new SettlementTipRange { Min = WorkerTipRange.Min, Max = WorkerTipRange.Max },
+                BourgeoisTipRange = new SettlementTipRange { Min = BourgeoisTipRange.Min, Max = BourgeoisTipRange.Max },
+                FeedbackDuration = FeedbackDuration
+            };
+        }
+
+        public SettlementTipRange GetTipRange(SignMiniGameSocialClass socialClass)
+        {
+            return socialClass switch
+            {
+                SignMiniGameSocialClass.Poor => PoorTipRange,
+                SignMiniGameSocialClass.Worker => WorkerTipRange,
+                SignMiniGameSocialClass.Bourgeois => BourgeoisTipRange,
+                _ => WorkerTipRange
+            };
+        }
+    }
+
+    [Serializable]
+    public sealed class SettlementClientConfig
+    {
+        public int ClientId;
+        public string ClientDisplayName = string.Empty;
+        public SignMiniGameSocialClass SocialClass = SignMiniGameSocialClass.Worker;
+    }
+
+    public struct SettlementResultPayload
+    {
+        public int ClientId;
+        public int Day;
+        public int FinalSatisfaction;
+        public int TipAmount;
+        public int TotalMoney;
+        public int NumberOfSignMistake;
+        public int GlobalSignMistake;
+        public SettlementTier Tier;
+        public bool WasFallback;
+    }
+
+    [Serializable]
+    public sealed class SettlementPanelData : UIPanelData
+    {
+        public int ClientId;
+        public int Day;
+        public string ClientDisplayName = string.Empty;
+        public string DocReviewResult = "passed";
+        public int QteErrorCount;
+        public string StampType = string.Empty;
+        public string StampTimingResult = "normal";
+        public int SoulPercent;
+        public string BeanSellResult = "skipped";
+        public int FinalSatisfaction;
+        public int TipAmount;
+        public int TotalMoney;
+        public SettlementTier Tier = SettlementTier.Neutral;
+        public float FeedbackDuration = 1.4f;
+
+        [NonSerialized] public Action OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
+    public enum RuneInputDirection
+    {
+        Up = 0,
+        Down = 1,
+        Left = 2,
+        Right = 3
+    }
+
+    [Serializable]
+    public sealed class RuneTypingConfig
+    {
+        public int GridWidth = 4;
+        public int GridHeight = 4;
+        public int TargetSequenceLength = 5;
+        public List<RuneInputDirection> TargetSequence = new();
+        public List<RuneInputDirection> RuneGridLayout = new();
+        public int InputBufferMs = 50;
+        public float CursorMoveDuration = 0.08f;
+        public float CorrectFlashDuration = 0.12f;
+        public float ErrorFlashDuration = 0.1f;
+        public float CompleteResolveDuration = 0.7f;
+        public float MaxDisplayHintSeconds = 4f;
+        public bool ShowOnScreenButtonsInWebGL = true;
+        public int MinConfirmIntervalMs = 60;
+    }
+
+    [Serializable]
+    public sealed class RuneTypingRoundConfig
+    {
+        public int ClientId = 1;
+        public int GridSize = 4;
+        public List<RuneInputDirection> TargetSequence = new();
+        public List<RuneInputDirection> RuneGridLayout = new();
+    }
+
+    public struct RuneTypingResultPayload
+    {
+        public int ClientId;
+        public int GridSize;
+        public int ErrorCount;
+        public int SequenceLength;
+        public bool UsedOnScreenButtons;
+        public bool WasFallback;
+    }
+
+    [Serializable]
+    public sealed class RuneTypingPanelData : UIPanelData
+    {
+        public int ClientId = 1;
+        public int GridSize = 4;
+        public RuneTypingConfig RuntimeConfig;
+        public RuneTypingRoundConfig RoundConfig;
+
+        [NonSerialized] public Action<RuneTypingResultPayload> OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
+    [Serializable]
+    public sealed class RuneVerifyPanelData : UIPanelData
+    {
+        public int ClientId;
+        public RuneVerifyConfig RuntimeConfig;
+        public int RuntimeSeed = -1;
+
+        [NonSerialized] public Action<RuneVerifyResultPayload> OnCompleted;
+        [NonSerialized] public Action<string, Transform, float> OnFxCue;
+    }
+
+    public readonly struct SignMiniGameFxCueEvent
+    {
+        public readonly string CueId;
+        public readonly Transform Anchor;
+        public readonly float Intensity;
+
+        public SignMiniGameFxCueEvent(string cueId, Transform anchor, float intensity)
+        {
+            CueId = cueId;
+            Anchor = anchor;
+            Intensity = intensity;
+        }
+    }
+}

@@ -88,7 +88,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a98608e07bca45943a65adca89b004df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.StampGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.StampGuideTag
 --- !u!1 &320458922674674528
 GameObject:
   m_ObjectHideFlags: 0
@@ -1111,7 +1111,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a98608e07bca45943a65adca89b004df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.StampGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.StampGuideTag
 --- !u!1 &3152704166220679923
 GameObject:
   m_ObjectHideFlags: 0
@@ -2249,7 +2249,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a98608e07bca45943a65adca89b004df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.StampGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.StampGuideTag
 --- !u!1 &5051361821586386795
 GameObject:
   m_ObjectHideFlags: 0
@@ -2749,7 +2749,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a98608e07bca45943a65adca89b004df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.StampGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.StampGuideTag
 --- !u!1 &6546803935083527451
 GameObject:
   m_ObjectHideFlags: 0
@@ -2914,7 +2914,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a98608e07bca45943a65adca89b004df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.StampGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.StampGuideTag
 --- !u!1 &7004941448252484405
 GameObject:
   m_ObjectHideFlags: 0
@@ -3339,7 +3339,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a98608e07bca45943a65adca89b004df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.StampGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.StampGuideTag
 --- !u!1 &7451288308326918735
 GameObject:
   m_ObjectHideFlags: 0
@@ -3388,7 +3388,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9238a315d0618842ab13f8f961e74c6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.StampPanel
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.StampPanel
   panelRoot: {fileID: 0}
   stampRoot: {fileID: 0}
   chargeVisualRoot: {fileID: 0}
@@ -4325,7 +4325,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a98608e07bca45943a65adca89b004df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.StampGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.StampGuideTag
 --- !u!1 &8334149434541769947
 GameObject:
   m_ObjectHideFlags: 0

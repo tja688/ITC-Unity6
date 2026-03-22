@@ -1521,7 +1521,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acad4eabc3064f9493ce51a97cf4cccf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SoulCollectGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SoulCollectGuideTag
 --- !u!1 &2464858392897502360
 GameObject:
   m_ObjectHideFlags: 0
@@ -2075,7 +2075,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acad4eabc3064f9493ce51a97cf4cccf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SoulCollectGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SoulCollectGuideTag
 --- !u!1 &4096558657024797482
 GameObject:
   m_ObjectHideFlags: 0
@@ -2164,7 +2164,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acad4eabc3064f9493ce51a97cf4cccf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SoulCollectGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SoulCollectGuideTag
 --- !u!1 &4256373607684081344
 GameObject:
   m_ObjectHideFlags: 0
@@ -2602,7 +2602,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acad4eabc3064f9493ce51a97cf4cccf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SoulCollectGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SoulCollectGuideTag
 --- !u!1 &5090841379530091439
 GameObject:
   m_ObjectHideFlags: 0
@@ -2651,7 +2651,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4871832212394b0eacd5b225e55ba4b0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SoulCollectPanel
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SoulCollectPanel
   panelRoot: {fileID: 0}
   soulRoot: {fileID: 0}
   soulArea: {fileID: 0}
@@ -3253,7 +3253,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acad4eabc3064f9493ce51a97cf4cccf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SoulCollectGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SoulCollectGuideTag
 --- !u!1 &6136718435029468690
 GameObject:
   m_ObjectHideFlags: 0
@@ -3990,7 +3990,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acad4eabc3064f9493ce51a97cf4cccf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SoulCollectGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SoulCollectGuideTag
 --- !u!1 &8869257830281366192
 GameObject:
   m_ObjectHideFlags: 0
@@ -4079,7 +4079,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acad4eabc3064f9493ce51a97cf4cccf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SoulCollectGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SoulCollectGuideTag
 --- !u!1 &8924162083001475406
 GameObject:
   m_ObjectHideFlags: 0

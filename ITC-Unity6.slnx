@@ -3,8 +3,8 @@
   <Project Path="MoreMountains.Tools.csproj" />
   <Project Path="Febucci.TextAnimatorForUnity.Runtime.csproj" />
   <Project Path="UIKit.csproj" />
-  <Project Path="ResKit.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="ResKit.csproj" />
   <Project Path="spine-unity-editor.csproj" />
   <Project Path="UniTask.csproj" />
   <Project Path="QFramework.CoreKit.csproj" />

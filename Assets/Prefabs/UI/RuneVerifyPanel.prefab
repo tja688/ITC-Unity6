@@ -1584,7 +1584,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 033306822e534befbcbe04c4f3e3230e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.RuneVerifyGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.RuneVerifyGuideTag
 --- !u!1 &1557015905220326662
 GameObject:
   m_ObjectHideFlags: 0
@@ -5515,7 +5515,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 033306822e534befbcbe04c4f3e3230e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.RuneVerifyGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.RuneVerifyGuideTag
 --- !u!1 &5447171468093485076
 GameObject:
   m_ObjectHideFlags: 0
@@ -5817,7 +5817,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 033306822e534befbcbe04c4f3e3230e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.RuneVerifyGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.RuneVerifyGuideTag
 --- !u!1 &5893479356437032519
 GameObject:
   m_ObjectHideFlags: 0
@@ -7231,7 +7231,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 033306822e534befbcbe04c4f3e3230e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.RuneVerifyGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.RuneVerifyGuideTag
 --- !u!1 &7316346047641126160
 GameObject:
   m_ObjectHideFlags: 0
@@ -7729,7 +7729,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 033306822e534befbcbe04c4f3e3230e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.RuneVerifyGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.RuneVerifyGuideTag
 --- !u!1 &7701223852894081162
 GameObject:
   m_ObjectHideFlags: 0
@@ -8977,7 +8977,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c4016b4399b24865b364b2eed54478b5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.RuneVerifyPanel
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.RuneVerifyPanel
   panelRoot: {fileID: 0}
   verifyRoot: {fileID: 0}
   gridRoot: {fileID: 0}

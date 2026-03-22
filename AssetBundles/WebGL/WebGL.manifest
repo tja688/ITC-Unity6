@@ -29,5 +29,5 @@ AssetBundleManifest:
         Dependency_1: dialogue_script_be566523a360449ab76b96921693bf48
         Dependency_2: dialogue_portrait_3693064dd9ef3f76e083be3024113df0
     Info_7:
-      Name: contracting_ui_fca472f026730dd113c4bb3d15be30d1
+      Name: sign_minigame_ui_fca472f026730dd113c4bb3d15be30d1
       Dependencies: {}

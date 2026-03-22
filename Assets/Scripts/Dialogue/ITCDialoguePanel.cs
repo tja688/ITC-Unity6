@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ITC.Contracting;
+using ITC.SignMiniGame;
 using QFramework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -301,8 +301,8 @@ namespace ITC.Dialogue
                 yield break;
             }
 
-            var flowState = this.GetModel<ContractFlowStateModel>();
-            var configModel = this.GetModel<ContractClientConfigModel>();
+            var flowState = this.GetModel<SignMiniGameFlowStateModel>();
+            var configModel = this.GetModel<SignMiniGameClientConfigModel>();
             var variableStorage = dialogueRunner.VariableStorage;
 
             var clientId = ParseClientId(clientToken, variableStorage);
@@ -340,7 +340,7 @@ namespace ITC.Dialogue
             UIKit.OpenPanelAsync<DocumentReviewPanel>(
                     UILevel.PopUI,
                     panelData,
-                    assetBundleName: "contracting_ui",
+                    assetBundleName: "sign_minigame_ui",
                     prefabName: nameof(DocumentReviewPanel))
                 .ToAction()
                 .StartGlobal(() => panelOpened = true);
@@ -398,8 +398,8 @@ namespace ITC.Dialogue
                 yield break;
             }
 
-            var flowState = this.GetModel<ContractFlowStateModel>();
-            var configModel = this.GetModel<ContractClientConfigModel>();
+            var flowState = this.GetModel<SignMiniGameFlowStateModel>();
+            var configModel = this.GetModel<SignMiniGameClientConfigModel>();
             var variableStorage = dialogueRunner.VariableStorage;
 
             var clientId = ParseClientId(clientToken, variableStorage);
@@ -434,7 +434,7 @@ namespace ITC.Dialogue
             UIKit.OpenPanelAsync<RuneTypingPanel>(
                     UILevel.PopUI,
                     panelData,
-                    assetBundleName: "contracting_ui",
+                    assetBundleName: "sign_minigame_ui",
                     prefabName: nameof(RuneTypingPanel))
                 .ToAction()
                 .StartGlobal(() => panelOpened = true);
@@ -487,8 +487,8 @@ namespace ITC.Dialogue
                 yield break;
             }
 
-            var flowState = this.GetModel<ContractFlowStateModel>();
-            var configModel = this.GetModel<ContractClientConfigModel>();
+            var flowState = this.GetModel<SignMiniGameFlowStateModel>();
+            var configModel = this.GetModel<SignMiniGameClientConfigModel>();
             var variableStorage = dialogueRunner.VariableStorage;
 
             var clientId = ParseClientId(clientToken, variableStorage);
@@ -530,7 +530,7 @@ namespace ITC.Dialogue
             UIKit.OpenPanelAsync<StampPanel>(
                     UILevel.PopUI,
                     panelData,
-                    assetBundleName: "contracting_ui",
+                    assetBundleName: "sign_minigame_ui",
                     prefabName: nameof(StampPanel))
                 .ToAction()
                 .StartGlobal(() => panelOpened = true);
@@ -587,8 +587,8 @@ namespace ITC.Dialogue
                 yield break;
             }
 
-            var flowState = this.GetModel<ContractFlowStateModel>();
-            var configModel = this.GetModel<ContractClientConfigModel>();
+            var flowState = this.GetModel<SignMiniGameFlowStateModel>();
+            var configModel = this.GetModel<SignMiniGameClientConfigModel>();
             var variableStorage = dialogueRunner.VariableStorage;
 
             var clientId = ParseClientId(clientToken, variableStorage);
@@ -631,7 +631,7 @@ namespace ITC.Dialogue
             UIKit.OpenPanelAsync<SoulCollectPanel>(
                     UILevel.PopUI,
                     panelData,
-                    assetBundleName: "contracting_ui",
+                    assetBundleName: "sign_minigame_ui",
                     prefabName: nameof(SoulCollectPanel))
                 .ToAction()
                 .StartGlobal(() => panelOpened = true);
@@ -689,8 +689,8 @@ namespace ITC.Dialogue
                 yield break;
             }
 
-            var flowState = this.GetModel<ContractFlowStateModel>();
-            var configModel = this.GetModel<ContractClientConfigModel>();
+            var flowState = this.GetModel<SignMiniGameFlowStateModel>();
+            var configModel = this.GetModel<SignMiniGameClientConfigModel>();
             var variableStorage = dialogueRunner.VariableStorage;
 
             var clientId = ParseClientId(clientToken, variableStorage);
@@ -741,7 +741,7 @@ namespace ITC.Dialogue
                 UIKit.OpenPanelAsync<BeanSellPanel>(
                         UILevel.PopUI,
                         panelData,
-                        assetBundleName: "contracting_ui",
+                        assetBundleName: "sign_minigame_ui",
                         prefabName: nameof(BeanSellPanel))
                     .ToAction()
                     .StartGlobal(() => panelOpened = true);
@@ -799,8 +799,8 @@ namespace ITC.Dialogue
                 yield break;
             }
 
-            var flowState = this.GetModel<ContractFlowStateModel>();
-            var configModel = this.GetModel<ContractClientConfigModel>();
+            var flowState = this.GetModel<SignMiniGameFlowStateModel>();
+            var configModel = this.GetModel<SignMiniGameClientConfigModel>();
             var variableStorage = dialogueRunner.VariableStorage;
 
             var clientId = ParseClientId(clientToken, variableStorage);
@@ -851,7 +851,7 @@ namespace ITC.Dialogue
             UIKit.OpenPanelAsync<SettlementPanel>(
                     UILevel.PopUI,
                     panelData,
-                    assetBundleName: "contracting_ui",
+                    assetBundleName: "sign_minigame_ui",
                     prefabName: nameof(SettlementPanel))
                 .ToAction()
                 .StartGlobal(() => panelOpened = true);
@@ -903,8 +903,8 @@ namespace ITC.Dialogue
                 yield break;
             }
 
-            var flowState = this.GetModel<ContractFlowStateModel>();
-            var configModel = this.GetModel<ContractClientConfigModel>();
+            var flowState = this.GetModel<SignMiniGameFlowStateModel>();
+            var configModel = this.GetModel<SignMiniGameClientConfigModel>();
             var variableStorage = dialogueRunner.VariableStorage;
             var clientId = ParseClientId(clientToken, variableStorage);
             var config = configModel.RuneVerifyRuleConfig;
@@ -954,7 +954,7 @@ namespace ITC.Dialogue
             UIKit.OpenPanelAsync<RuneVerifyPanel>(
                     UILevel.PopUI,
                     panelData,
-                    assetBundleName: "contracting_ui",
+                    assetBundleName: "sign_minigame_ui",
                     prefabName: nameof(RuneVerifyPanel))
                 .ToAction()
                 .StartGlobal(() => panelOpened = true);

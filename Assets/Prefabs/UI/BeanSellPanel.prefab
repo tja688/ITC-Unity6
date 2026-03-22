@@ -88,7 +88,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72807f9d04a842269a48c9955a919cb2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.BeanSellGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.BeanSellGuideTag
 --- !u!1 &847421889742697496
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72807f9d04a842269a48c9955a919cb2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.BeanSellGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.BeanSellGuideTag
 --- !u!1 &966233018274103030
 GameObject:
   m_ObjectHideFlags: 0
@@ -890,7 +890,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72807f9d04a842269a48c9955a919cb2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.BeanSellGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.BeanSellGuideTag
 --- !u!1 &2745619584168121253
 GameObject:
   m_ObjectHideFlags: 0
@@ -939,7 +939,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13df52dd5d5d46988250268248778143, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.BeanSellPanel
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.BeanSellPanel
   panelRoot: {fileID: 0}
   beanRoot: {fileID: 0}
   strongPushButton: {fileID: 0}
@@ -1180,7 +1180,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72807f9d04a842269a48c9955a919cb2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.BeanSellGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.BeanSellGuideTag
 --- !u!1 &3140551826356199168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1308,7 +1308,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72807f9d04a842269a48c9955a919cb2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.BeanSellGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.BeanSellGuideTag
 --- !u!1 &3747392274968781724
 GameObject:
   m_ObjectHideFlags: 0
@@ -3045,7 +3045,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72807f9d04a842269a48c9955a919cb2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.BeanSellGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.BeanSellGuideTag
 --- !u!1 &7812913507973333212
 GameObject:
   m_ObjectHideFlags: 0

@@ -159,24 +159,24 @@ VFX cue：
 
 #### 11.1 业务层（QFramework）
 
-- `Assets/Scripts/Contracting/Common/ContractingTypes.cs`  
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameTypes.cs`  
   - 新增 `RuneTypingConfig / RuneTypingRoundConfig / RuneTypingPanelData / RuneTypingResultPayload`
-- `Assets/Scripts/Contracting/Common/ContractFlowStateModel.cs`  
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameFlowStateModel.cs`  
   - 新增 `RouteQteErrorCount / RuneTypingGridSize / RuneTypingRunning / RuneTypingCompleted`
-- `Assets/Scripts/Contracting/Common/ContractClientConfigModel.cs`  
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameClientConfigModel.cs`  
   - 新增 `RuneTypingRuleConfig` 与 `BuildRuneTypingRoundConfig`
-- `Assets/Scripts/Contracting/Common/ContractCommands.cs`  
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameCommands.cs`  
   - `BeginRuneTypingCommand`：开局写作基线状态  
   - `SubmitRuneTypingResultCommand`：统一收口写回 `RouteQteErrorCount`
 
 #### 11.2 UI 层（Panel）
 
-- `Assets/Scripts/Contracting/RuneTyping/RuneTypingPanel.cs`  
+- `Assets/Scripts/SignMiniGame/RuneTyping/RuneTypingPanel.cs`  
   - 状态机：`Countdown -> Playing -> FeedbackCorrect/FeedbackError -> ComboResolve -> Completed`
   - 输入：`WASD + Enter/Space`，并保留屏幕方向按钮/确认按钮兜底
   - 判定：错误确认才计入 `errorCount`；边界外输入仅反馈不计错
   - 内嵌中文说明系统，支持一键开关
-- `Assets/Scripts/Contracting/RuneTyping/RuneTypingGuideTag.cs`  
+- `Assets/Scripts/SignMiniGame/RuneTyping/RuneTypingGuideTag.cs`  
   - 说明标注对象的统一标记组件
 
 #### 11.3 流程桥接层（Yarn）
@@ -193,16 +193,16 @@ VFX cue：
 
 #### 12.1 白模 Prefab 重建（编辑器菜单）
 
-- 菜单：`ITC/Contracting/重建 02符文控制板 白模Prefab`
-- 实现：`Assets/Editor/Contracting/RuneTypingPanelPrefabBuilder.cs`
+- 菜单：`ITC/SignMiniGame/重建 02符文控制板 白模Prefab`
+- 实现：`Assets/Editor/SignMiniGame/RuneTypingPanelPrefabBuilder.cs`
 - 生成目标：`Assets/Prefabs/UI/RuneTypingPanel.prefab`
 
 #### 12.2 快速测试启动器
 
-- 运行菜单：`ITC/Contracting/一键运行 02符文控制板全流程测试`
-- 停止菜单：`ITC/Contracting/一键停止 02符文控制板全流程测试`
-- 编辑器工具：`Assets/Editor/Contracting/RuneTypingQuickTestTools.cs`
-- 运行时组件：`Assets/Scripts/Contracting/RuneTyping/RuneTypingQuickTestLauncher.cs`
+- 运行菜单：`ITC/SignMiniGame/一键运行 02符文控制板全流程测试`
+- 停止菜单：`ITC/SignMiniGame/一键停止 02符文控制板全流程测试`
+- 编辑器工具：`Assets/Editor/SignMiniGame/RuneTypingQuickTestTools.cs`
+- 运行时组件：`Assets/Scripts/SignMiniGame/RuneTyping/RuneTypingQuickTestLauncher.cs`
 
 ---
 

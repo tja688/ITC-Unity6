@@ -102,8 +102,8 @@ Source Files:
 - `Assets/Scripts/Dialogue/TALinePresenter.cs`
 - `Assets/Scripts/Dialogue/TADialogueEvents.cs`
 - `Assets/Scripts/Dialogue/YarnMarkupConverter.cs`
-- `Assets/Scripts/Contracting/Common/ContractFlowStateModel.cs`
-- `Assets/Scripts/Contracting/Common/ContractCommands.cs`
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameFlowStateModel.cs`
+- `Assets/Scripts/SignMiniGame/Common/SignMiniGameCommands.cs`
 - `Assets/Doc/ITC Doc/dialogue/ITC_YARN_DATA_TEXT_ANIM.yarn`
 
 Added/Changed Contract:

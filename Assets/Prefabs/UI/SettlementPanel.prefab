@@ -638,7 +638,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 487bb384df5e4df6b57d2463b6bac29e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SettlementGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SettlementGuideTag
 --- !u!1 &3054936368863231141
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,7 +1531,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 487bb384df5e4df6b57d2463b6bac29e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SettlementGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SettlementGuideTag
 --- !u!1 &6289461896656361807
 GameObject:
   m_ObjectHideFlags: 0
@@ -1896,7 +1896,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 487bb384df5e4df6b57d2463b6bac29e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SettlementGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SettlementGuideTag
 --- !u!1 &7653301379970523410
 GameObject:
   m_ObjectHideFlags: 0
@@ -1945,7 +1945,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef012dee743e4596a1b8babffcc398ef, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SettlementPanel
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SettlementPanel
   panelRoot: {fileID: 0}
   settlementRoot: {fileID: 0}
   skipButton: {fileID: 0}
@@ -2426,7 +2426,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 487bb384df5e4df6b57d2463b6bac29e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SettlementGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SettlementGuideTag
 --- !u!1 &8527145425723744334
 GameObject:
   m_ObjectHideFlags: 0
@@ -3077,4 +3077,4 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 487bb384df5e4df6b57d2463b6bac29e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Contracting.SettlementGuideTag
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.SignMiniGame.SettlementGuideTag
