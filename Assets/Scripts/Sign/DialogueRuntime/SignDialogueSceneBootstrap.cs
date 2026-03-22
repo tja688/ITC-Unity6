@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using QFramework;
 using TMPro;
 using UnityEngine;
 using Yarn.Unity;
@@ -43,7 +44,7 @@ namespace ITC.Dialogue
 
             if (frontMask == null || backMask == null || playerMask == null || dialogueRoot == null)
             {
-                Debug.LogError("[SignDialogueSceneBootstrap] Failed to resolve required scene anchors.", this);
+                LogKit.E("[SignDialogueSceneBootstrap] Failed to resolve required scene anchors.");
                 enabled = false;
                 return;
             }
@@ -54,7 +55,7 @@ namespace ITC.Dialogue
 
             if (frontTemplate == null || backTemplate == null || playerTemplate == null)
             {
-                Debug.LogError("[SignDialogueSceneBootstrap] Failed to resolve dialogue panel templates.", this);
+                LogKit.E("[SignDialogueSceneBootstrap] Failed to resolve dialogue panel templates.");
                 enabled = false;
                 return;
             }
@@ -66,7 +67,7 @@ namespace ITC.Dialogue
 
             if (dialogueRunner == null || dialoguePanel == null || optionsPanel == null || linePresenter == null)
             {
-                Debug.LogError("[SignDialogueSceneBootstrap] Failed to resolve dialogue bridge components.", this);
+                LogKit.E("[SignDialogueSceneBootstrap] Failed to resolve dialogue bridge components.");
                 enabled = false;
                 return;
             }

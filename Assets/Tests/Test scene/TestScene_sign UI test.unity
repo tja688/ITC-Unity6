@@ -605,6 +605,7 @@ GameObject:
   - component: {fileID: 1053856068}
   - component: {fileID: 1053856067}
   - component: {fileID: 1053856071}
+  - component: {fileID: 1053856072}
   m_Layer: 0
   m_Name: SignUI
   m_TagString: Untagged
@@ -709,9 +710,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 240f39b1c17af064f836b12ced72db89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.SignDialogueSceneBootstrap
-  ensureDialogueStarts: 1
+  ensureDialogueStarts: 0
   startKickDelaySeconds: 0.35
-  fallbackStartNode: Start
+  fallbackStartNode: Sign_Day1_Start
+--- !u!114 &1053856072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1053856066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d02fc59375ff51d4fb0fb7b330c4ce26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.Sign.SignSceneDialogueLauncher
+  dialogueRunner: {fileID: 6171889450684896082}
+  yarnProject: {fileID: 7545569452688597077, guid: 63582a8e4bc77db40b86893753345b96, type: 3}
+  autoStartOnEnable: 1
+  startupDelaySeconds: 0.2
+  startNode: Sign_Day1_Start
 --- !u!1 &1280755438
 GameObject:
   m_ObjectHideFlags: 0
@@ -2678,6 +2696,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7841493334733479497}
+  - component: {fileID: 7841493334733479498}
   m_Layer: 0
   m_Name: "\u7B7E\u7EA6\u7279\u5236\u5BF9\u8BDD\u7CFB\u7EDF"
   m_TagString: Untagged
@@ -2869,7 +2888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bec29c0a230741bdac901dba8da47ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: YarnSpinner.Unity::Yarn.Unity.DialogueRunner
-  yarnProject: {fileID: 7545569452688597077, guid: 8915f76135d3b344a9f762d47b52e33e, type: 3}
+  yarnProject: {fileID: 7545569452688597077, guid: 63582a8e4bc77db40b86893753345b96, type: 3}
   variableStorage: {fileID: 1050335887616172676}
   lineProvider: {fileID: 8211551196686269757}
   saliencyStrategy: 0
@@ -2877,8 +2896,8 @@ MonoBehaviour:
   - {fileID: 1418828565772919317}
   - {fileID: 4420366758149674715}
   verboseLogging: 1
-  autoStart: 1
-  startNode: Start
+  autoStart: 0
+  startNode: Sign_Day1_Start
   runSelectedOptionAsLine: 0
   allowOptionFallthrough: 1
   onNodeStart:
@@ -3057,7 +3076,6 @@ GameObject:
   - component: {fileID: 6171889450684896082}
   - component: {fileID: 1050335887616172676}
   - component: {fileID: 8211551196686269757}
-  - component: {fileID: 8211551196686269758}
   m_Layer: 0
   m_Name: DialogueRunner
   m_TagString: Untagged
@@ -3330,6 +3348,27 @@ Transform:
   - {fileID: 565915991756594679}
   m_Father: {fileID: 1053856070}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7841493334733479498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4662445094895145051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89c6df86f5664558a34decf1f819db53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.ITCDialoguePanel
+  dialogueRunner: {fileID: 0}
+  backgroundImage: {fileID: 0}
+  npcPortraitImage: {fileID: 0}
+  npcAvatarImage: {fileID: 0}
+  pcPortraitImage: {fileID: 0}
+  visualCatalog: {fileID: 0}
+  resourcesCatalogPath: Dialogue/DialogueVisualCatalog
+  visualFadeDuration: 0.2
+  hidePortraitWhenMissing: 1
 --- !u!1 &7854255013636731918
 GameObject:
   m_ObjectHideFlags: 0
@@ -3463,25 +3502,6 @@ MonoBehaviour:
   _assetLocaleCode: zh
   _useFallback: 0
   _fallbackLocaleCode: zh
---- !u!114 &8211551196686269758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6934471665127515701}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0c988427655071449f24a46cedf4a0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.Testing.SignDialogueTestLoopDriver
-  dialogueRunner: {fileID: 0}
-  startNode: Start
-  initialStartDelaySeconds: 0.2
-  autoRestartOnComplete: 1
-  restartDelaySeconds: 0.6
-  allowManualRestart: 1
-  manualRestartKey: 32
 --- !u!224 &8245833741970114747
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3626,51 +3646,51 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 965341189933513278, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 965341189933513278, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 965341189933513278, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 965341189933513278, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 965341189933513278, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 965341189933513278, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -105
       objectReference: {fileID: 0}
     - target: {fileID: 2336164619646524516, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2336164619646524516, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2336164619646524516, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 2336164619646524516, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 2336164619646524516, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2336164619646524516, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -40
       objectReference: {fileID: 0}
     - target: {fileID: 3780219539273549147, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_Pivot.x
@@ -3782,31 +3802,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7716412462669448823, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7716412462669448823, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7716412462669448823, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 7716412462669448823, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 7716412462669448823, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7716412462669448823, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -170
       objectReference: {fileID: 0}
     - target: {fileID: 9112731005302041344, guid: 72df8d7fedaf8a243a0685aed6366378, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 210
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

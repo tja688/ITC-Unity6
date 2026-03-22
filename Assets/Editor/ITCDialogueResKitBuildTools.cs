@@ -39,7 +39,7 @@ namespace ITC.Editor
 
             if (!ITCDialogueVisualCatalogTools.ValidateVisualCatalog(logResults: true))
             {
-                Debug.LogError("[ITCDialogueResKitBuildTools] Build canceled because DialogueVisualCatalog validation failed.");
+                LogKit.E("[ITCDialogueResKitBuildTools] Build canceled because DialogueVisualCatalog validation failed.");
                 return;
             }
 
@@ -50,7 +50,7 @@ namespace ITC.Editor
                 var switched = EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
                 if (!switched)
                 {
-                    Debug.LogError("[ITCDialogueResKitBuildTools] Failed to switch Build Target to WebGL.");
+                    LogKit.E("[ITCDialogueResKitBuildTools] Failed to switch Build Target to WebGL.");
                     return;
                 }
             }
@@ -58,7 +58,7 @@ namespace ITC.Editor
             ResKitEditorAPI.BuildAssetBundles();
             AssetBundlePathHelper.SimulationMode = true;
             AssetDatabase.Refresh();
-            Debug.Log("[ITCDialogueResKitBuildTools] WebGL ResKit bundle build finished.");
+            LogKit.I("[ITCDialogueResKitBuildTools] WebGL ResKit bundle build finished.");
         }
 
         private static bool SetBundleName(string assetPath, string bundleName)
