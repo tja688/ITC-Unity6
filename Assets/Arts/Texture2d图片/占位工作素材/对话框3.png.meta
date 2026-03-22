@@ -146,8 +146,8 @@ TextureImporter:
       name: "\u5BF9\u8BDD\u68463_0"
       rect:
         serializedVersion: 2
-        x: 651
-        y: 561
+        x: 653
+        y: 566
         width: 625
         height: 501
       alignment: 7
@@ -169,11 +169,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 174
-        y: 22
+        y: 18
         width: 619
         height: 490
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -194,8 +194,8 @@ TextureImporter:
         y: 37
         width: 607
         height: 487
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
