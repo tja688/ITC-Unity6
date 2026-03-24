@@ -3,8 +3,8 @@
   <Project Path="MoreMountains.Tools.csproj" />
   <Project Path="Febucci.TextAnimatorForUnity.Runtime.csproj" />
   <Project Path="UIKit.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="ResKit.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="spine-unity-editor.csproj" />
   <Project Path="UniTask.csproj" />
   <Project Path="QFramework.CoreKit.csproj" />
@@ -16,6 +16,7 @@
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="UIKit.Editor.csproj" />
   <Project Path="UniTask.Addressables.csproj" />
+  <Project Path="Lofelt.NiceVibrations.Demo.csproj" />
   <Project Path="ResKit.Editor.csproj" />
   <Project Path="DOTween.Modules.csproj" />
   <Project Path="Febucci.TextAnimator.Demo.Runtime.csproj" />
