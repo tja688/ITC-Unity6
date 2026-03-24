@@ -92,7 +92,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1760532008273575191
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1573,6 +1573,8 @@ MonoBehaviour:
   canvasGroup: {fileID: 552632879314735534}
   lineTextCanvasGroup: {fileID: 1012536377031838912}
   routeToSignSlots: 0
+  signDialogueRuntimeFacade: {fileID: 0}
+  signDialogueSlotRuntime: {fileID: 0}
   showCharacterName: 1
   useFadeEffect: 1
   fadeInDuration: 0.25
@@ -1602,6 +1604,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ITC.Dialogue.DialogueContinueHandler
   dialogueRunner: {fileID: 5501917324134188776}
   linePresenter: {fileID: 742242325984032687}
+  signDialogueRuntimeFacade: {fileID: 0}
+  signDialogueSlotRuntime: {fileID: 0}
   useMouseClick: 1
   useKeyboard: 1
   continueKey: 1
