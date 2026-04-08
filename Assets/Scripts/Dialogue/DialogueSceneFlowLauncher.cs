@@ -1,7 +1,6 @@
 using System.Collections;
-using ITC.Dialogue;
-using QFramework;
 using UnityEngine;
+using Yarn.Unity;
 
 [DisallowMultipleComponent]
 public sealed class DialogueSceneFlowLauncher : MonoBehaviour
@@ -10,16 +9,9 @@ public sealed class DialogueSceneFlowLauncher : MonoBehaviour
     [SerializeField] private bool autoOpenDialogueOnStart = true;
     [SerializeField] private float startupDelaySeconds = 0.2f;
     [SerializeField] private string startNode = "ITC_Start";
-    [SerializeField] private string dialoguePanelAssetBundleName = "dialogue_ui";
-    [SerializeField] private string dialoguePanelPrefabName = "ITC DialogueSystem";
+    [SerializeField] private DialogueRunner dialogueRunner;
 
     private bool bootstrapped;
-    private bool dialogueOpenRequested;
-
-    private void Awake()
-    {
-        UIKit.Config = new MainMenuUIKitConfig();
-    }
 
     private IEnumerator Start()
     {
@@ -29,7 +21,14 @@ public sealed class DialogueSceneFlowLauncher : MonoBehaviour
         }
 
         bootstrapped = true;
-        yield return ResKit.InitAsync();
+
+        dialogueRunner ??= FindFirstObjectByType<DialogueRunner>(FindObjectsInactive.Include);
+        if (dialogueRunner == null)
+        {
+            yield break;
+        }
+
+        dialogueRunner.autoStart = false;
 
         if (!autoOpenDialogueOnStart)
         {
@@ -37,23 +36,11 @@ public sealed class DialogueSceneFlowLauncher : MonoBehaviour
         }
 
         yield return new WaitForSecondsRealtime(Mathf.Max(0f, startupDelaySeconds));
-        if (dialogueOpenRequested)
+        if (dialogueRunner.IsDialogueRunning)
         {
             yield break;
         }
 
-        dialogueOpenRequested = true;
-
-        UIKit.OpenPanelAsync<ITCDialoguePanel>(
-                UILevel.Common,
-                new ITCDialoguePanelData
-                {
-                    StartNode = startNode,
-                    AutoStartOnOpen = true
-                },
-                assetBundleName: dialoguePanelAssetBundleName,
-                prefabName: dialoguePanelPrefabName)
-            .ToAction()
-            .StartGlobal();
+        _ = dialogueRunner.StartDialogue(string.IsNullOrWhiteSpace(startNode) ? "ITC_Start" : startNode.Trim());
     }
 }

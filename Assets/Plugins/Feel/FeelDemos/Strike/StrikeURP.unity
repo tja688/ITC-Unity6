@@ -1385,14 +1385,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 382701572}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0.5046845, b: 0.4292453, a: 1}
   m_Intensity: 5
   m_Range: 20
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize2D: {x: 10, y: 10}
+  m_CookieSize: 10
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -1454,23 +1454,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
-  m_RenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_ShadowRenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_Version: 4
-  m_LightLayerMask: 1
-  m_ShadowLayerMask: 1
-  m_RenderingLayers: 1
-  m_ShadowRenderingLayers: 1
 --- !u!1 &389044792
 GameObject:
   m_ObjectHideFlags: 0
@@ -1700,8 +1694,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1723,11 +1715,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &421513921
 MeshFilter:
@@ -2125,7 +2115,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!199 &463411749
 ParticleSystemRenderer:
-  serializedVersion: 7
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2144,8 +2134,6 @@ ParticleSystemRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2168,11 +2156,9 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -2204,6 +2190,7 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+  m_MaskInteraction: 0
 --- !u!198 &463411750
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -7221,7 +7208,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -3783893103257190392, guid: 7e984f512e89b60468e829489e8883e3, type: 2}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 80140f70bc373074582ae93dffce593b, type: 3}
   m_Resource: {fileID: 8300000, guid: 80140f70bc373074582ae93dffce593b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -7637,14 +7624,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 597100417}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 11
   m_Type: 2
   m_Color: {r: 0.754717, g: 0.6162249, b: 0.23851903, a: 1}
   m_Intensity: 5
   m_Range: 20
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize2D: {x: 10, y: 10}
+  m_CookieSize: 10
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -7721,23 +7708,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
-  m_RenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_ShadowRenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_Version: 4
-  m_LightLayerMask: 1
-  m_ShadowLayerMask: 1
-  m_RenderingLayers: 1
-  m_ShadowRenderingLayers: 1
 --- !u!224 &608909185 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 9181942661678119006, guid: b4ba93cf48b1c6b468135361158be27d, type: 3}
@@ -10193,8 +10174,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -10216,11 +10195,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &880276017
 MeshFilter:
@@ -10383,9 +10360,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -10395,7 +10369,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -1991737462
         Label: Set Active
-        OriginalLabel: Set Active
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -10465,7 +10439,6 @@ MonoBehaviour:
         DebugActive: 0
         TargetGameObject: {fileID: 2102360788}
         ExtraTargetGameObjects: []
-        IgnorePlayDirection: 0
         SetStateOnInit: 0
         StateOnInit: 1
         SetStateOnPlay: 1
@@ -10484,7 +10457,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -1244531504
         Label: Position
-        OriginalLabel: Position
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -10556,9 +10529,7 @@ MonoBehaviour:
         Mode: 1
         Space: 0
         RandomizeRemap: 0
-        MovementMode: 0
         AnimatePositionDuration: 0.2
-        AnimatePositionSpeed: 1
         AnimatePositionTween:
           MMTweenDefinitionType: 1
           MMTweenCurve: 4
@@ -10907,7 +10878,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 155353446
         Label: Haptic Preset
-        OriginalLabel: Haptic Preset
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -10976,8 +10947,6 @@ MonoBehaviour:
         Owner: {fileID: 903384447}
         DebugActive: 0
         Preset: 2
-        PlayPresetButton:
-          ButtonText: Test Preset
         HapticSettings:
           ForceGamepadID: 0
           GamepadID: 0
@@ -10991,7 +10960,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -258290897
         Label: Holding Pause
-        OriginalLabel: Holding Pause
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -11073,7 +11042,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -671091004
         Label: Set Active
-        OriginalLabel: Set Active
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -11143,7 +11112,6 @@ MonoBehaviour:
         DebugActive: 0
         TargetGameObject: {fileID: 2102360788}
         ExtraTargetGameObjects: []
-        IgnorePlayDirection: 0
         SetStateOnInit: 0
         StateOnInit: 1
         SetStateOnPlay: 1
@@ -11162,7 +11130,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 834641004
         Label: MMSoundManager Sound
-        OriginalLabel: MMSoundManager Sound
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -11230,9 +11198,7 @@ MonoBehaviour:
           ButtonText: Automatic Shaker Setup
         Owner: {fileID: 903384447}
         DebugActive: 0
-        Source: 0
         Sfx: {fileID: 8300000, guid: 18533ba163e0f074aa8795afb633df48, type: 3}
-        AudioResourceToPlay: {fileID: 0}
         RandomSfx: []
         SequentialOrder: 0
         SequentialOrderHoldLast: 0
@@ -11250,12 +11216,11 @@ MonoBehaviour:
         Loop: 0
         Persistent: 0
         DoNotPlayIfClipAlreadyPlaying: 0
-        MaximumConcurrentInstances: 3
         StopSoundOnFeedbackStop: 0
-        FadeIn: 0
-        FadeInInitialVolume: 0
-        FadeInDuration: 1
-        FadeInTween:
+        Fade: 0
+        FadeInitialVolume: 0
+        FadeDuration: 1
+        FadeTween:
           MMTweenDefinitionType: 0
           MMTweenCurve: 9
           Curve:
@@ -11284,39 +11249,6 @@ MonoBehaviour:
             m_RotationOrder: 4
           Initialized: 0
           ConditionPropertyName: Fade
-          EnumConditionPropertyName: 
-          EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
-        FadeOutOnStop: 0
-        FadeOutDuration: 1
-        FadeOutTween:
-          MMTweenDefinitionType: 0
-          MMTweenCurve: 9
-          Curve:
-            serializedVersion: 2
-            m_Curve:
-            - serializedVersion: 3
-              time: 0
-              value: 0
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          Initialized: 0
-          ConditionPropertyName: FadeOutOnStop
           EnumConditionPropertyName: 
           EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
         SoloSingleTrack: 0
@@ -11640,8 +11572,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -11663,11 +11593,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &958675463
 MeshFilter:
@@ -12419,9 +12347,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -12585,9 +12510,7 @@ MonoBehaviour:
         DebugActive: 0
         Mode: 1
         AnimateScaleTarget: {fileID: 421513918}
-        MovementMode: 0
         AnimateScaleDuration: 0.2
-        AnimatePositionSpeed: 1
         RemapCurveZero: 0
         RemapCurveOne: 0.3
         Offset: 0
@@ -12892,8 +12815,6 @@ MonoBehaviour:
         Owner: {fileID: 994770565}
         DebugActive: 0
         Preset: 8
-        PlayPresetButton:
-          ButtonText: Test Preset
         HapticSettings:
           ForceGamepadID: 0
           GamepadID: 0
@@ -12979,9 +12900,7 @@ MonoBehaviour:
         Mode: 1
         Space: 1
         RandomizeRemap: 0
-        MovementMode: 0
         AnimatePositionDuration: 0.2
-        AnimatePositionSpeed: 1
         AnimatePositionTween:
           MMTweenDefinitionType: 1
           MMTweenCurve: 4
@@ -13587,9 +13506,7 @@ MonoBehaviour:
         AnimateRotationTarget: {fileID: 1436830129}
         Mode: 0
         RotationSpace: 0
-        MovementMode: 0
         AnimateRotationDuration: 0.5
-        AnimatePositionSpeed: 1
         RemapCurveZero: 0
         RemapCurveOne: 1080
         AnimateX: 1
@@ -13932,9 +13849,7 @@ MonoBehaviour:
         DebugActive: 0
         Mode: 0
         AnimateScaleTarget: {fileID: 2135072408}
-        MovementMode: 0
         AnimateScaleDuration: 0.25
-        AnimatePositionSpeed: 1
         RemapCurveZero: 1
         RemapCurveOne: 1.5
         Offset: 0
@@ -14276,9 +14191,7 @@ MonoBehaviour:
         DebugActive: 0
         Mode: 0
         AnimateScaleTarget: {fileID: 2135072408}
-        MovementMode: 0
         AnimateScaleDuration: 0.25
-        AnimatePositionSpeed: 1
         RemapCurveZero: 1
         RemapCurveOne: 1.5
         Offset: 0
@@ -14868,8 +14781,6 @@ MonoBehaviour:
         Owner: {fileID: 994770565}
         DebugActive: 0
         Preset: 7
-        PlayPresetButton:
-          ButtonText: Test Preset
         HapticSettings:
           ForceGamepadID: 0
           GamepadID: 0
@@ -15118,8 +15029,6 @@ MonoBehaviour:
         Owner: {fileID: 994770565}
         DebugActive: 0
         Preset: 6
-        PlayPresetButton:
-          ButtonText: Test Preset
         HapticSettings:
           ForceGamepadID: 0
           GamepadID: 0
@@ -15756,9 +15665,7 @@ MonoBehaviour:
           ButtonText: Automatic Shaker Setup
         Owner: {fileID: 994770565}
         DebugActive: 0
-        Source: 0
         Sfx: {fileID: 8300000, guid: efead1e52c2d52b49a4944caff6062e3, type: 3}
-        AudioResourceToPlay: {fileID: 0}
         RandomSfx: []
         SequentialOrder: 0
         SequentialOrderHoldLast: 0
@@ -15776,12 +15683,11 @@ MonoBehaviour:
         Loop: 0
         Persistent: 0
         DoNotPlayIfClipAlreadyPlaying: 0
-        MaximumConcurrentInstances: 3
         StopSoundOnFeedbackStop: 0
-        FadeIn: 0
-        FadeInInitialVolume: 0
-        FadeInDuration: 1
-        FadeInTween:
+        Fade: 0
+        FadeInitialVolume: 0
+        FadeDuration: 1
+        FadeTween:
           MMTweenDefinitionType: 0
           MMTweenCurve: 9
           Curve:
@@ -15810,39 +15716,6 @@ MonoBehaviour:
             m_RotationOrder: 4
           Initialized: 0
           ConditionPropertyName: Fade
-          EnumConditionPropertyName: 
-          EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
-        FadeOutOnStop: 0
-        FadeOutDuration: 1
-        FadeOutTween:
-          MMTweenDefinitionType: 0
-          MMTweenCurve: 9
-          Curve:
-            serializedVersion: 2
-            m_Curve:
-            - serializedVersion: 3
-              time: 0
-              value: 0
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          Initialized: 0
-          ConditionPropertyName: FadeOutOnStop
           EnumConditionPropertyName: 
           EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
         SoloSingleTrack: 0
@@ -16129,9 +16002,7 @@ MonoBehaviour:
           ButtonText: Automatic Shaker Setup
         Owner: {fileID: 994770565}
         DebugActive: 0
-        Source: 0
         Sfx: {fileID: 8300000, guid: bebedb9f3395e5b408ff645048a4cbe2, type: 3}
-        AudioResourceToPlay: {fileID: 0}
         RandomSfx: []
         SequentialOrder: 0
         SequentialOrderHoldLast: 0
@@ -16149,12 +16020,11 @@ MonoBehaviour:
         Loop: 0
         Persistent: 0
         DoNotPlayIfClipAlreadyPlaying: 0
-        MaximumConcurrentInstances: 3
         StopSoundOnFeedbackStop: 0
-        FadeIn: 0
-        FadeInInitialVolume: 0
-        FadeInDuration: 1
-        FadeInTween:
+        Fade: 0
+        FadeInitialVolume: 0
+        FadeDuration: 1
+        FadeTween:
           MMTweenDefinitionType: 0
           MMTweenCurve: 9
           Curve:
@@ -16183,39 +16053,6 @@ MonoBehaviour:
             m_RotationOrder: 4
           Initialized: 0
           ConditionPropertyName: Fade
-          EnumConditionPropertyName: 
-          EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
-        FadeOutOnStop: 0
-        FadeOutDuration: 1
-        FadeOutTween:
-          MMTweenDefinitionType: 0
-          MMTweenCurve: 9
-          Curve:
-            serializedVersion: 2
-            m_Curve:
-            - serializedVersion: 3
-              time: 0
-              value: 0
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          Initialized: 0
-          ConditionPropertyName: FadeOutOnStop
           EnumConditionPropertyName: 
           EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
         SoloSingleTrack: 0
@@ -16348,9 +16185,7 @@ MonoBehaviour:
           ButtonText: Automatic Shaker Setup
         Owner: {fileID: 994770565}
         DebugActive: 0
-        Source: 0
         Sfx: {fileID: 8300000, guid: 8afe5f72f4d9ef242a63799641fa0e12, type: 3}
-        AudioResourceToPlay: {fileID: 0}
         RandomSfx: []
         SequentialOrder: 0
         SequentialOrderHoldLast: 0
@@ -16368,12 +16203,11 @@ MonoBehaviour:
         Loop: 0
         Persistent: 0
         DoNotPlayIfClipAlreadyPlaying: 0
-        MaximumConcurrentInstances: 3
         StopSoundOnFeedbackStop: 0
-        FadeIn: 0
-        FadeInInitialVolume: 0
-        FadeInDuration: 1
-        FadeInTween:
+        Fade: 0
+        FadeInitialVolume: 0
+        FadeDuration: 1
+        FadeTween:
           MMTweenDefinitionType: 0
           MMTweenCurve: 9
           Curve:
@@ -16402,39 +16236,6 @@ MonoBehaviour:
             m_RotationOrder: 4
           Initialized: 0
           ConditionPropertyName: Fade
-          EnumConditionPropertyName: 
-          EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
-        FadeOutOnStop: 0
-        FadeOutDuration: 1
-        FadeOutTween:
-          MMTweenDefinitionType: 0
-          MMTweenCurve: 9
-          Curve:
-            serializedVersion: 2
-            m_Curve:
-            - serializedVersion: 3
-              time: 0
-              value: 0
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          Initialized: 0
-          ConditionPropertyName: FadeOutOnStop
           EnumConditionPropertyName: 
           EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
         SoloSingleTrack: 0
@@ -17372,7 +17173,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -2273146209696275378, guid: 7e984f512e89b60468e829489e8883e3, type: 2}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 45c6539e9c07f5948b638b490a0d48b2, type: 3}
   m_Resource: {fileID: 8300000, guid: 45c6539e9c07f5948b638b490a0d48b2, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -17769,14 +17570,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218093502}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 5
   m_Range: 20
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize2D: {x: 10, y: 10}
+  m_CookieSize: 10
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -17853,23 +17654,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
-  m_RenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_ShadowRenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_Version: 4
-  m_LightLayerMask: 1
-  m_ShadowLayerMask: 1
-  m_RenderingLayers: 1
-  m_ShadowRenderingLayers: 1
 --- !u!1001 &1220445019
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18793,9 +18588,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -18876,9 +18668,7 @@ MonoBehaviour:
         AnimateRotationTarget: {fileID: 1871779771}
         Mode: 0
         RotationSpace: 0
-        MovementMode: 0
         AnimateRotationDuration: 0.2
-        AnimatePositionSpeed: 1
         RemapCurveZero: 0
         RemapCurveOne: 360
         AnimateX: 1
@@ -19222,9 +19012,7 @@ MonoBehaviour:
         AnimateRotationTarget: {fileID: 278877830}
         Mode: 0
         RotationSpace: 0
-        MovementMode: 0
         AnimateRotationDuration: 0.2
-        AnimatePositionSpeed: 1
         RemapCurveZero: 0
         RemapCurveOne: 360
         AnimateX: 1
@@ -19568,9 +19356,7 @@ MonoBehaviour:
         AnimateRotationTarget: {fileID: 479204755}
         Mode: 0
         RotationSpace: 0
-        MovementMode: 0
         AnimateRotationDuration: 0.2
-        AnimatePositionSpeed: 1
         RemapCurveZero: 0
         RemapCurveOne: 360
         AnimateX: 1
@@ -19912,8 +19698,6 @@ MonoBehaviour:
         Owner: {fileID: 1383449248}
         DebugActive: 0
         Preset: 3
-        PlayPresetButton:
-          ButtonText: Test Preset
         HapticSettings:
           ForceGamepadID: 0
           GamepadID: 0
@@ -19995,9 +19779,7 @@ MonoBehaviour:
           ButtonText: Automatic Shaker Setup
         Owner: {fileID: 1383449248}
         DebugActive: 0
-        Source: 0
         Sfx: {fileID: 8300000, guid: 59e8e5c4b29ba9f4c84c3847a91fb798, type: 3}
-        AudioResourceToPlay: {fileID: 0}
         RandomSfx: []
         SequentialOrder: 0
         SequentialOrderHoldLast: 0
@@ -20015,12 +19797,11 @@ MonoBehaviour:
         Loop: 0
         Persistent: 0
         DoNotPlayIfClipAlreadyPlaying: 0
-        MaximumConcurrentInstances: 3
         StopSoundOnFeedbackStop: 0
-        FadeIn: 0
-        FadeInInitialVolume: 0
-        FadeInDuration: 1
-        FadeInTween:
+        Fade: 0
+        FadeInitialVolume: 0
+        FadeDuration: 1
+        FadeTween:
           MMTweenDefinitionType: 0
           MMTweenCurve: 9
           Curve:
@@ -20049,39 +19830,6 @@ MonoBehaviour:
             m_RotationOrder: 4
           Initialized: 0
           ConditionPropertyName: Fade
-          EnumConditionPropertyName: 
-          EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
-        FadeOutOnStop: 0
-        FadeOutDuration: 1
-        FadeOutTween:
-          MMTweenDefinitionType: 0
-          MMTweenCurve: 9
-          Curve:
-            serializedVersion: 2
-            m_Curve:
-            - serializedVersion: 3
-              time: 0
-              value: 0
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          Initialized: 0
-          ConditionPropertyName: FadeOutOnStop
           EnumConditionPropertyName: 
           EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
         SoloSingleTrack: 0
@@ -20175,7 +19923,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!199 &1404995333
 ParticleSystemRenderer:
-  serializedVersion: 7
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -20194,8 +19942,6 @@ ParticleSystemRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -20218,11 +19964,9 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -20254,6 +19998,7 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+  m_MaskInteraction: 0
 --- !u!198 &1404995334
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -26081,7 +25826,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -539.99927}
+  m_AnchoredPosition: {x: 0, y: -433.5}
   m_SizeDelta: {x: 0, y: 733.9895}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1557570897
@@ -26823,8 +26568,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -26846,11 +26589,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1678064144
 MeshFilter:
@@ -27069,6 +26810,7 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
+  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -27076,7 +26818,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
-  m_Version: 2
 --- !u!114 &1687258587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27184,7 +26925,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!199 &1721053128
 ParticleSystemRenderer:
-  serializedVersion: 7
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -27203,8 +26944,6 @@ ParticleSystemRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -27227,11 +26966,9 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -27263,6 +27000,7 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+  m_MaskInteraction: 0
 --- !u!198 &1721053129
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -32696,9 +32434,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -32708,7 +32443,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -15958035
         Label: Scale
-        OriginalLabel: Scale
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -32778,9 +32513,7 @@ MonoBehaviour:
         DebugActive: 0
         Mode: 0
         AnimateScaleTarget: {fileID: 1871779771}
-        MovementMode: 0
         AnimateScaleDuration: 0.2
-        AnimatePositionSpeed: 1
         RemapCurveZero: 1
         RemapCurveOne: 1.2
         Offset: 0
@@ -33016,7 +32749,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 608660366
         Label: Scale
-        OriginalLabel: Scale
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -33086,9 +32819,7 @@ MonoBehaviour:
         DebugActive: 0
         Mode: 0
         AnimateScaleTarget: {fileID: 278877830}
-        MovementMode: 0
         AnimateScaleDuration: 0.2
-        AnimatePositionSpeed: 1
         RemapCurveZero: 1
         RemapCurveOne: 1.2
         Offset: 0
@@ -33324,7 +33055,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 578952328
         Label: Scale
-        OriginalLabel: Scale
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -33394,9 +33125,7 @@ MonoBehaviour:
         DebugActive: 0
         Mode: 0
         AnimateScaleTarget: {fileID: 479204755}
-        MovementMode: 0
         AnimateScaleDuration: 0.2
-        AnimatePositionSpeed: 1
         RemapCurveZero: 1
         RemapCurveOne: 1.2
         Offset: 0
@@ -33632,7 +33361,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 1215877052
         Label: Image
-        OriginalLabel: Image
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -33736,31 +33465,6 @@ MonoBehaviour:
           m_NumColorKeys: 2
           m_NumAlphaKeys: 4
         InstantColor: {r: 0, g: 0, b: 0, a: 0}
-        ToDestinationColor: {r: 1, g: 0, b: 0, a: 1}
-        ToDestinationColorCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
         DisableOnInit: 0
         EnableOnPlay: 1
         DisableOnSequenceEnd: 0
@@ -33771,7 +33475,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -256470174
         Label: Haptic Preset
-        OriginalLabel: Haptic Preset
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -33840,8 +33544,6 @@ MonoBehaviour:
         Owner: {fileID: 1754328596}
         DebugActive: 0
         Preset: 1
-        PlayPresetButton:
-          ButtonText: Test Preset
         HapticSettings:
           ForceGamepadID: 0
           GamepadID: 0
@@ -33855,7 +33557,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 956320354
         Label: MMSoundManager Sound
-        OriginalLabel: MMSoundManager Sound
+        OriginalLabel: 
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -33923,9 +33625,7 @@ MonoBehaviour:
           ButtonText: Automatic Shaker Setup
         Owner: {fileID: 1754328596}
         DebugActive: 0
-        Source: 0
         Sfx: {fileID: 8300000, guid: b8256a6b792fe3b488157984ecc43f61, type: 3}
-        AudioResourceToPlay: {fileID: 0}
         RandomSfx: []
         SequentialOrder: 0
         SequentialOrderHoldLast: 0
@@ -33943,12 +33643,11 @@ MonoBehaviour:
         Loop: 0
         Persistent: 0
         DoNotPlayIfClipAlreadyPlaying: 0
-        MaximumConcurrentInstances: 3
         StopSoundOnFeedbackStop: 0
-        FadeIn: 0
-        FadeInInitialVolume: 0
-        FadeInDuration: 1
-        FadeInTween:
+        Fade: 0
+        FadeInitialVolume: 0
+        FadeDuration: 1
+        FadeTween:
           MMTweenDefinitionType: 0
           MMTweenCurve: 9
           Curve:
@@ -33977,39 +33676,6 @@ MonoBehaviour:
             m_RotationOrder: 4
           Initialized: 0
           ConditionPropertyName: Fade
-          EnumConditionPropertyName: 
-          EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
-        FadeOutOnStop: 0
-        FadeOutDuration: 1
-        FadeOutTween:
-          MMTweenDefinitionType: 0
-          MMTweenCurve: 9
-          Curve:
-            serializedVersion: 2
-            m_Curve:
-            - serializedVersion: 3
-              time: 0
-              value: 0
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          Initialized: 0
-          ConditionPropertyName: FadeOutOnStop
           EnumConditionPropertyName: 
           EnumConditions: 0000000000000000000000000000000000000000000000000000000000000000
         SoloSingleTrack: 0
@@ -34227,7 +33893,6 @@ MonoBehaviour:
   Gain: 1
   Use2DDistance: 0
   UseCameraSpace: 0
-  SignalCombinationMode: 0
   ReactionSettings:
     m_SecondaryNoise: {fileID: 0}
     AmplitudeGain: 0
@@ -34521,8 +34186,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -34544,11 +34207,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1805474686
 MeshFilter:
@@ -34666,8 +34327,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -34689,11 +34348,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1834639636
 MeshFilter:
@@ -34915,10 +34572,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1848502308}
-  serializedVersion: 5
+  serializedVersion: 4
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_Drag: 0
+  m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -34976,8 +34633,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -34999,11 +34654,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1848502312
 MeshFilter:
@@ -35318,7 +34971,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!199 &1897800148
 ParticleSystemRenderer:
-  serializedVersion: 7
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -35337,8 +34990,6 @@ ParticleSystemRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -35361,11 +35012,9 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -35397,6 +35046,7 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+  m_MaskInteraction: 0
 --- !u!198 &1897800149
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -41399,8 +41049,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -41422,11 +41070,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &2102360793
 MeshFilter:
@@ -41583,10 +41229,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2109722799}
-  serializedVersion: 5
+  serializedVersion: 4
   m_Mass: 10
-  m_LinearDamping: 0
-  m_AngularDamping: 0.001
+  m_Drag: 0
+  m_AngularDrag: 0.001
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -41935,14 +41581,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2138677391}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 0.8
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.802082
-  m_CookieSize2D: {x: 10, y: 10}
+  m_CookieSize: 10
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -42019,23 +41665,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
-  m_RenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_ShadowRenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_Version: 4
-  m_LightLayerMask: 1
-  m_ShadowLayerMask: 1
-  m_RenderingLayers: 1
-  m_ShadowRenderingLayers: 1
 --- !u!1 &2146031374
 GameObject:
   m_ObjectHideFlags: 0
@@ -42194,9 +41834,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -42577,9 +42214,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -42925,9 +42559,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -43238,9 +42869,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -43551,9 +43179,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -43864,9 +43489,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -44177,9 +43799,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -44660,9 +44279,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -45043,9 +44659,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -45419,9 +45032,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -45767,9 +45377,6 @@ MonoBehaviour:
   RestoreInitialValuesOnDisable: 0
   StopFeedbacksOnDisable: 0
   PlayCount: 0
-  MMF_ChannelMode: 0
-  MMF_Channel: 0
-  MMF_ChannelDefinition: {fileID: 0}
   references:
     version: 2
     RefIds:

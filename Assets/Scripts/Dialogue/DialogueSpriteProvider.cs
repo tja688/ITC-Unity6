@@ -33,6 +33,12 @@ namespace ITC.Dialogue
                 yield break;
             }
 
+            if (mapping.directSprite != null)
+            {
+                onCompleted?.Invoke(mapping.directSprite);
+                yield break;
+            }
+
             var bundle = string.IsNullOrWhiteSpace(mapping.assetBundleName)
                 ? defaultBundle
                 : mapping.assetBundleName.Trim();

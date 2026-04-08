@@ -1,6 +1,7 @@
 using System.Collections;
 using QFramework;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Yarn.Unity;
 
 namespace ITC.Sign
@@ -14,6 +15,10 @@ namespace ITC.Sign
         [SerializeField] private float startupDelaySeconds = 0.2f;
         [SerializeField] private string startNode = "Sign_Day1_Start";
         [SerializeField] private float startupRetryWindowSeconds = 5f;
+        [SerializeField] private string[] requiredOverlaySceneNames =
+        {
+            "SignMiniGameOverlayScene"
+        };
 
         private bool startupRequestedThisSession;
         private float sessionStartRealtime;
@@ -121,14 +126,13 @@ namespace ITC.Sign
                 yield break;
             }
 
-            UIKit.Config = new MainMenuUIKitConfig();
-            yield return ResKit.InitAsync();
-
             if (dialogueRunner.IsDialogueRunning)
             {
                 startupRoutine = null;
                 yield break;
             }
+
+            yield return EnsureRequiredOverlayScenesLoaded();
 
             if (yarnProject != null)
             {
@@ -158,6 +162,40 @@ namespace ITC.Sign
             }
 
             startupRoutine = null;
+        }
+
+        private IEnumerator EnsureRequiredOverlayScenesLoaded()
+        {
+            if (requiredOverlaySceneNames == null || requiredOverlaySceneNames.Length == 0)
+            {
+                yield break;
+            }
+
+            foreach (var sceneReference in requiredOverlaySceneNames)
+            {
+                var trimmedReference = sceneReference?.Trim();
+                if (string.IsNullOrWhiteSpace(trimmedReference) || SignSceneOverlayLoader.IsSceneLoaded(trimmedReference))
+                {
+                    continue;
+                }
+
+                var asyncOp = SignSceneOverlayLoader.LoadAdditiveScene(trimmedReference);
+                if (asyncOp == null)
+                {
+                    LogKit.W($"[SignSceneDialogueLauncher] Failed to resolve overlay scene '{trimmedReference}'.");
+                    continue;
+                }
+
+                while (!asyncOp.isDone)
+                {
+                    yield return null;
+                }
+            }
+
+            if (gameObject.scene.IsValid())
+            {
+                SceneManager.SetActiveScene(gameObject.scene);
+            }
         }
     }
 }

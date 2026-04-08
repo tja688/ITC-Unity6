@@ -1,5 +1,6 @@
 using QFramework;
-using ITC.Dialogue;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public sealed class MarkMainMenuResReadyCommand : AbstractCommand
 {
@@ -21,13 +22,15 @@ public sealed class OpenMainMenuPanelCommand : AbstractCommand
         }
 
         model.PanelOpenRequested.Value = true;
+        var panel = Object.FindFirstObjectByType<MainMenuPanel>(FindObjectsInactive.Include);
+        if (panel == null)
+        {
+            LogKit.E("[MainMenuCommands] MainMenuPanel is missing from scene.");
+            return;
+        }
 
-        UIKit.OpenPanelAsync<MainMenuPanel>(
-                UILevel.Common,
-                assetBundleName: "menu_core",
-                prefabName: nameof(MainMenuPanel))
-            .ToAction()
-            .StartGlobal(() => this.SendCommand<MarkMainMenuPanelOpenedCommand>());
+        panel.gameObject.SetActive(true);
+        this.SendCommand<MarkMainMenuPanelOpenedCommand>();
     }
 }
 
@@ -42,6 +45,8 @@ public sealed class MarkMainMenuPanelOpenedCommand : AbstractCommand
 
 public sealed class RequestOpenDialoguePanelCommand : AbstractCommand
 {
+    private const string TargetGameplaySceneName = "SignScene";
+
     protected override void OnExecute()
     {
         var model = this.GetModel<MainMenuStateModel>();
@@ -51,22 +56,8 @@ public sealed class RequestOpenDialoguePanelCommand : AbstractCommand
         }
 
         model.DialoguePanelOpenRequested.Value = true;
-
-        UIKit.OpenPanelAsync<ITCDialoguePanel>(
-                UILevel.Common,
-                new ITCDialoguePanelData
-                {
-                    StartNode = "ITC_Start",
-                    AutoStartOnOpen = true
-                },
-                assetBundleName: "dialogue_ui",
-                prefabName: "ITC DialogueSystem")
-            .ToAction()
-            .StartGlobal(() =>
-            {
-                UIKit.ClosePanel<MainMenuPanel>();
-                this.SendCommand<MarkDialoguePanelOpenedCommand>();
-            });
+        SceneManager.LoadScene(TargetGameplaySceneName, LoadSceneMode.Single);
+        this.SendCommand<MarkDialoguePanelOpenedCommand>();
     }
 }
 

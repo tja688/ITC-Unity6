@@ -17,6 +17,7 @@ namespace ITC.Dialogue
     {
         public string key;
         public DialogueVisualSlot slot = DialogueVisualSlot.Background;
+        public Sprite directSprite;
         public string assetName;
         public string subSpriteName;
         public string assetBundleName;
@@ -41,6 +42,7 @@ namespace ITC.Dialogue
         [SerializeField] private string pcAvatarDefaultKey = "barks_default";
 
         [Header("Missing Sprite Fallback")]
+        [SerializeField] private Sprite missingSprite;
         [SerializeField] private string missingSpriteBundle = "dialogue_portrait";
         [SerializeField] private string missingSpriteAssetName = "image missing";
         [SerializeField] private string missingSpriteSubSpriteName = "image missing_0";
@@ -56,6 +58,7 @@ namespace ITC.Dialogue
         public string NpcMainPortraitDefaultKey => npcMainPortraitDefaultKey;
         public string NpcAvatarDefaultKey => npcAvatarDefaultKey;
         public string PcAvatarDefaultKey => pcAvatarDefaultKey;
+        public Sprite MissingSprite => missingSprite;
         public string MissingSpriteBundle => missingSpriteBundle;
         public string MissingSpriteAssetName => missingSpriteAssetName;
         public string MissingSpriteSubSpriteName => missingSpriteSubSpriteName;

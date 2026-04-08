@@ -50,6 +50,11 @@ namespace ITC.Dialogue
         private DialogueSpriteProvider spriteProvider;
         private bool commandsRegistered;
 
+        private static SignMiniGameSceneHost CachedMiniGameSceneHost =>
+            SignMiniGameSceneHost.Instance != null
+                ? SignMiniGameSceneHost.Instance
+                : FindFirstObjectByType<SignMiniGameSceneHost>(FindObjectsInactive.Include);
+
         private void Awake()
         {
             BootstrapRuntimeBindings();
@@ -409,27 +414,12 @@ namespace ITC.Dialogue
                 }
             };
 
-            var panelOpened = false;
-
-            UIKit.OpenPanelAsync<DocumentReviewPanel>(
-                    UILevel.PopUI,
-                    panelData,
-                    assetBundleName: "sign_minigame_ui",
-                    prefabName: nameof(DocumentReviewPanel))
-                .ToAction()
-                .StartGlobal(() => panelOpened = true);
-
-            var openTimeout = 8f;
-            var elapsed = 0f;
-            while (!panelOpened && elapsed < openTimeout)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                yield return null;
-            }
+            var panelHost = ResolveMiniGameSceneHost(nameof(DocumentReviewPanel));
+            var panelOpened = panelHost != null && panelHost.OpenDocumentReview(panelData);
 
             if (!panelOpened)
             {
-                LogKit.E("[ITCDialoguePanel] DocumentReviewPanel open timeout. Applying fallback result.");
+                LogKit.E("[ITCDialoguePanel] DocumentReviewPanel scene host missing. Applying fallback result.");
                 if (!resultSubmitted)
                 {
                     resultSubmitted = true;
@@ -439,7 +429,7 @@ namespace ITC.Dialogue
             else
             {
                 var gameplayTimeout = 180f;
-                elapsed = 0f;
+                var elapsed = 0f;
                 while (flowState.DocumentReviewRunning.Value && elapsed < gameplayTimeout)
                 {
                     elapsed += Time.unscaledDeltaTime;
@@ -462,7 +452,7 @@ namespace ITC.Dialogue
             WriteFloatVariable(variableStorage, "$Sign_mistake", flowState.SignMistake.Value);
             WriteFloatVariable(variableStorage, "$satisfaction", flowState.Satisfaction.Value);
 
-            UIKit.ClosePanel<DocumentReviewPanel>();
+            panelHost?.CloseDocumentReview();
         }
 
         private IEnumerator RunRuneTypingCommand(string clientToken, string gridSizeToken)
@@ -504,26 +494,12 @@ namespace ITC.Dialogue
                 }
             };
 
-            var panelOpened = false;
-            UIKit.OpenPanelAsync<RuneTypingPanel>(
-                    UILevel.PopUI,
-                    panelData,
-                    assetBundleName: "sign_minigame_ui",
-                    prefabName: nameof(RuneTypingPanel))
-                .ToAction()
-                .StartGlobal(() => panelOpened = true);
-
-            var openTimeout = 8f;
-            var elapsed = 0f;
-            while (!panelOpened && elapsed < openTimeout)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                yield return null;
-            }
+            var panelHost = ResolveMiniGameSceneHost(nameof(RuneTypingPanel));
+            var panelOpened = panelHost != null && panelHost.OpenRuneTyping(panelData);
 
             if (!panelOpened)
             {
-                LogKit.E("[ITCDialoguePanel] RuneTypingPanel open timeout. Applying fallback result.");
+                LogKit.E("[ITCDialoguePanel] RuneTypingPanel scene host missing. Applying fallback result.");
                 if (!resultSubmitted)
                 {
                     resultSubmitted = true;
@@ -534,7 +510,7 @@ namespace ITC.Dialogue
             else
             {
                 var gameplayTimeout = 180f;
-                elapsed = 0f;
+                var elapsed = 0f;
                 while (flowState.RuneTypingRunning.Value && elapsed < gameplayTimeout)
                 {
                     elapsed += Time.unscaledDeltaTime;
@@ -551,7 +527,7 @@ namespace ITC.Dialogue
             }
 
             WriteFloatVariable(variableStorage, "$Route_QTEErrorCount", flowState.RouteQteErrorCount.Value);
-            UIKit.ClosePanel<RuneTypingPanel>();
+            panelHost?.CloseRuneTyping();
         }
 
         private IEnumerator RunStampSelectCommand(string clientToken)
@@ -600,26 +576,12 @@ namespace ITC.Dialogue
                 }
             };
 
-            var panelOpened = false;
-            UIKit.OpenPanelAsync<StampPanel>(
-                    UILevel.PopUI,
-                    panelData,
-                    assetBundleName: "sign_minigame_ui",
-                    prefabName: nameof(StampPanel))
-                .ToAction()
-                .StartGlobal(() => panelOpened = true);
-
-            var openTimeout = 8f;
-            var elapsed = 0f;
-            while (!panelOpened && elapsed < openTimeout)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                yield return null;
-            }
+            var panelHost = ResolveMiniGameSceneHost(nameof(StampPanel));
+            var panelOpened = panelHost != null && panelHost.OpenStamp(panelData);
 
             if (!panelOpened)
             {
-                LogKit.E("[ITCDialoguePanel] StampPanel open timeout. Applying fallback result.");
+                LogKit.E("[ITCDialoguePanel] StampPanel scene host missing. Applying fallback result.");
                 if (!resultSubmitted)
                 {
                     resultSubmitted = true;
@@ -630,7 +592,7 @@ namespace ITC.Dialogue
             else
             {
                 var gameplayTimeout = 120f;
-                elapsed = 0f;
+                var elapsed = 0f;
                 while (flowState.StampRunning.Value && elapsed < gameplayTimeout)
                 {
                     elapsed += Time.unscaledDeltaTime;
@@ -651,7 +613,7 @@ namespace ITC.Dialogue
             WriteFloatVariable(variableStorage, "$Sign_mistake", flowState.SignMistake.Value);
             WriteFloatVariable(variableStorage, "$satisfaction", flowState.Satisfaction.Value);
 
-            UIKit.ClosePanel<StampPanel>();
+            panelHost?.CloseStamp();
         }
 
         private IEnumerator RunSoulCollectCommand(string clientToken, string targetPercentToken)
@@ -701,26 +663,12 @@ namespace ITC.Dialogue
                 }
             };
 
-            var panelOpened = false;
-            UIKit.OpenPanelAsync<SoulCollectPanel>(
-                    UILevel.PopUI,
-                    panelData,
-                    assetBundleName: "sign_minigame_ui",
-                    prefabName: nameof(SoulCollectPanel))
-                .ToAction()
-                .StartGlobal(() => panelOpened = true);
-
-            var openTimeout = 8f;
-            var elapsed = 0f;
-            while (!panelOpened && elapsed < openTimeout)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                yield return null;
-            }
+            var panelHost = ResolveMiniGameSceneHost(nameof(SoulCollectPanel));
+            var panelOpened = panelHost != null && panelHost.OpenSoulCollect(panelData);
 
             if (!panelOpened)
             {
-                LogKit.E("[ITCDialoguePanel] SoulCollectPanel open timeout. Applying fallback result.");
+                LogKit.E("[ITCDialoguePanel] SoulCollectPanel scene host missing. Applying fallback result.");
                 if (!resultSubmitted)
                 {
                     resultSubmitted = true;
@@ -731,7 +679,7 @@ namespace ITC.Dialogue
             else
             {
                 var gameplayTimeout = 180f;
-                elapsed = 0f;
+                var elapsed = 0f;
                 while (flowState.SoulCollectRunning.Value && elapsed < gameplayTimeout)
                 {
                     elapsed += Time.unscaledDeltaTime;
@@ -753,7 +701,7 @@ namespace ITC.Dialogue
             WriteFloatVariable(variableStorage, "$Sign_mistake", flowState.SignMistake.Value);
             WriteFloatVariable(variableStorage, "$satisfaction", flowState.Satisfaction.Value);
 
-            UIKit.ClosePanel<SoulCollectPanel>();
+            panelHost?.CloseSoulCollect();
         }
 
         private IEnumerator RunBeanSellCommand(string clientToken)
@@ -811,26 +759,12 @@ namespace ITC.Dialogue
                     }
                 };
 
-                var panelOpened = false;
-                UIKit.OpenPanelAsync<BeanSellPanel>(
-                        UILevel.PopUI,
-                        panelData,
-                        assetBundleName: "sign_minigame_ui",
-                        prefabName: nameof(BeanSellPanel))
-                    .ToAction()
-                    .StartGlobal(() => panelOpened = true);
-
-                var openTimeout = 8f;
-                var elapsed = 0f;
-                while (!panelOpened && elapsed < openTimeout)
-                {
-                    elapsed += Time.unscaledDeltaTime;
-                    yield return null;
-                }
+                var panelHost = ResolveMiniGameSceneHost(nameof(BeanSellPanel));
+                var panelOpened = panelHost != null && panelHost.OpenBeanSell(panelData);
 
                 if (!panelOpened)
                 {
-                    LogKit.E("[ITCDialoguePanel] BeanSellPanel open timeout. Applying fallback result.");
+                    LogKit.E("[ITCDialoguePanel] BeanSellPanel scene host missing. Applying fallback result.");
                     if (!resultSubmitted)
                     {
                         resultSubmitted = true;
@@ -841,7 +775,7 @@ namespace ITC.Dialogue
                 else
                 {
                     var gameplayTimeout = 90f;
-                    elapsed = 0f;
+                    var elapsed = 0f;
                     while (flowState.BeanSellRunning.Value && elapsed < gameplayTimeout)
                     {
                         elapsed += Time.unscaledDeltaTime;
@@ -857,7 +791,7 @@ namespace ITC.Dialogue
                     }
                 }
 
-                UIKit.ClosePanel<BeanSellPanel>();
+                panelHost?.CloseBeanSell();
             }
 
             WriteStringVariable(variableStorage, "$Route_BeanSellResult", flowState.RouteBeanSellResult.Value);
@@ -918,30 +852,16 @@ namespace ITC.Dialogue
                 OnFxCue = DispatchContractFxCue
             };
 
-            var panelOpened = false;
             var panelFinished = false;
             panelData.OnCompleted = () => panelFinished = true;
 
-            UIKit.OpenPanelAsync<SettlementPanel>(
-                    UILevel.PopUI,
-                    panelData,
-                    assetBundleName: "sign_minigame_ui",
-                    prefabName: nameof(SettlementPanel))
-                .ToAction()
-                .StartGlobal(() => panelOpened = true);
-
-            var openTimeout = 8f;
-            var elapsed = 0f;
-            while (!panelOpened && elapsed < openTimeout)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                yield return null;
-            }
+            var panelHost = ResolveMiniGameSceneHost(nameof(SettlementPanel));
+            var panelOpened = panelHost != null && panelHost.OpenSettlement(panelData);
 
             if (panelOpened)
             {
                 var feedbackTimeout = 30f;
-                elapsed = 0f;
+                var elapsed = 0f;
                 while (!panelFinished && elapsed < feedbackTimeout)
                 {
                     elapsed += Time.unscaledDeltaTime;
@@ -953,11 +873,11 @@ namespace ITC.Dialogue
                     LogKit.W("[ITCDialoguePanel] SettlementPanel feedback timeout, continue route.");
                 }
 
-                UIKit.ClosePanel<SettlementPanel>();
+                panelHost.CloseSettlement();
             }
             else
             {
-                LogKit.W("[ITCDialoguePanel] SettlementPanel open timeout, settlement data already finalized.");
+                LogKit.W("[ITCDialoguePanel] SettlementPanel scene host missing, settlement data already finalized.");
             }
 
             WriteFloatVariable(variableStorage, "$satisfaction", flowState.Satisfaction.Value);
@@ -1024,26 +944,12 @@ namespace ITC.Dialogue
                 }
             };
 
-            var panelOpened = false;
-            UIKit.OpenPanelAsync<RuneVerifyPanel>(
-                    UILevel.PopUI,
-                    panelData,
-                    assetBundleName: "sign_minigame_ui",
-                    prefabName: nameof(RuneVerifyPanel))
-                .ToAction()
-                .StartGlobal(() => panelOpened = true);
-
-            var openTimeout = 8f;
-            var elapsed = 0f;
-            while (!panelOpened && elapsed < openTimeout)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                yield return null;
-            }
+            var panelHost = ResolveMiniGameSceneHost(nameof(RuneVerifyPanel));
+            var panelOpened = panelHost != null && panelHost.OpenRuneVerify(panelData);
 
             if (!panelOpened)
             {
-                LogKit.E("[ITCDialoguePanel] RuneVerifyPanel open timeout. Applying fallback result.");
+                LogKit.E("[ITCDialoguePanel] RuneVerifyPanel scene host missing. Applying fallback result.");
                 if (!resultSubmitted)
                 {
                     resultSubmitted = true;
@@ -1056,7 +962,7 @@ namespace ITC.Dialogue
             else
             {
                 var gameplayTimeout = Mathf.Max(10f, config.TimeLimitSeconds + config.CountdownLeadSeconds + 8f);
-                elapsed = 0f;
+                var elapsed = 0f;
                 while (flowState.RuneVerifyRunning.Value && elapsed < gameplayTimeout)
                 {
                     elapsed += Time.unscaledDeltaTime;
@@ -1080,7 +986,7 @@ namespace ITC.Dialogue
             WriteStringVariable(variableStorage, "$Route_RuneVerifyResult", routeResult);
             WriteFloatVariable(variableStorage, "$Route_RuneVerifyDebuff", flowState.RouteRuneVerifyDebuff.Value);
 
-            UIKit.ClosePanel<RuneVerifyPanel>();
+            panelHost?.CloseRuneVerify();
         }
 
         private static int ParseClientId(string clientToken, VariableStorageBehaviour variableStorage)
@@ -1188,6 +1094,17 @@ namespace ITC.Dialogue
         private static void DispatchContractFxCue(string cueId, Transform anchor, float intensity)
         {
             // Reserved for future AudioKit/VFX router wiring.
+        }
+
+        private static SignMiniGameSceneHost ResolveMiniGameSceneHost(string panelName)
+        {
+            var host = CachedMiniGameSceneHost;
+            if (host == null)
+            {
+                LogKit.E($"[ITCDialoguePanel] SignMiniGameSceneHost missing. Cannot open {panelName}.");
+            }
+
+            return host;
         }
 
         private static DocumentReviewResultPayload BuildFallbackResult(int clientId)
@@ -1442,6 +1359,12 @@ namespace ITC.Dialogue
 
         private IEnumerator LoadMissingSpriteAsync(Action<Sprite> onCompleted)
         {
+            if (visualCatalog.MissingSprite != null)
+            {
+                onCompleted?.Invoke(visualCatalog.MissingSprite);
+                yield break;
+            }
+
             var missingBundle = string.IsNullOrWhiteSpace(visualCatalog.MissingSpriteBundle)
                 ? visualCatalog.DefaultPortraitBundle
                 : visualCatalog.MissingSpriteBundle.Trim();
